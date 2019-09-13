@@ -18,7 +18,37 @@
 <l>threshold (EdgeAmplitude, Region, 0.5, 255)</l>
 <l>gen_contour_region_xld (Region, Contours, 'border')</l>
 <l>create_shape_model_xld (Contours, 'auto', -0.39, 0.79, 'auto', 'auto', 'ignore_local_polarity', 5, ModelID)</l>
-<l>write_shape_model (ModelID, './circleModel')</l>
+<l>*write_shape_model (ModelID, './circleModel')</l>
+<c></c>
+<c>* center of the model</c>
+<l>area_center (Region, Area1, centerModelY, centerModelX)</l>
+<c></c>
+<c>* upperleft find line</c>
+<l>gen_rectangle2 (Rectangle, 331.86700000, 495.16200000, rad(-90.00000000), 25.65790000, 90.95780000)</l>
+<l>area_center (Rectangle, Area, Row1, Column1)</l>
+<c>* upper right find line</c>
+<l>gen_rectangle2 (Rectangle1, 326.22500000, 1080.54000000, rad(-90.00000000), 25.65790000, 77.31420000)</l>
+<l>area_center (Rectangle1, Area2, Row2, Column2)</l>
+<c>* left upper find line</c>
+<l>gen_rectangle2 (Rectangle2, 477.38200000, 350.80400000, rad(0.00000000), 25.28290000, 75.89940000)</l>
+<l>area_center (Rectangle2, Area3, Row3, Column3)</l>
+<c>* left lower find line</c>
+<l>gen_rectangle2 (Rectangle3, 897.15300000, 348.12700000, rad(0.00000000), 25.28290000, 48.35380000)</l>
+<l>area_center (Rectangle3, Area4, Row4, Column4)</l>
+<c></c>
+<l>set_system ('init_new_image', 'false')</l>
+<l>centerXOriginAlign_upperLeft := Column1 - centerModelX</l>
+<l>centerXOriginAlign_upperRight := Column2 - centerModelX</l>
+<l>centerXOriginAlign_leftUpper := Column3 - centerModelX</l>
+<l>centerXOriginAlign_leftLower := Column4 - centerModelX</l>
+<c></c>
+<l>centerYOriginAlign_upperLeft := Row1 - centerModelY</l>
+<l>centerYOriginAlign_upperRight := Row2 - centerModelY</l>
+<l>centerYOriginAlign_leftUpper := Row3 - centerModelY</l>
+<l>centerYOriginAlign_leftLower := Row4 - centerModelY</l>
+<c></c>
+<c></c>
+<c></c>
 <c></c>
 <l>stop ()</l>
 <l>VisionProStyleFindLine (Image, ROI_0, 'positive', 331.86700000, 495.16200000, rad(-90.00000000), 25.65790000, 90.95780000, 8, XsUpperLeft, YsUpperLeft)</l>
