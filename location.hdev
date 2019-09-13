@@ -6,84 +6,52 @@
 <l>read_image (Image, 'E:/Projects/3d/3D_Image/DF7_1_Z.tif')</l>
 <l>get_image_size (Image, Width, Height)</l>
 <c></c>
+<l>dev_close_window ()</l>
+<l>dev_open_window_fit_image (Image, 0, 0, -1, -1, WindowHandle)</l>
+<l>attach_background_to_window (Image, WindowHandle)</l>
 <l>dev_set_draw ('margin')</l>
 <l>dev_set_color ('red')</l>
-<l>transition := 'positive'</l>
-<c></c>
-<l>Xs := []</l>
-<l>Ys := []</l>
-<c></c>
-<l>rect1_row := 830.35100000</l>
-<l>rect1_col := 1508.15000000</l>
-<l>rect1_deg := -133.31100000</l>
-<l>rect1_rad := rad(rect1_deg)</l>
-<l>rect1_len1 := 824.94200000</l>
-<l>rect1_len2 := 311.35100000</l>
-<l>leftFaced := rect1_deg&lt;-90 or rect1_deg&gt;90</l>
-<c></c>
-<l>gen_rectangle2 (ROI_0, rect1_row, rect1_col, rect1_rad, rect1_len1, rect1_len2)</l>
-<l>gen_measure_rectangle2 (rect1_row, rect1_col, rect1_rad, rect1_len1, rect1_len2, Width, Height, 'nearest_neighbor', MeasureHandle)</l>
-<l>measure_pos (Image, MeasureHandle, 1, 1, 'negative', 'all', RowEdge, ColumnEdge, Amplitude, Distance)</l>
-<c></c>
-<l>gen_cross_contour_xld (Cross, RowEdge, ColumnEdge, 6, 0.785398)</l>
-<c></c>
-<l>numSubRects := 10</l>
-<l>widthSubRects := rect1_len2/numSubRects*2</l>
-<l>heightSubRects := rect1_len1*2</l>
-<c></c>
-<l>if(leftFaced)</l>
-<l>    betaDeg := -rect1_deg - 90</l>
-<l>rectStartX := rect1_col - rect1_len2 * cos(rad(betaDeg))</l>
-<l>rectStartY := rect1_row - rect1_len2 * sin(rad(betaDeg))</l>
-<l>subRectXIncrement := widthSubRects * cos(rad(betaDeg))</l>
-<l>subRectYIncrement := sqrt(widthSubRects*widthSubRects-subRectXIncrement*subRectXIncrement)</l>
-<l>firstSubRectCenterX := rectStartX + subRectXIncrement*0.5</l>
-<l>firstSubRectCenterY := rectStartY + subRectYIncrement * 0.5</l>
-<l>else</l>
-<l>    betaDeg := 90 + rect1_deg</l>
-<l>rectStartX := rect1_col + rect1_len2 * cos(rad(betaDeg))</l>
-<l>rectStartY := rect1_row - rect1_len2 * sin(rad(betaDeg))</l>
-<l>subRectXIncrement := -widthSubRects * cos(rad(betaDeg))</l>
-<l>subRectYIncrement := sqrt(widthSubRects*widthSubRects-subRectXIncrement*subRectXIncrement)</l>
-<l>firstSubRectCenterX := rectStartX + subRectXIncrement*0.5</l>
-<l>firstSubRectCenterY := rectStartY + subRectYIncrement * 0.5</l>
-<l>endif</l>
 <c></c>
 <c></c>
+<l>VisionProStyleFindLine (Image, ROI_0, 'positive', 331.86700000, 495.16200000, rad(-90.00000000), 25.65790000, 90.95780000, 8, XsUpperLeft, YsUpperLeft)</l>
 <c></c>
-<l>gen_cross_contour_xld (Cross1, rectStartY, rectStartX, 100, 0.785398)</l>
-<l>gen_cross_contour_xld (Cross2, firstSubRectCenterY, firstSubRectCenterX, 100, 0.785398)</l>
+<l>VisionProStyleFindLine (Image, ROI_0, 'positive', 326.22500000, 1080.54000000, rad(-90.00000000), 25.65790000, 77.31420000, 8, XsUpperRight, YsUpperRight)</l>
 <c></c>
-<l>   dev_set_color ('green')</l>
-<l>for Index := 0 to numSubRects-1 by 1</l>
-<c>    </c>
-<l>    if(leftFaced)</l>
-<l>         subRectCenterX := firstSubRectCenterX + Index*subRectXIncrement</l>
-<l>   subRectCenterY := firstSubRectCenterY + Index*subRectYIncrement </l>
-<l>   subRectLen1 := rect1_len1</l>
-<l>   subRectLen2 := rect1_len2/numSubRects</l>
-<l>   subRectPhi := rect1_rad</l>
-<l>    else</l>
-<l>           subRectCenterX := firstSubRectCenterX + Index*subRectXIncrement</l>
-<l>   subRectCenterY := firstSubRectCenterY + Index*subRectYIncrement </l>
-<l>   subRectLen1 := rect1_len1</l>
-<l>   subRectLen2 := rect1_len2/numSubRects</l>
-<l>   subRectPhi := rect1_rad</l>
-<l>    endif</l>
-<c>    </c>
+<l>VisionProStyleFindLine (Image, ROI_0, 'positive', 477.38200000, 350.80400000, rad(0.00000000), 25.28290000, 75.89940000, 8, XsLeftUpper, YsLeftUpper)</l>
 <c></c>
-<c>   </c>
-<l>   gen_rectangle2 (Rectangle, subRectCenterY, subRectCenterX, subRectPhi, subRectLen1, subRectLen2)</l>
-<l>   gen_measure_rectangle2 (subRectCenterY, subRectCenterX, subRectPhi, subRectLen1, subRectLen2, Width, Height, 'nearest_neighbor', MeasureHandle1)</l>
-<l>   measure_pos (Image, MeasureHandle1, 1, 0.5, transition, 'first', RowEdge1, ColumnEdge1, Amplitude1, Distance1)</l>
-<l>   Xs := [Xs,ColumnEdge1]</l>
-<l>   Ys := [Ys, RowEdge1]</l>
-<l>   close_measure (MeasureHandle1)</l>
-<l>endfor</l>
+<l>VisionProStyleFindLine (Image, ROI_0, 'positive', 897.15300000, 348.12700000, rad(0.00000000), 25.28290000, 48.35380000, 8, XsLeftLower, YsLeftLower)</l>
+<c></c>
+<l>dev_set_color ('blue')</l>
+<l>gen_cross_contour_xld (Cross, YsUpperLeft, XsUpperLeft, 50, 0.785398)</l>
+<l>gen_cross_contour_xld (Cross, YsUpperRight, XsUpperRight, 50, 0.785398)</l>
+<l>gen_cross_contour_xld (Cross, YsLeftUpper, XsLeftUpper, 50, 0.785398)</l>
+<l>gen_cross_contour_xld (Cross, YsLeftLower, XsLeftLower, 50, 0.785398)</l>
+<c></c>
+<l>tuple_concat (XsUpperLeft, XsUpperRight, XsUpper)</l>
+<l>tuple_concat (YsUpperLeft, YsUpperRight, YsUpper)</l>
+<l>tuple_concat (XsLeftUpper, XsLeftLower, XsLeft)</l>
+<l>tuple_concat (YsLeftUpper, YsLeftLower, YsLeft)</l>
+<c></c>
+<c>* fit base line</c>
+<l>FitLine2D(XsUpper, YsUpper, 372.5, lineX1Horizontal, lineY1Horizontal, lineX2Horizontal, lineY2Horizontal)</l>
+<l>FitLine2D(YsLeft, XsLeft, 421.25, lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical)</l>
+<c></c>
+<c>* show base line</c>
+<l>disp_line (WindowHandle, lineY1Horizontal, lineX1Horizontal, lineY2Horizontal, lineX2Horizontal)</l>
+<l>disp_line (WindowHandle, lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical)</l>
+<l>intersection_lines (lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical, lineY1Horizontal, lineX1Horizontal, lineY2Horizontal, lineX2Horizontal, Row, Column, IsOverlapping)</l>
+<l>gen_cross_contour_xld (Cross1, Row, Column, 100, 0.785398)</l>
 <c></c>
 <c></c>
-<l>gen_cross_contour_xld (Cross3, Ys, Xs, 50, 0.785398)</l>
-<c></c>
+<c>*************A***************</c>
+<c>* A1: (4.34,7.12)</c>
+<c>* A2: (-4.34,7.12)</c>
+<c>* A3: (-6.57,4.54)</c>
+<c>* A4: (-6.57, -4.54)</c>
+<c>* A5: (-4.05, -6.94)</c>
+<c>* A6: (4.05, -6.94)</c>
+<c>* A7: (6.75, -4.54)</c>
+<c>* A8: (6.75, 4.54)</c>
 <c></c>
 </body>
 <docu id="main">
@@ -124,6 +92,174 @@
 <parameter id="rect1_len2"/>
 <parameter id="rect1_rad"/>
 <parameter id="rect1_row"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="VisionProStyleFindLine">
+<interface>
+<io>
+<par name="Image" base_type="iconic" dimension="0"/>
+</io>
+<oo>
+<par name="ROI_0" base_type="iconic" dimension="0"/>
+</oo>
+<ic>
+<par name="transition" base_type="ctrl" dimension="0"/>
+<par name="rect1_row" base_type="ctrl" dimension="0"/>
+<par name="rect1_col" base_type="ctrl" dimension="0"/>
+<par name="rect1_rad" base_type="ctrl" dimension="0"/>
+<par name="rect1_len1" base_type="ctrl" dimension="0"/>
+<par name="rect1_len2" base_type="ctrl" dimension="0"/>
+<par name="numSubRects" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="Xs" base_type="ctrl" dimension="0"/>
+<par name="Ys" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<c></c>
+<l>Xs := []</l>
+<l>Ys := []</l>
+<c></c>
+<l>get_image_size (Image, Width, Height)</l>
+<c></c>
+<l>leftFaced := rect1_rad&lt;rad(-90) or rect1_rad&gt;rad(90)</l>
+<l>rect1_deg := deg(rect1_rad)</l>
+<c></c>
+<l>gen_rectangle2 (ROI_0, rect1_row, rect1_col, rect1_rad, rect1_len1, rect1_len2)</l>
+<l>numSubRects := 10</l>
+<l>widthSubRects := rect1_len2/numSubRects*2</l>
+<l>heightSubRects := rect1_len1*2</l>
+<c></c>
+<l>if(leftFaced)</l>
+<l>    betaDeg := -rect1_deg - 90</l>
+<l>rectStartX := rect1_col - rect1_len2 * cos(rad(betaDeg))</l>
+<l>rectStartY := rect1_row - rect1_len2 * sin(rad(betaDeg))</l>
+<l>subRectXIncrement := widthSubRects * cos(rad(betaDeg))</l>
+<l>subRectYIncrement := sqrt(widthSubRects*widthSubRects-subRectXIncrement*subRectXIncrement)</l>
+<l>firstSubRectCenterX := rectStartX + subRectXIncrement*0.5</l>
+<l>firstSubRectCenterY := rectStartY + subRectYIncrement * 0.5</l>
+<l>else</l>
+<l>    betaDeg := 90 + rect1_deg</l>
+<l>rectStartX := rect1_col + rect1_len2 * cos(rad(betaDeg))</l>
+<l>rectStartY := rect1_row - rect1_len2 * sin(rad(betaDeg))</l>
+<l>subRectXIncrement := -widthSubRects * cos(rad(betaDeg))</l>
+<l>subRectYIncrement := sqrt(widthSubRects*widthSubRects-subRectXIncrement*subRectXIncrement)</l>
+<l>firstSubRectCenterX := rectStartX + subRectXIncrement*0.5</l>
+<l>firstSubRectCenterY := rectStartY + subRectYIncrement * 0.5</l>
+<l>endif</l>
+<c></c>
+<c></c>
+<l>for Index := 0 to numSubRects-1 by 1</l>
+<c>    </c>
+<l>    if(leftFaced)</l>
+<l>         subRectCenterX := firstSubRectCenterX + Index*subRectXIncrement</l>
+<l>   subRectCenterY := firstSubRectCenterY + Index*subRectYIncrement </l>
+<l>   subRectLen1 := rect1_len1</l>
+<l>   subRectLen2 := rect1_len2/numSubRects</l>
+<l>   subRectPhi := rect1_rad</l>
+<l>    else</l>
+<l>           subRectCenterX := firstSubRectCenterX + Index*subRectXIncrement</l>
+<l>   subRectCenterY := firstSubRectCenterY + Index*subRectYIncrement </l>
+<l>   subRectLen1 := rect1_len1</l>
+<l>   subRectLen2 := rect1_len2/numSubRects</l>
+<l>   subRectPhi := rect1_rad</l>
+<l>    endif</l>
+<c>    </c>
+<l>   gen_rectangle2 (Rectangle, subRectCenterY, subRectCenterX, subRectPhi, subRectLen1, subRectLen2)</l>
+<l>   gen_measure_rectangle2 (subRectCenterY, subRectCenterX, subRectPhi, subRectLen1, subRectLen2, Width, Height, 'nearest_neighbor', MeasureHandle1)</l>
+<l>   measure_pos (Image, MeasureHandle1, 1, 0.5, transition, 'first', RowEdge1, ColumnEdge1, Amplitude1, Distance1)</l>
+<l>   Xs := [Xs,ColumnEdge1]</l>
+<l>   Ys := [Ys, RowEdge1]</l>
+<l>   close_measure (MeasureHandle1)</l>
+<l>endfor</l>
+<c></c>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="VisionProStyleFindLine">
+<parameters>
+<parameter id="Image"/>
+<parameter id="ROI_0"/>
+<parameter id="Xs"/>
+<parameter id="Ys"/>
+<parameter id="numSubRects"/>
+<parameter id="rect1_col"/>
+<parameter id="rect1_len1"/>
+<parameter id="rect1_len2"/>
+<parameter id="rect1_rad"/>
+<parameter id="rect1_row"/>
+<parameter id="transition"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="FitLine2D">
+<interface>
+<ic>
+<par name="Xs" base_type="ctrl" dimension="0"/>
+<par name="Ys" base_type="ctrl" dimension="0"/>
+<par name="offset" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="lineX1" base_type="ctrl" dimension="0"/>
+<par name="lineY1" base_type="ctrl" dimension="0"/>
+<par name="lineX2" base_type="ctrl" dimension="0"/>
+<par name="lineY2" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>tuple_sum (Xs, SumX)</l>
+<l>AverageX := SumX / |Xs|</l>
+<c></c>
+<l>tuple_sum (Ys, SumY)</l>
+<l>AverageY := SumY / |Ys|</l>
+<c></c>
+<l>SumUpper := 0</l>
+<l>SumLower := 0</l>
+<l>for i := 0 to |Xs|-1 by 1</l>
+<l>    incrementUpper := (Xs[i]-AverageX) * (Ys[i]-AverageY)</l>
+<l>    incrementLower := (AverageX-Xs[i]) * (AverageX-Xs[i])</l>
+<l>    SumUpper := SumUpper + incrementUpper</l>
+<l>    SumLower := SumLower + incrementLower</l>
+<l>endfor</l>
+<c></c>
+<l>m := SumUpper / SumLower</l>
+<l>b := AverageY - m*AverageX </l>
+<c></c>
+<c>* calculate skewness</c>
+<l>dx := 1</l>
+<l>x1 := 100</l>
+<l>x2 := x1 + dx</l>
+<l>y1 := m*x1 +b</l>
+<l>y2 := m*x2 +b</l>
+<l>dy := y2-y1</l>
+<l>radLine := atan(dy/dx)</l>
+<c></c>
+<c>* calculate y offset</c>
+<l>yOffset := offset / cos(radLine)</l>
+<c></c>
+<c>* update b</c>
+<l>b := b + yOffset</l>
+<c></c>
+<c>* sample two point</c>
+<l>tuple_max (Xs, lineX1)</l>
+<l>tuple_min (Xs, lineX2)</l>
+<c></c>
+<l>lineY1 := m * lineX1 + b</l>
+<l>lineY2 := m * lineX2 + b</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="FitLine2D">
+<parameters>
+<parameter id="Xs"/>
+<parameter id="Ys"/>
+<parameter id="lineX1"/>
+<parameter id="lineX2"/>
+<parameter id="lineY1"/>
+<parameter id="lineY2"/>
+<parameter id="offset"/>
 </parameters>
 </docu>
 </procedure>
