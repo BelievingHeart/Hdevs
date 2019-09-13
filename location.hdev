@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="18.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<l>read_image (Image, 'E:/Projects/3d/3D_Image/DF7_1_Z.tif')</l>
+<l>get_image_size (Image, Width, Height)</l>
+<c></c>
+<l>dev_set_draw ('margin')</l>
+<l>dev_set_color ('red')</l>
+<l>transition := 'positive'</l>
+<c></c>
+<l>Xs := []</l>
+<l>Ys := []</l>
+<c></c>
+<l>rect1_row := 1307.22000000</l>
+<l>rect1_col := 991.38600000</l>
+<l>rect1_deg := 44.82030000</l>
+<l>rect1_rad := rad(rect1_deg)</l>
+<l>rect1_len1 := 580.19500000</l>
+<l>rect1_len2 := 175.09300000</l>
+<c></c>
+<l>leftFaced := rect1_deg&lt;90 or rect1_deg&gt;90</l>
+<c></c>
+<l>gen_rectangle2 (ROI_0, rect1_row, rect1_col, rect1_rad, rect1_len1, rect1_len2)</l>
+<l>gen_measure_rectangle2 (rect1_row, rect1_col, rect1_rad, rect1_len1, rect1_len2, Width, Height, 'nearest_neighbor', MeasureHandle)</l>
+<l>measure_pos (Image, MeasureHandle, 1, 1, 'negative', 'all', RowEdge, ColumnEdge, Amplitude, Distance)</l>
+<c></c>
+<l>gen_cross_contour_xld (Cross, RowEdge, ColumnEdge, 6, 0.785398)</l>
+<c></c>
+<l>numSubRects := 10</l>
+<l>widthSubRects := rect1_len2/numSubRects*2</l>
+<l>heightSubRects := rect1_len1*2</l>
+<c></c>
+<c></c>
+<l>betaDeg := 90 + rect1_deg</l>
+<l>rectStartX := rect1_col + rect1_len2 * cos(rad(betaDeg))</l>
+<l>rectStartY := rect1_row - rect1_len2 * sin(rad(betaDeg))</l>
+<l>subRectXIncrement := -widthSubRects * cos(rad(betaDeg))</l>
+<l>subRectYIncrement := sqrt(widthSubRects*widthSubRects-subRectXIncrement*subRectXIncrement)</l>
+<l>firstSubRectCenterX := rectStartX + subRectXIncrement*0.5</l>
+<l>firstSubRectCenterY := rectStartY + subRectYIncrement * 0.5</l>
+<c></c>
+<l>gen_cross_contour_xld (Cross1, rectStartY, rectStartX, 100, 0.785398)</l>
+<l>gen_cross_contour_xld (Cross2, firstSubRectCenterY, firstSubRectCenterX, 100, 0.785398)</l>
+<c></c>
+<l>   dev_set_color ('green')</l>
+<l>for Index := 0 to numSubRects-1 by 1</l>
+<l>   subRectCenterX := firstSubRectCenterX + Index*subRectXIncrement</l>
+<l>   subRectCenterY := firstSubRectCenterY + Index*subRectYIncrement </l>
+<l>   subRectLen1 := rect1_len1</l>
+<l>   subRectLen2 := rect1_len2/numSubRects</l>
+<l>   subRectPhi := rect1_rad</l>
+<c>   </c>
+<l>   gen_rectangle2 (Rectangle, subRectCenterY, subRectCenterX, subRectPhi, subRectLen1, subRectLen2)</l>
+<l>   gen_measure_rectangle2 (subRectCenterY, subRectCenterX, subRectPhi, subRectLen1, subRectLen2, Width, Height, 'nearest_neighbor', MeasureHandle1)</l>
+<l>   measure_pos (Image, MeasureHandle1, 1, 0.5, transition, 'first', RowEdge1, ColumnEdge1, Amplitude1, Distance1)</l>
+<l>   Xs := [Xs,ColumnEdge1]</l>
+<l>   Ys := [Ys, RowEdge1]</l>
+<c>   </c>
+<l>endfor</l>
+<c></c>
+<c></c>
+<l>gen_cross_contour_xld (Cross3, Ys, Xs, 50, 0.785398)</l>
+<c></c>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+<procedure name="GenVisibleMeasureRect">
+<interface>
+<oo>
+<par name="ROI_0" base_type="iconic" dimension="0"/>
+</oo>
+<ic>
+<par name="rect1_row" base_type="ctrl" dimension="0"/>
+<par name="rect1_col" base_type="ctrl" dimension="0"/>
+<par name="rect1_rad" base_type="ctrl" dimension="0"/>
+<par name="rect1_len1" base_type="ctrl" dimension="0"/>
+<par name="rect1_len2" base_type="ctrl" dimension="0"/>
+<par name="Width" base_type="ctrl" dimension="0"/>
+<par name="Height" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="MeasureHandle" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>gen_rectangle2 (ROI_0, rect1_row, rect1_col, rect1_rad, rect1_len1, rect1_len2)</l>
+<l>gen_measure_rectangle2 (rect1_row, rect1_col, rect1_rad, rect1_len1, rect1_len2, Width, Height, 'nearest_neighbor', MeasureHandle)</l>
+<l>return ()</l>
+</body>
+<docu id="GenVisibleMeasureRect">
+<parameters>
+<parameter id="Height"/>
+<parameter id="MeasureHandle"/>
+<parameter id="ROI_0"/>
+<parameter id="Width"/>
+<parameter id="rect1_col"/>
+<parameter id="rect1_len1"/>
+<parameter id="rect1_len2"/>
+<parameter id="rect1_rad"/>
+<parameter id="rect1_row"/>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>
