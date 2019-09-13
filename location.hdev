@@ -12,7 +12,15 @@
 <l>dev_set_draw ('margin')</l>
 <l>dev_set_color ('red')</l>
 <c></c>
+<l>gen_rectangle1 (ROI_0, 393.25, 434.631, 939.083, 1146.66)</l>
+<l>reduce_domain (Image, ROI_0, ImageReduced)</l>
+<l>sobel_amp (ImageReduced, EdgeAmplitude, 'sum_abs', 3)</l>
+<l>threshold (EdgeAmplitude, Region, 0.5, 255)</l>
+<l>gen_contour_region_xld (Region, Contours, 'border')</l>
+<l>create_shape_model_xld (Contours, 'auto', -0.39, 0.79, 'auto', 'auto', 'ignore_local_polarity', 5, ModelID)</l>
+<l>write_shape_model (ModelID, './circleModel')</l>
 <c></c>
+<l>stop ()</l>
 <l>VisionProStyleFindLine (Image, ROI_0, 'positive', 331.86700000, 495.16200000, rad(-90.00000000), 25.65790000, 90.95780000, 8, XsUpperLeft, YsUpperLeft)</l>
 <c></c>
 <l>VisionProStyleFindLine (Image, ROI_0, 'positive', 326.22500000, 1080.54000000, rad(-90.00000000), 25.65790000, 77.31420000, 8, XsUpperRight, YsUpperRight)</l>
