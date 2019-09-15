@@ -3,8 +3,11 @@
 <procedure name="main">
 <interface/>
 <body>
-<l>read_image (Image, 'E:/Projects/3d/3D_Image/DF7_1_Z.tif')</l>
+<l>read_image (Image, 'E:/3d/3D_Image/DF2_1_Z.tif')</l>
 <l>get_image_size (Image, Width, Height)</l>
+<c></c>
+<l>xCoeff := 0.016</l>
+<l>yCoeff := 0.02</l>
 <c></c>
 <l>dev_close_window ()</l>
 <l>dev_open_window_fit_image (Image, 0, 0, -1, -1, WindowHandle)</l>
@@ -12,58 +15,60 @@
 <l>dev_set_draw ('margin')</l>
 <l>dev_set_color ('red')</l>
 <c></c>
-<l>gen_rectangle1 (ROI_0, 393.25, 434.631, 939.083, 1146.66)</l>
+<l>gen_rectangle1 (ROI_0, 99.0277, 161.153, 1198.89, 1388.46)</l>
 <l>reduce_domain (Image, ROI_0, ImageReduced)</l>
 <l>sobel_amp (ImageReduced, EdgeAmplitude, 'sum_abs', 3)</l>
 <l>threshold (EdgeAmplitude, Region, 0.5, 255)</l>
+<l>region_to_bin (Region, BinImage, 255, 0, Width, Height)</l>
 <l>gen_contour_region_xld (Region, Contours, 'border')</l>
-<l>create_shape_model_xld (Contours, 'auto', -0.39, 0.79, 'auto', 'auto', 'ignore_local_polarity', 5, ModelID)</l>
+<l>read_shape_model ('E:/3d/Hdev/DF7_1_Z', ModelID)</l>
+<l>find_shape_model (BinImage, ModelID, -0.39, 0.79, 0.5, 1, 0.5, 'least_squares', 0, 0.9, Row5, Column5, Angle, Score)</l>
+<l>vector_angle_to_rigid (0, 0, 0, Row5, Column5, Angle, HomMat2D)</l>
 <l>*write_shape_model (ModelID, './circleModel')</l>
 <c></c>
 <c>* center of the model</c>
 <l>area_center (Region, Area1, centerModelY, centerModelX)</l>
 <c></c>
+<l>set_system ('clip_region', 'false')</l>
 <c>* upperleft find line</c>
-<l>gen_rectangle2 (Rectangle, 331.86700000, 495.16200000, rad(-90.00000000), 25.65790000, 90.95780000)</l>
-<l>area_center (Rectangle, Area, Row1, Column1)</l>
+<l>gen_rectangle2 (Rectangle, 331.86700000, 495.16200000, rad(-90.00000000), 40, 90.95780000)</l>
+<l>move_region (Rectangle, RegionMoved, -centerModelY, -centerModelX)</l>
 <c>* upper right find line</c>
-<l>gen_rectangle2 (Rectangle1, 326.22500000, 1080.54000000, rad(-90.00000000), 25.65790000, 77.31420000)</l>
-<l>area_center (Rectangle1, Area2, Row2, Column2)</l>
+<l>gen_rectangle2 (Rectangle1, 326.22500000, 1080.54000000, rad(-90.00000000), 40, 77.31420000)</l>
+<l>move_region (Rectangle1, RegionMoved1, -centerModelY, -centerModelX)</l>
 <c>* left upper find line</c>
-<l>gen_rectangle2 (Rectangle2, 477.38200000, 350.80400000, rad(0.00000000), 25.28290000, 75.89940000)</l>
-<l>area_center (Rectangle2, Area3, Row3, Column3)</l>
+<l>gen_rectangle2 (Rectangle2, 477.38200000, 350.80400000, rad(0.00000000), 40, 75.89940000)</l>
+<l>move_region (Rectangle2, RegionMoved2, -centerModelY, -centerModelX)</l>
 <c>* left lower find line</c>
-<l>gen_rectangle2 (Rectangle3, 897.15300000, 348.12700000, rad(0.00000000), 25.28290000, 48.35380000)</l>
-<l>area_center (Rectangle3, Area4, Row4, Column4)</l>
+<l>gen_rectangle2 (Rectangle3, 897.15300000, 348.12700000, rad(0.00000000), 40, 48.35380000)</l>
+<l>move_region (Rectangle3, RegionMoved3, -centerModelY, -centerModelX)</l>
 <c></c>
-<l>set_system ('init_new_image', 'false')</l>
-<l>centerXOriginAlign_upperLeft := Column1 - centerModelX</l>
-<l>centerXOriginAlign_upperRight := Column2 - centerModelX</l>
-<l>centerXOriginAlign_leftUpper := Column3 - centerModelX</l>
-<l>centerXOriginAlign_leftLower := Column4 - centerModelX</l>
+<l>set_system ('clip_region', 'true')</l>
 <c></c>
-<l>centerYOriginAlign_upperLeft := Row1 - centerModelY</l>
-<l>centerYOriginAlign_upperRight := Row2 - centerModelY</l>
-<l>centerYOriginAlign_leftUpper := Row3 - centerModelY</l>
-<l>centerYOriginAlign_leftLower := Row4 - centerModelY</l>
+<l>affine_trans_region (RegionMoved, RegionAffineTrans, HomMat2D, 'nearest_neighbor')</l>
+<l>affine_trans_region (RegionMoved1, RegionAffineTrans1, HomMat2D, 'nearest_neighbor')</l>
+<l>affine_trans_region (RegionMoved2, RegionAffineTrans2, HomMat2D, 'nearest_neighbor')</l>
+<l>affine_trans_region (RegionMoved3, RegionAffineTrans3, HomMat2D, 'nearest_neighbor')</l>
+<c></c>
+<l>smallest_rectangle2 (RegionAffineTrans, Row1, Column1, Phi, Length1, Length2)</l>
+<l>smallest_rectangle2 (RegionAffineTrans1, Row2, Column2, Phi1, Length11, Length21)</l>
+<l>smallest_rectangle2 (RegionAffineTrans2, Row3, Column3, Phi2, Length12, Length22)</l>
+<l>smallest_rectangle2 (RegionAffineTrans3, Row4, Column4, Phi3, Length13, Length23)</l>
 <c></c>
 <c></c>
+<l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row1, Column1, rad(-90), Length2, Length1, 8, XsUpperLeft, YsUpperLeft)</l>
 <c></c>
+<l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row2, Column2, rad(-90), Length21, Length11, 8, XsUpperRight, YsUpperRight)</l>
 <c></c>
-<l>stop ()</l>
-<l>VisionProStyleFindLine (Image, ROI_0, 'positive', 331.86700000, 495.16200000, rad(-90.00000000), 25.65790000, 90.95780000, 8, XsUpperLeft, YsUpperLeft)</l>
+<l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row3, Column3, rad(0), Length22, Length12, 8, XsLeftUpper, YsLeftUpper)</l>
 <c></c>
-<l>VisionProStyleFindLine (Image, ROI_0, 'positive', 326.22500000, 1080.54000000, rad(-90.00000000), 25.65790000, 77.31420000, 8, XsUpperRight, YsUpperRight)</l>
-<c></c>
-<l>VisionProStyleFindLine (Image, ROI_0, 'positive', 477.38200000, 350.80400000, rad(0.00000000), 25.28290000, 75.89940000, 8, XsLeftUpper, YsLeftUpper)</l>
-<c></c>
-<l>VisionProStyleFindLine (Image, ROI_0, 'positive', 897.15300000, 348.12700000, rad(0.00000000), 25.28290000, 48.35380000, 8, XsLeftLower, YsLeftLower)</l>
+<l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row4, Column4, rad(0), Length23, Length13, 8, XsLeftLower, YsLeftLower)</l>
 <c></c>
 <l>dev_set_color ('blue')</l>
 <l>gen_cross_contour_xld (Cross, YsUpperLeft, XsUpperLeft, 50, 0.785398)</l>
-<l>gen_cross_contour_xld (Cross, YsUpperRight, XsUpperRight, 50, 0.785398)</l>
-<l>gen_cross_contour_xld (Cross, YsLeftUpper, XsLeftUpper, 50, 0.785398)</l>
-<l>gen_cross_contour_xld (Cross, YsLeftLower, XsLeftLower, 50, 0.785398)</l>
+<l>gen_cross_contour_xld (Cross1, YsUpperRight, XsUpperRight, 50, 0.785398)</l>
+<l>gen_cross_contour_xld (Cross2, YsLeftUpper, XsLeftUpper, 50, 0.785398)</l>
+<l>gen_cross_contour_xld (Cross3, YsLeftLower, XsLeftLower, 50, 0.785398)</l>
 <c></c>
 <l>tuple_concat (XsUpperLeft, XsUpperRight, XsUpper)</l>
 <l>tuple_concat (YsUpperLeft, YsUpperRight, YsUpper)</l>
@@ -71,8 +76,8 @@
 <l>tuple_concat (YsLeftUpper, YsLeftLower, YsLeft)</l>
 <c></c>
 <c>* fit base line</c>
-<l>FitLine2D(XsUpper, YsUpper, 372.5, lineX1Horizontal, lineY1Horizontal, lineX2Horizontal, lineY2Horizontal)</l>
-<l>FitLine2D(YsLeft, XsLeft, 421.25, lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical)</l>
+<l>FitLine2D(XsUpper, YsUpper, 0, lineX1Horizontal, lineY1Horizontal, lineX2Horizontal, lineY2Horizontal)</l>
+<l>FitLine2D(YsLeft, XsLeft, 0, lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical)</l>
 <c></c>
 <c>* show base line</c>
 <l>disp_line (WindowHandle, lineY1Horizontal, lineX1Horizontal, lineY2Horizontal, lineX2Horizontal)</l>
@@ -80,7 +85,19 @@
 <l>intersection_lines (lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical, lineY1Horizontal, lineX1Horizontal, lineY2Horizontal, lineX2Horizontal, Row, Column, IsOverlapping)</l>
 <l>gen_cross_contour_xld (Cross1, Row, Column, 100, 0.785398)</l>
 <c></c>
+<l>move_point_along_line (Column, Row, lineX1Horizontal, lineY1Horizontal, 6.74/xCoeff, lineMovedX, lineMovedY)</l>
+<l>gen_cross_contour_xld (Cross4, lineMovedY, lineMovedX, 100, Angle)</l>
+<l>stop ()</l>
 <c></c>
+<c>* the perpendicular can be determined by the last four params</c>
+<l>get_perpendicular_line_that_passes (lineX1Horizontal, lineY1Horizontal, lineMovedX, lineMovedY, lineMovedX, lineMovedY, lineXPerpendicular, lineYPerpendicular)</l>
+<l>gen_region_line (RegionLines, lineMovedY, lineMovedX, lineYPerpendicular, lineXPerpendicular)</l>
+<c></c>
+<l>offset_line(lineX1Horizontal, lineY1Horizontal, lineX2Horizontal, lineY2Horizontal, 7.45/yCoeff, x1Output, y1Output, x2Output, y2Output)</l>
+<c></c>
+<c>* draw new coordinate center</c>
+<l>intersection_lines (lineMovedY, lineMovedX, lineYPerpendicular, lineXPerpendicular, y1Output, x1Output, y2Output, x2Output, CoorCenterY, CoorCenterX, IsOverlapping1)</l>
+<l>gen_cross_contour_xld (Cross5, CoorCenterY, CoorCenterX, 100, Angle)</l>
 <c>*************A***************</c>
 <c>* A1: (4.34,7.12)</c>
 <c>* A2: (-4.34,7.12)</c>
@@ -298,6 +315,199 @@
 <parameter id="lineY1"/>
 <parameter id="lineY2"/>
 <parameter id="offset"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="move_point_along_line">
+<interface>
+<ic>
+<par name="lineStartX" base_type="ctrl" dimension="0"/>
+<par name="lineStartY" base_type="ctrl" dimension="0"/>
+<par name="lineDirectionX" base_type="ctrl" dimension="0"/>
+<par name="lineDirectionY" base_type="ctrl" dimension="0"/>
+<par name="distance" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="lineMovedX" base_type="ctrl" dimension="0"/>
+<par name="lineMovedY" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>xDiff := lineDirectionX - lineStartX</l>
+<l>yDiff := lineDirectionY - lineStartY</l>
+<l>totalDiff := sqrt(yDiff*yDiff+xDiff*xDiff)</l>
+<l>xDirection := xDiff / totalDiff</l>
+<l>yDirection := yDiff / totalDiff</l>
+<l>lineMovedX := lineStartX + xDirection * distance</l>
+<l>lineMovedY := lineStartY + yDirection * distance</l>
+<l>return ()</l>
+</body>
+<docu id="move_point_along_line">
+<parameters>
+<parameter id="distance"/>
+<parameter id="lineDirectionX"/>
+<parameter id="lineDirectionY"/>
+<parameter id="lineMovedX"/>
+<parameter id="lineMovedY"/>
+<parameter id="lineStartX"/>
+<parameter id="lineStartY"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="get_perpendicular_line_that_passes">
+<interface>
+<ic>
+<par name="lineXStart" base_type="ctrl" dimension="0"/>
+<par name="lineYStart" base_type="ctrl" dimension="0"/>
+<par name="lineXEnd" base_type="ctrl" dimension="0"/>
+<par name="lineYEnd" base_type="ctrl" dimension="0"/>
+<par name="xPass" base_type="ctrl" dimension="0"/>
+<par name="yPass" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="lineXPerpendicular" base_type="ctrl" dimension="0"/>
+<par name="lineYPerpendicular" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>get_direction_unit (lineXStart, lineYStart, lineXEnd, lineYEnd, xUnit, yUnit)</l>
+<l>get_perpendicular_direction (xUnit, yUnit, outputVectorX, outputVectorY)</l>
+<c></c>
+<c>* another point on the perpendicular line can be determined by</c>
+<c>* adding perpendicular unit vector to the first point that we passed</c>
+<l>lineXPerpendicular := xPass + outputVectorX</l>
+<l>lineYPerpendicular := yPass + outputVectorY</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="get_perpendicular_line_that_passes">
+<parameters>
+<parameter id="lineXEnd"/>
+<parameter id="lineXPerpendicular"/>
+<parameter id="lineXStart"/>
+<parameter id="lineYEnd"/>
+<parameter id="lineYPerpendicular"/>
+<parameter id="lineYStart"/>
+<parameter id="xPass"/>
+<parameter id="yPass"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="get_direction_unit">
+<interface>
+<ic>
+<par name="xStart" base_type="ctrl" dimension="0"/>
+<par name="yStart" base_type="ctrl" dimension="0"/>
+<par name="xEnd" base_type="ctrl" dimension="0"/>
+<par name="yEnd" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="xUnit" base_type="ctrl" dimension="0"/>
+<par name="yUnit" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>xDiff := xEnd - xStart</l>
+<l>yDiff := yEnd - yStart</l>
+<c></c>
+<l>totalDiff := sqrt(yDiff*yDiff + xDiff*xDiff)</l>
+<c></c>
+<l>xUnit := xDiff / totalDiff</l>
+<l>yUnit := yDiff / totalDiff</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="get_direction_unit">
+<parameters>
+<parameter id="xEnd"/>
+<parameter id="xStart"/>
+<parameter id="xUnit"/>
+<parameter id="yEnd"/>
+<parameter id="yStart"/>
+<parameter id="yUnit"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="get_perpendicular_direction">
+<interface>
+<ic>
+<par name="inputVectorX" base_type="ctrl" dimension="0"/>
+<par name="inputVectorY" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="outputVectorX" base_type="ctrl" dimension="0"/>
+<par name="outputVectorY" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<c>* assume that a perticular vector perpendiclar to me is (xAssume, yAssume), let xAssume = 1</c>
+<l>xAssume := 1</l>
+<l>yAssume := -(inputVectorX/inputVectorY)</l>
+<l>distAssume := sqrt(yAssume*yAssume + xAssume * xAssume)</l>
+<c></c>
+<c>* calculate unit length direction vector</c>
+<l>outputVectorX := xAssume / distAssume</l>
+<l>outputVectorY := yAssume / distAssume</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="get_perpendicular_direction">
+<parameters>
+<parameter id="inputVectorX"/>
+<parameter id="inputVectorY"/>
+<parameter id="outputVectorX"/>
+<parameter id="outputVectorY"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="offset_line">
+<interface>
+<ic>
+<par name="x1" base_type="ctrl" dimension="0"/>
+<par name="y1" base_type="ctrl" dimension="0"/>
+<par name="x2" base_type="ctrl" dimension="0"/>
+<par name="y2" base_type="ctrl" dimension="0"/>
+<par name="offset" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="x1Output" base_type="ctrl" dimension="0"/>
+<par name="y1Output" base_type="ctrl" dimension="0"/>
+<par name="x2Output" base_type="ctrl" dimension="0"/>
+<par name="y2Output" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<c>* calculate m and b</c>
+<l>xDiff := x2 - x1</l>
+<l>yDiff := y2 - y1</l>
+<l>m := yDiff / xDiff</l>
+<l>b := y1 - m* x1</l>
+<c></c>
+<c>* calculate angle</c>
+<l>radian := atan(m)</l>
+<c>* calculate new b after offset</c>
+<l>yIncre := offset / cos(radian)</l>
+<l>newB := b + yIncre</l>
+<c></c>
+<c>* sample two points back to caller</c>
+<l>x1Output := x1</l>
+<l>x2Output := x2</l>
+<l>y1Output := x1Output * m + newB</l>
+<l>y2Output := x2Output * m + newB</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="offset_line">
+<parameters>
+<parameter id="offset"/>
+<parameter id="x1"/>
+<parameter id="x1Output"/>
+<parameter id="x2"/>
+<parameter id="x2Output"/>
+<parameter id="y1"/>
+<parameter id="y1Output"/>
+<parameter id="y2"/>
+<parameter id="y2Output"/>
 </parameters>
 </docu>
 </procedure>
