@@ -3,13 +3,18 @@
 <procedure name="main">
 <interface/>
 <body>
-<l>read_image (Image, 'E:/3d/3D_Image/DF2_1_Z.tif')</l>
-<l>get_image_size (Image, Width, Height)</l>
+<l>open_framegrabber ('File', 1, 1, 0, 0, 0, 0, 'default', -1, 'default', -1, 'false', 'E:/3d/3D_Image/image.seq', '', 1, 2, AcqHandle)</l>
+<c></c>
+<l>set_system ('image_dir', 'E:/3d/3D_Image')</l>
+<l>Width := 2032</l>
+<l>Height := 2500</l>
 <c></c>
 <l>xCoeff := 0.016</l>
 <l>yCoeff := 0.02</l>
 <c></c>
-<l>dev_close_window ()</l>
+<l>for Index := 0 to 48 by 1</l>
+<l>    dev_close_window ()</l>
+<l>grab_image (Image, AcqHandle)</l>
 <l>dev_open_window_fit_image (Image, 0, 0, -1, -1, WindowHandle)</l>
 <l>attach_background_to_window (Image, WindowHandle)</l>
 <l>dev_set_draw ('margin')</l>
@@ -31,16 +36,16 @@
 <c></c>
 <l>set_system ('clip_region', 'false')</l>
 <c>* upperleft find line</c>
-<l>gen_rectangle2 (Rectangle, 331.86700000, 495.16200000, rad(-90.00000000), 40, 90.95780000)</l>
+<l>gen_rectangle2 (Rectangle, 331.86700000, 510.16200000, rad(-90.00000000), 40, 90.95780000)</l>
 <l>move_region (Rectangle, RegionMoved, -centerModelY, -centerModelX)</l>
 <c>* upper right find line</c>
-<l>gen_rectangle2 (Rectangle1, 326.22500000, 1080.54000000, rad(-90.00000000), 40, 77.31420000)</l>
+<l>gen_rectangle2 (Rectangle1, 336.22500000, 1080.54000000, rad(-90.00000000), 40, 77.31420000)</l>
 <l>move_region (Rectangle1, RegionMoved1, -centerModelY, -centerModelX)</l>
 <c>* left upper find line</c>
-<l>gen_rectangle2 (Rectangle2, 477.38200000, 350.80400000, rad(0.00000000), 40, 75.89940000)</l>
+<l>gen_rectangle2 (Rectangle2, 477.38200000, 370.80400000, rad(0.00000000), 60, 75.89940000)</l>
 <l>move_region (Rectangle2, RegionMoved2, -centerModelY, -centerModelX)</l>
 <c>* left lower find line</c>
-<l>gen_rectangle2 (Rectangle3, 897.15300000, 348.12700000, rad(0.00000000), 40, 48.35380000)</l>
+<l>gen_rectangle2 (Rectangle3, 897.15300000, 368.12700000, rad(0.00000000), 60, 48.35380000)</l>
 <l>move_region (Rectangle3, RegionMoved3, -centerModelY, -centerModelX)</l>
 <c></c>
 <l>set_system ('clip_region', 'true')</l>
@@ -83,11 +88,10 @@
 <l>disp_line (WindowHandle, lineY1Horizontal, lineX1Horizontal, lineY2Horizontal, lineX2Horizontal)</l>
 <l>disp_line (WindowHandle, lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical)</l>
 <l>intersection_lines (lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical, lineY1Horizontal, lineX1Horizontal, lineY2Horizontal, lineX2Horizontal, Row, Column, IsOverlapping)</l>
-<l>gen_cross_contour_xld (Cross1, Row, Column, 100, 0.785398)</l>
+<c></c>
 <c></c>
 <l>move_point_along_line (Column, Row, lineX1Horizontal, lineY1Horizontal, 6.74/xCoeff, lineMovedX, lineMovedY)</l>
 <l>gen_cross_contour_xld (Cross4, lineMovedY, lineMovedX, 100, Angle)</l>
-<l>stop ()</l>
 <c></c>
 <c>* the perpendicular can be determined by the last four params</c>
 <l>get_perpendicular_line_that_passes (lineX1Horizontal, lineY1Horizontal, lineMovedX, lineMovedY, lineMovedX, lineMovedY, lineXPerpendicular, lineYPerpendicular)</l>
@@ -98,6 +102,21 @@
 <c>* draw new coordinate center</c>
 <l>intersection_lines (lineMovedY, lineMovedX, lineYPerpendicular, lineXPerpendicular, y1Output, x1Output, y2Output, x2Output, CoorCenterY, CoorCenterX, IsOverlapping1)</l>
 <l>gen_cross_contour_xld (Cross5, CoorCenterY, CoorCenterX, 100, Angle)</l>
+<c></c>
+<l>dev_display (Image)</l>
+<l>dev_display (Cross)</l>
+<l>dev_display (Cross1)</l>
+<l>dev_display (Cross2)</l>
+<l>dev_display (Cross3)</l>
+<l>dev_display (Cross4)</l>
+<l>dev_display (Cross5)</l>
+<l>dev_display (RegionAffineTrans)</l>
+<l>dev_display (RegionAffineTrans1)</l>
+<l>dev_display (RegionAffineTrans2)</l>
+<l>dev_display (RegionAffineTrans3)</l>
+<c></c>
+<l>stop ()</l>
+<l>endfor</l>
 <c>*************A***************</c>
 <c>* A1: (4.34,7.12)</c>
 <c>* A2: (-4.34,7.12)</c>
