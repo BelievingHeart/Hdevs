@@ -16,24 +16,23 @@
 <l>    dev_close_window ()</l>
 <l>grab_image (Image, AcqHandle)</l>
 <l>dev_open_window_fit_image (Image, 0, 0, -1, -1, WindowHandle)</l>
-<l>attach_background_to_window (Image, WindowHandle)</l>
-<l>dev_set_draw ('margin')</l>
-<l>dev_set_color ('red')</l>
 <c></c>
+<c>* create xld features for fixturing</c>
 <l>gen_rectangle1 (ROI_0, 99.0277, 161.153, 1198.89, 1388.46)</l>
 <l>reduce_domain (Image, ROI_0, ImageReduced)</l>
 <l>sobel_amp (ImageReduced, EdgeAmplitude, 'sum_abs', 3)</l>
 <l>threshold (EdgeAmplitude, Region, 0.5, 255)</l>
 <l>region_to_bin (Region, BinImage, 255, 0, Width, Height)</l>
 <l>gen_contour_region_xld (Region, Contours, 'border')</l>
-<l>read_shape_model ('E:/3d/Hdev/DF7_1_Z', ModelID)</l>
+<c></c>
+<l>read_shape_model ('./DF7_1_Z', ModelID)</l>
 <l>find_shape_model (BinImage, ModelID, -0.39, 0.79, 0.5, 1, 0.5, 'least_squares', 0, 0.9, Row5, Column5, Angle, Score)</l>
 <l>vector_angle_to_rigid (0, 0, 0, Row5, Column5, Angle, HomMat2D)</l>
-<l>*write_shape_model (ModelID, './circleModel')</l>
 <c></c>
 <c>* center of the model</c>
 <l>area_center (Region, Area1, centerModelY, centerModelX)</l>
 <c></c>
+<c>* align all the measure rects with respect to the created shape model which is zero centered</c>
 <l>set_system ('clip_region', 'false')</l>
 <c>* upperleft find line</c>
 <l>gen_rectangle2 (Rectangle, 331.86700000, 510.16200000, rad(-90.00000000), 40, 90.95780000)</l>
@@ -47,73 +46,70 @@
 <c>* left lower find line</c>
 <l>gen_rectangle2 (Rectangle3, 897.15300000, 368.12700000, rad(0.00000000), 60, 48.35380000)</l>
 <l>move_region (Rectangle3, RegionMoved3, -centerModelY, -centerModelX)</l>
-<c></c>
 <l>set_system ('clip_region', 'true')</l>
 <c></c>
-<l>affine_trans_region (RegionMoved, RegionAffineTrans, HomMat2D, 'nearest_neighbor')</l>
-<l>affine_trans_region (RegionMoved1, RegionAffineTrans1, HomMat2D, 'nearest_neighbor')</l>
-<l>affine_trans_region (RegionMoved2, RegionAffineTrans2, HomMat2D, 'nearest_neighbor')</l>
-<l>affine_trans_region (RegionMoved3, RegionAffineTrans3, HomMat2D, 'nearest_neighbor')</l>
 <c></c>
-<l>smallest_rectangle2 (RegionAffineTrans, Row1, Column1, Phi, Length1, Length2)</l>
-<l>smallest_rectangle2 (RegionAffineTrans1, Row2, Column2, Phi1, Length11, Length21)</l>
-<l>smallest_rectangle2 (RegionAffineTrans2, Row3, Column3, Phi2, Length12, Length22)</l>
-<l>smallest_rectangle2 (RegionAffineTrans3, Row4, Column4, Phi3, Length13, Length23)</l>
+<c>* fix all the measure rects to track individual parts to be measured</c>
+<l>affine_trans_region (RegionMoved, FindLineRegions, HomMat2D, 'nearest_neighbor')</l>
+<l>affine_trans_region (RegionMoved1, FindLineRegions1, HomMat2D, 'nearest_neighbor')</l>
+<l>affine_trans_region (RegionMoved2, FindLineRegions2, HomMat2D, 'nearest_neighbor')</l>
+<l>affine_trans_region (RegionMoved3, FindLineRegions3, HomMat2D, 'nearest_neighbor')</l>
 <c></c>
+<c>* get the pose of measure rects that are fixed in place</c>
+<l>smallest_rectangle2 (FindLineRegions, Row1, Column1, Phi, Length1, Length2)</l>
+<l>smallest_rectangle2 (FindLineRegions1, Row2, Column2, Phi1, Length11, Length21)</l>
+<l>smallest_rectangle2 (FindLineRegions2, Row3, Column3, Phi2, Length12, Length22)</l>
+<l>smallest_rectangle2 (FindLineRegions3, Row4, Column4, Phi3, Length13, Length23)</l>
 <c></c>
+<c>* find all the points within the above rects</c>
 <l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row1, Column1, rad(-90), Length2, Length1, 8, XsUpperLeft, YsUpperLeft)</l>
-<c></c>
 <l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row2, Column2, rad(-90), Length21, Length11, 8, XsUpperRight, YsUpperRight)</l>
-<c></c>
 <l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row3, Column3, rad(0), Length22, Length12, 8, XsLeftUpper, YsLeftUpper)</l>
-<c></c>
 <l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row4, Column4, rad(0), Length23, Length13, 8, XsLeftLower, YsLeftLower)</l>
 <c></c>
-<l>dev_set_color ('blue')</l>
-<l>gen_cross_contour_xld (Cross, YsUpperLeft, XsUpperLeft, 50, 0.785398)</l>
-<l>gen_cross_contour_xld (Cross1, YsUpperRight, XsUpperRight, 50, 0.785398)</l>
-<l>gen_cross_contour_xld (Cross2, YsLeftUpper, XsLeftUpper, 50, 0.785398)</l>
-<l>gen_cross_contour_xld (Cross3, YsLeftLower, XsLeftLower, 50, 0.785398)</l>
+<c>* display all the found points on the line</c>
+<l>gen_cross_contour_xld (PointsFound, YsUpperLeft, XsUpperLeft, 50, 0.785398)</l>
+<l>gen_cross_contour_xld (PointsFound1, YsUpperRight, XsUpperRight, 50, 0.785398)</l>
+<l>gen_cross_contour_xld (PointsFound2, YsLeftUpper, XsLeftUpper, 50, 0.785398)</l>
+<l>gen_cross_contour_xld (PointsFound3, YsLeftLower, XsLeftLower, 50, 0.785398)</l>
 <c></c>
+<c>* fit left and upper base line</c>
 <l>tuple_concat (XsUpperLeft, XsUpperRight, XsUpper)</l>
 <l>tuple_concat (YsUpperLeft, YsUpperRight, YsUpper)</l>
 <l>tuple_concat (XsLeftUpper, XsLeftLower, XsLeft)</l>
 <l>tuple_concat (YsLeftUpper, YsLeftLower, YsLeft)</l>
 <c></c>
-<c>* fit base line</c>
 <l>FitLine2D(XsUpper, YsUpper, 0, lineX1Horizontal, lineY1Horizontal, lineX2Horizontal, lineY2Horizontal)</l>
 <l>FitLine2D(YsLeft, XsLeft, 0, lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical)</l>
 <c></c>
-<c>* show base line</c>
-<l>disp_line (WindowHandle, lineY1Horizontal, lineX1Horizontal, lineY2Horizontal, lineX2Horizontal)</l>
-<l>disp_line (WindowHandle, lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical)</l>
 <l>intersection_lines (lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical, lineY1Horizontal, lineX1Horizontal, lineY2Horizontal, lineX2Horizontal, Row, Column, IsOverlapping)</l>
 <c></c>
-<c></c>
-<l>move_point_along_line (Column, Row, lineX1Horizontal, lineY1Horizontal, 6.74/xCoeff, lineMovedX, lineMovedY)</l>
-<l>gen_cross_contour_xld (Cross4, lineMovedY, lineMovedX, 100, Angle)</l>
+<c>* move the intersection point from top left to top center</c>
+<l>move_point_along_line (Column, Row, lineX1Horizontal, lineY1Horizontal, 6.74/xCoeff, VAxisX1, VAxisY1)</l>
+<l>gen_cross_contour_xld (PointsFound4, VAxisY1, VAxisX1, 100, Angle)</l>
 <c></c>
 <c>* the perpendicular can be determined by the last four params</c>
-<l>get_perpendicular_line_that_passes (lineX1Horizontal, lineY1Horizontal, lineMovedX, lineMovedY, lineMovedX, lineMovedY, lineXPerpendicular, lineYPerpendicular)</l>
-<l>gen_region_line (RegionLines, lineMovedY, lineMovedX, lineYPerpendicular, lineXPerpendicular)</l>
+<l>get_perpendicular_line_that_passes (lineX1Horizontal, lineY1Horizontal, VAxisX1, VAxisY1, VAxisX1, VAxisY1, VAxisX2, VAxisY2)</l>
 <c></c>
-<l>offset_line(lineX1Horizontal, lineY1Horizontal, lineX2Horizontal, lineY2Horizontal, 7.45/yCoeff, x1Output, y1Output, x2Output, y2Output)</l>
+<c>* offset the horizontal line</c>
+<l>offset_line(lineX1Horizontal, lineY1Horizontal, lineX2Horizontal, lineY2Horizontal, 7.45/yCoeff, HAxisX1, HAxisY1, HAxisX2, HAxisY2)</l>
 <c></c>
 <c>* draw new coordinate center</c>
-<l>intersection_lines (lineMovedY, lineMovedX, lineYPerpendicular, lineXPerpendicular, y1Output, x1Output, y2Output, x2Output, CoorCenterY, CoorCenterX, IsOverlapping1)</l>
-<l>gen_cross_contour_xld (Cross5, CoorCenterY, CoorCenterX, 100, Angle)</l>
+<l>intersection_lines (VAxisY1, VAxisX1, VAxisY2, VAxisX2, HAxisY1, HAxisX1, HAxisY2, HAxisX2, CoorCenterY, CoorCenterX, IsOverlapping1)</l>
+<l>gen_cross_contour_xld (PointsFound5, CoorCenterY, CoorCenterX, 100, Angle)</l>
 <c></c>
-<l>dev_display (Image)</l>
-<l>dev_display (Cross)</l>
-<l>dev_display (Cross1)</l>
-<l>dev_display (Cross2)</l>
-<l>dev_display (Cross3)</l>
-<l>dev_display (Cross4)</l>
-<l>dev_display (Cross5)</l>
-<l>dev_display (RegionAffineTrans)</l>
-<l>dev_display (RegionAffineTrans1)</l>
-<l>dev_display (RegionAffineTrans2)</l>
-<l>dev_display (RegionAffineTrans3)</l>
+<c>*clean up</c>
+<l>clear_shape_model (ModelID)</l>
+<c></c>
+<c>* concat objects necessary for displaying</c>
+<l>concat_obj (PointsFound, PointsFound1, PointsFound)</l>
+<l>concat_obj (PointsFound, PointsFound2, PointsFound)</l>
+<l>concat_obj (PointsFound, PointsFound3, PointsFound)</l>
+<l>concat_obj (PointsFound, PointsFound4, PointsFound)</l>
+<l>concat_obj (PointsFound, PointsFound5, PointsFound)</l>
+<l>concat_obj (FindLineRegions, FindLineRegions1, FindLineRegions)</l>
+<l>concat_obj (FindLineRegions, FindLineRegions2, FindLineRegions)</l>
+<l>concat_obj (FindLineRegions, FindLineRegions3, FindLineRegions)</l>
 <c></c>
 <l>stop ()</l>
 <l>endfor</l>
