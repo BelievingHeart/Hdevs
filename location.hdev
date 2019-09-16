@@ -3,8 +3,8 @@
 <procedure name="main">
 <interface/>
 <body>
-<l>read_image (Image, 'E:/3d/3D_Image/DF3_3_Z.tif')</l>
-<l>read_shape_model ('E:/3d/Hdev/DF7_1_Z', ModelID)</l>
+<l>read_image (Image, 'E:/Projects/3d/3D_Image/DF3_1_Z.tif')</l>
+<l>read_shape_model ('./DF7_1_Z', ModelID)</l>
 <l>dev_close_window ()</l>
 <l>dev_open_window (0, 0, 400, 500, 'black', WindowHandle)</l>
 <l>dev_set_draw ('margin')</l>
@@ -475,10 +475,10 @@
 <c>* align all the measure rects with respect to the created shape model which is zero centered</c>
 <l>set_system ('clip_region', 'false')</l>
 <c>* upperleft find line</c>
-<l>gen_rectangle2 (Rectangle, 331.86700000, 510.16200000, rad(-90.00000000), 40, 90.95780000)</l>
-<l>move_region (Rectangle, RegionMoved, -centerModelY, -centerModelX)</l>
+<l>*gen_rectangle2 (Rectangle, 331.86700000, 510.16200000, rad(-90.00000000), 40, 90.95780000)</l>
+<l>*move_region (Rectangle, RegionMoved, -centerModelY, -centerModelX)</l>
 <c>* upper right find line</c>
-<l>gen_rectangle2 (Rectangle1, 336.22500000, 1080.54000000, rad(-90.00000000), 40, 77.31420000)</l>
+<l>gen_rectangle2 (Rectangle1, 1676.14, 792.335, rad(90), 60, 220.943)</l>
 <l>move_region (Rectangle1, RegionMoved1, -centerModelY, -centerModelX)</l>
 <c>* left upper find line</c>
 <l>gen_rectangle2 (Rectangle2, 477.38200000, 370.80400000, rad(0.00000000), 60, 75.89940000)</l>
@@ -490,36 +490,36 @@
 <c></c>
 <c></c>
 <c>* fix all the measure rects to track individual parts to be measured</c>
-<l>affine_trans_region (RegionMoved, FindLineRegions, HomMat2D, 'nearest_neighbor')</l>
-<l>affine_trans_region (RegionMoved1, FindLineRegions1, HomMat2D, 'nearest_neighbor')</l>
+<l>*affine_trans_region (RegionMoved, FindLineRegions, HomMat2D, 'nearest_neighbor')</l>
+<l>affine_trans_region (RegionMoved1, FindLineRegions, HomMat2D, 'nearest_neighbor')</l>
 <l>affine_trans_region (RegionMoved2, FindLineRegions2, HomMat2D, 'nearest_neighbor')</l>
 <l>affine_trans_region (RegionMoved3, FindLineRegions3, HomMat2D, 'nearest_neighbor')</l>
 <c></c>
 <c>* get the pose of measure rects that are fixed in place</c>
-<l>smallest_rectangle2 (FindLineRegions, Row1, Column1, Phi, Length1, Length2)</l>
-<l>smallest_rectangle2 (FindLineRegions1, Row2, Column2, Phi1, Length11, Length21)</l>
+<l>*smallest_rectangle2 (FindLineRegions, Row1, Column1, Phi, Length1, Length2)</l>
+<l>smallest_rectangle2 (FindLineRegions, Row2, Column2, Phi1, Length11, Length21)</l>
 <l>smallest_rectangle2 (FindLineRegions2, Row3, Column3, Phi2, Length12, Length22)</l>
 <l>smallest_rectangle2 (FindLineRegions3, Row4, Column4, Phi3, Length13, Length23)</l>
 <c></c>
 <c>* find all the points within the above rects</c>
-<l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row1, Column1, rad(-90), Length2, Length1, 8, XsUpperLeft, YsUpperLeft)</l>
-<l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row2, Column2, rad(-90), Length21, Length11, 8, XsUpperRight, YsUpperRight)</l>
+<l>*VisionProStyleFindLine (Image, ROI_0, 'positive', Row1, Column1, rad(-90), Length2, Length1, 8, XsUpperLeft, YsUpperLeft)</l>
+<l>VisionProStyleFindLine (Image, ROI_0, 'negative', Row2, Column2, rad(-90), Length21, Length11, 8, XsUpperRight, YsUpperRight)</l>
 <l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row3, Column3, rad(0), Length22, Length12, 8, XsLeftUpper, YsLeftUpper)</l>
 <l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row4, Column4, rad(0), Length23, Length13, 8, XsLeftLower, YsLeftLower)</l>
 <c></c>
 <c>* display all the found points on the line</c>
-<l>gen_cross_contour_xld (PointsFound, YsUpperLeft, XsUpperLeft, 50, 0.785398)</l>
-<l>gen_cross_contour_xld (PointsFound1, YsUpperRight, XsUpperRight, 50, 0.785398)</l>
+<l>*gen_cross_contour_xld (PointsFound, YsUpperLeft, XsUpperLeft, 50, 0.785398)</l>
+<l>gen_cross_contour_xld (PointsFound, YsUpperRight, XsUpperRight, 50, 0.785398)</l>
 <l>gen_cross_contour_xld (PointsFound2, YsLeftUpper, XsLeftUpper, 50, 0.785398)</l>
 <l>gen_cross_contour_xld (PointsFound3, YsLeftLower, XsLeftLower, 50, 0.785398)</l>
 <c></c>
 <c>* fit left and upper base line</c>
-<l>tuple_concat (XsUpperLeft, XsUpperRight, XsUpper)</l>
-<l>tuple_concat (YsUpperLeft, YsUpperRight, YsUpper)</l>
+<l>*tuple_concat (XsUpperLeft, XsUpperRight, XsUpper)</l>
+<l>*tuple_concat (YsUpperLeft, YsUpperRight, YsUpper)</l>
 <l>tuple_concat (XsLeftUpper, XsLeftLower, XsLeft)</l>
 <l>tuple_concat (YsLeftUpper, YsLeftLower, YsLeft)</l>
 <c></c>
-<l>FitLine2D(XsUpper, YsUpper, 0, lineX1Horizontal, lineY1Horizontal, lineX2Horizontal, lineY2Horizontal)</l>
+<l>FitLine2D(XsUpperRight, YsUpperRight, 0, lineX1Horizontal, lineY1Horizontal, lineX2Horizontal, lineY2Horizontal)</l>
 <l>FitLine2D(YsLeft, XsLeft, 0, lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical)</l>
 <c></c>
 <l>intersection_lines (lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical, lineY1Horizontal, lineX1Horizontal, lineY2Horizontal, lineX2Horizontal, Row, Column, IsOverlapping)</l>
@@ -532,7 +532,7 @@
 <l>get_perpendicular_line_that_passes (lineX1Horizontal, lineY1Horizontal, VAxisX1, VAxisY1, VAxisX1, VAxisY1, VAxisX2, VAxisY2)</l>
 <c></c>
 <c>* offset the horizontal line</c>
-<l>offset_line(lineX1Horizontal, lineY1Horizontal, lineX2Horizontal, lineY2Horizontal, 7.45/yCoeff, HAxisX1, HAxisY1, HAxisX2, HAxisY2)</l>
+<l>offset_line(lineX1Horizontal, lineY1Horizontal, lineX2Horizontal, lineY2Horizontal, -19.47/yCoeff, HAxisX1, HAxisY1, HAxisX2, HAxisY2)</l>
 <c></c>
 <c>* draw new coordinate center</c>
 <l>intersection_lines (VAxisY1, VAxisX1, VAxisY2, VAxisX2, HAxisY1, HAxisX1, HAxisY2, HAxisX2, CoorCenterY, CoorCenterX, IsOverlapping1)</l>
@@ -540,12 +540,12 @@
 <c></c>
 <c></c>
 <c>* concat objects necessary for displaying</c>
-<l>concat_obj (PointsFound, PointsFound1, PointsFound)</l>
+<l>*concat_obj (PointsFound, PointsFound1, PointsFound)</l>
 <l>concat_obj (PointsFound, PointsFound2, PointsFound)</l>
 <l>concat_obj (PointsFound, PointsFound3, PointsFound)</l>
 <l>concat_obj (PointsFound, PointsFound4, PointsFound)</l>
 <l>concat_obj (PointsFound, PointsFound5, PointsFound)</l>
-<l>concat_obj (FindLineRegions, FindLineRegions1, FindLineRegions)</l>
+<l>*concat_obj (FindLineRegions, FindLineRegions, FindLineRegions)</l>
 <l>concat_obj (FindLineRegions, FindLineRegions2, FindLineRegions)</l>
 <l>concat_obj (FindLineRegions, FindLineRegions3, FindLineRegions)</l>
 <l>return ()</l>
