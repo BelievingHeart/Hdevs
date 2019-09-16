@@ -169,7 +169,7 @@
 <ic>
 <par name="Xs" base_type="ctrl" dimension="0"/>
 <par name="Ys" base_type="ctrl" dimension="0"/>
-<par name="offset" base_type="ctrl" dimension="0"/>
+<par name="ignorePortion" base_type="ctrl" dimension="0"/>
 </ic>
 <oc>
 <par name="lineX1" base_type="ctrl" dimension="0"/>
@@ -179,45 +179,35 @@
 </oc>
 </interface>
 <body>
-<l>tuple_sum (Xs, SumX)</l>
-<l>AverageX := SumX / |Xs|</l>
+<l>fit_line2D_rough (Xs, Ys, lineX1, lineY1, lineX2, lineY2)</l>
 <c></c>
-<l>tuple_sum (Ys, SumY)</l>
-<l>AverageY := SumY / |Ys|</l>
+<c>* number of points to ignore</c>
+<l>numPointsLeft := (1.0-ignorePortion) * |Xs|</l>
+<l>numThrows := 0</l>
 <c></c>
-<l>SumUpper := 0</l>
-<l>SumLower := 0</l>
+<c>* calculate fitness of each point</c>
+<l>fiterrors := []</l>
 <l>for i := 0 to |Xs|-1 by 1</l>
-<l>    incrementUpper := (Xs[i]-AverageX) * (Ys[i]-AverageY)</l>
-<l>    incrementLower := (AverageX-Xs[i]) * (AverageX-Xs[i])</l>
-<l>    SumUpper := SumUpper + incrementUpper</l>
-<l>    SumLower := SumLower + incrementLower</l>
+<l>    distance_pl (Ys[i], Xs[i], lineY1, lineX1, lineY2, lineX2, Distance)</l>
+<l>    fiterrors := [fiterrors, Distance]</l>
 <l>endfor</l>
 <c></c>
-<l>m := SumUpper / SumLower</l>
-<l>b := AverageY - m*AverageX </l>
+<l>tuple_sort_index (fiterrors, Indices)</l>
 <c></c>
-<c>* calculate skewness</c>
-<l>dx := 1</l>
-<l>x1 := 100</l>
-<l>x2 := x1 + dx</l>
-<l>y1 := m*x1 +b</l>
-<l>y2 := m*x2 +b</l>
-<l>dy := y2-y1</l>
-<l>radLine := atan(dy/dx)</l>
+<c>* select the best fits</c>
+<l>XsBest := []</l>
+<l>YsBest := []</l>
+<l>ErrorBest := []</l>
+<l>for i := 0 to numPointsLeft by 1</l>
+<l>    index := Indices[i]</l>
+<l>    XsBest := [XsBest, Xs[index]]</l>
+<l>    YsBest := [YsBest, Ys[index]]</l>
+<l>    ErrorBest := [ErrorBest, fiterrors[index]]</l>
+<l>endfor</l>
 <c></c>
-<c>* calculate y offset</c>
-<l>yOffset := offset / cos(radLine)</l>
+<c>* fit line again</c>
+<l>fit_line2D_rough (XsBest, YsBest, lineX1, lineY1, lineX2, lineY2)</l>
 <c></c>
-<c>* update b</c>
-<l>b := b + yOffset</l>
-<c></c>
-<c>* sample two point</c>
-<l>tuple_max (Xs, lineX1)</l>
-<l>tuple_min (Xs, lineX2)</l>
-<c></c>
-<l>lineY1 := m * lineX1 + b</l>
-<l>lineY2 := m * lineX2 + b</l>
 <c></c>
 <l>return ()</l>
 </body>
@@ -225,11 +215,11 @@
 <parameters>
 <parameter id="Xs"/>
 <parameter id="Ys"/>
+<parameter id="ignorePortion"/>
 <parameter id="lineX1"/>
 <parameter id="lineX2"/>
 <parameter id="lineY1"/>
 <parameter id="lineY2"/>
-<parameter id="offset"/>
 </parameters>
 </docu>
 </procedure>
@@ -519,8 +509,9 @@
 <l>tuple_concat (XsLeftUpper, XsLeftLower, XsLeft)</l>
 <l>tuple_concat (YsLeftUpper, YsLeftLower, YsLeft)</l>
 <c></c>
-<l>FitLine2D(XsUpperRight, YsUpperRight, 0, lineX1Horizontal, lineY1Horizontal, lineX2Horizontal, lineY2Horizontal)</l>
-<l>FitLine2D(YsLeft, XsLeft, 0, lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical)</l>
+<l>ignorePortion := 0.2</l>
+<l>FitLine2D (XsUpperRight, YsUpperRight, ignorePortion, lineX1Horizontal, lineY1Horizontal, lineX2Horizontal, lineY2Horizontal)</l>
+<l>FitLine2D (YsLeft, XsLeft, ignorePortion, lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical)</l>
 <c></c>
 <l>intersection_lines (lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical, lineY1Horizontal, lineX1Horizontal, lineY2Horizontal, lineX2Horizontal, Row, Column, IsOverlapping)</l>
 <c></c>
@@ -566,6 +557,59 @@
 <parameter id="VAxisX2"/>
 <parameter id="VAxisY1"/>
 <parameter id="VAxisY2"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="fit_line2D_rough">
+<interface>
+<ic>
+<par name="Xs" base_type="ctrl" dimension="0"/>
+<par name="Ys" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="lineX1" base_type="ctrl" dimension="0"/>
+<par name="lineY1" base_type="ctrl" dimension="0"/>
+<par name="lineX2" base_type="ctrl" dimension="0"/>
+<par name="lineY2" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>tuple_sum (Xs, SumX)</l>
+<l>AverageX := SumX / |Xs|</l>
+<c></c>
+<l>tuple_sum (Ys, SumY)</l>
+<l>AverageY := SumY / |Ys|</l>
+<c></c>
+<l>SumUpper := 0</l>
+<l>SumLower := 0</l>
+<l>for i := 0 to |Xs|-1 by 1</l>
+<l>    incrementUpper := (Xs[i]-AverageX) * (Ys[i]-AverageY)</l>
+<l>    incrementLower := (AverageX-Xs[i]) * (AverageX-Xs[i])</l>
+<l>    SumUpper := SumUpper + incrementUpper</l>
+<l>    SumLower := SumLower + incrementLower</l>
+<l>endfor</l>
+<c></c>
+<l>m := SumUpper / SumLower</l>
+<l>b := AverageY - m*AverageX </l>
+<c></c>
+<c></c>
+<c></c>
+<c>* sample two point</c>
+<l>tuple_max (Xs, lineX1)</l>
+<l>tuple_min (Xs, lineX2)</l>
+<c></c>
+<l>lineY1 := m * lineX1 + b</l>
+<l>lineY2 := m * lineX2 + b</l>
+<l>return ()</l>
+</body>
+<docu id="fit_line2D_rough">
+<parameters>
+<parameter id="Xs"/>
+<parameter id="Ys"/>
+<parameter id="lineX1"/>
+<parameter id="lineX2"/>
+<parameter id="lineY1"/>
+<parameter id="lineY2"/>
 </parameters>
 </docu>
 </procedure>
