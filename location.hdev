@@ -24,7 +24,7 @@
 <l>baseRightRadian := rad(180)</l>
 <l>baseRightLen1 := 155.856</l>
 <l>baseRightLen2 := 923.855</l>
-<l>VisionProStyleFindLineOneStep (Image, rectBaseRight, 'positive', baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2, numSubRects, 50, 'first', ignorePortion, 'true', lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, XsUsedRightBase, YsUsedRightBase, XsIgnoredRightBase, YsIgnoredRightBase)</l>
+<l>VisionProStyleFindLineOneStep (Image, rectBaseRight, 'positive', baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2, numSubRects, 50, 'first', ignorePortion, 'true', 1, lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, XsUsedRightBase, YsUsedRightBase, XsIgnoredRightBase, YsIgnoredRightBase)</l>
 <c></c>
 <c></c>
 <c>* find top base line</c>
@@ -33,7 +33,7 @@
 <l>baseTopRadian := rad(-91.33180000)</l>
 <l>baseTopLen1 := 243.06000000</l>
 <l>baseTopLen2 := 535.03500000</l>
-<l>VisionProStyleFindLineOneStep (Image, rectBaseTop, 'positive', baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, numSubRects, 50, 'first', ignorePortion, 'false', lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, XsUsedTopBase, YsUsedTopBase, XsIgnoredTopBase, YsIgnoredTopBase)</l>
+<l>VisionProStyleFindLineOneStep (Image, rectBaseTop, 'positive', baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, numSubRects, 50, 'first', ignorePortion, 'false', 1, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, XsUsedTopBase, YsUsedTopBase, XsIgnoredTopBase, YsIgnoredTopBase)</l>
 <l>concat_obj (rectBaseRight, rectBaseTop, FindLineRects)</l>
 <c></c>
 <c>* display used and ignored points</c>
@@ -98,7 +98,7 @@
 <l>rectFAI3Radian := rad(88.76800000)</l>
 <l>rectFAI3Len1 := 140.37300000</l>
 <l>rectFAI3Len2 := 503.62100000</l>
-<l>VisionProStyleFindLineOneStep (Image, rectFAI3, 'positive', rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, numSubRects, 120, 'first', ignorePortion, 'false', lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3, XsUsedFAI3, YsUsedFAI3, XsIgnoredFAI3, YsIgnoredFAI3)</l>
+<l>VisionProStyleFindLineOneStep (Image, rectFAI3, 'positive', rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, numSubRects, 120, 'first', ignorePortion, 'false', 1, lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3, XsUsedFAI3, YsUsedFAI3, XsIgnoredFAI3, YsIgnoredFAI3)</l>
 <l>concat_obj (FindLineRects, rectFAI3, FindLineRects)</l>
 <c></c>
 <l>dev_set_color('green')</l>
@@ -130,7 +130,7 @@
 <l>rectFAI4Radian := rad(89)</l>
 <l>rectFAI4Len1 := 126.79500000</l>
 <l>rectFAI4Len2 := 525.15600000</l>
-<l>VisionProStyleFindLineOneStep (Image, rectFAI4, 'negative', rectFAI4Row, rectFAI4Col, rectFAI4Radian, rectFAI4Len1, rectFAI4Len2, numSubRects, 50, 'first', ignorePortion, 'false', lineX1FAI4, lineY1FAI4, lineX2FAI4, lineY2FAI4, XsUsedFAI4, YsUsedFAI4, XsIgnoredFAI4, YsIgnoredFAI4)</l>
+<l>VisionProStyleFindLineOneStep (Image, rectFAI4, 'negative', rectFAI4Row, rectFAI4Col, rectFAI4Radian, rectFAI4Len1, rectFAI4Len2, numSubRects, 50, 'first', ignorePortion, 'false', 1, lineX1FAI4, lineY1FAI4, lineX2FAI4, lineY2FAI4, XsUsedFAI4, YsUsedFAI4, XsIgnoredFAI4, YsIgnoredFAI4)</l>
 <l>concat_obj (FindLineRects, rectFAI4, FindLineRects)</l>
 <c></c>
 <l>dev_set_color('green')</l>
@@ -218,7 +218,12 @@
 <par name="rect1_len2" base_type="ctrl" dimension="0"/>
 <par name="numSubRects" base_type="ctrl" dimension="0"/>
 <par name="threshold" base_type="ctrl" dimension="0"/>
+<par name="sigma" base_type="ctrl" dimension="0"/>
 <par name="firstOrLast" base_type="ctrl" dimension="0"/>
+<par name="usingPairs" base_type="ctrl" dimension="0"/>
+<par name="whichEdgePair" base_type="ctrl" dimension="0"/>
+<par name="minEdge" base_type="ctrl" dimension="0"/>
+<par name="maxEdge" base_type="ctrl" dimension="0"/>
 </ic>
 <oc>
 <par name="Xs" base_type="ctrl" dimension="0"/>
@@ -279,10 +284,29 @@
 <c>    </c>
 <l>   gen_rectangle2 (Rectangle, subRectCenterY, subRectCenterX, subRectPhi, subRectLen1, subRectLen2)</l>
 <l>   gen_measure_rectangle2 (subRectCenterY, subRectCenterX, subRectPhi, subRectLen1, subRectLen2, Width, Height, 'nearest_neighbor', MeasureHandle1)</l>
-<l>   measure_pos (Image, MeasureHandle1, 1, threshold, transition, firstOrLast, RowEdge1, ColumnEdge1, Amplitude1, Distance1)</l>
-<l>   Xs := [Xs,ColumnEdge1]</l>
-<l>   Ys := [Ys, RowEdge1]</l>
-<l>   close_measure (MeasureHandle1)</l>
+<c>   </c>
+<l>   if(usingPairs == 'false')</l>
+<l>          measure_pos (Image, MeasureHandle1, sigma, threshold, transition, firstOrLast, RowEdge1, ColumnEdge1, Amplitude1, Distance1)</l>
+<l>          Xs := [Xs,ColumnEdge1]</l>
+<l>          Ys := [Ys, RowEdge1]</l>
+<l>   else</l>
+<l>       measure_pairs (Image, MeasureHandle1, sigma, threshold, transition, whichEdgePair, RowEdgeFirst, ColumnEdgeFirst, AmplitudeFirst, RowEdgeSecond, ColumnEdgeSecond, AmplitudeSecond, IntraDistance, InterDistance)</l>
+<c>       * only count if edge with is within range</c>
+<l>       if(|IntraDistance|&gt;0 and IntraDistance &gt; minEdge and IntraDistance &lt; maxEdge)</l>
+<l>           if(firstOrLast == 'first')</l>
+<l>               Xs := [Xs,ColumnEdgeFirst]</l>
+<l>               Ys := [Ys, RowEdgeFirst]</l>
+<l>           else</l>
+<l>                 Xs := [Xs,ColumnEdgeSecond]</l>
+<l>               Ys := [Ys, RowEdgeSecond]</l>
+<l>           endif</l>
+<l>       endif</l>
+<c>       </c>
+<l>   endif</l>
+<l>                close_measure (MeasureHandle1)</l>
+<c></c>
+<c>   </c>
+<c></c>
 <l>endfor</l>
 <c></c>
 <c></c>
@@ -295,14 +319,36 @@
 <parameter id="Xs"/>
 <parameter id="Ys"/>
 <parameter id="firstOrLast"/>
+<parameter id="maxEdge">
+<sem_type>real</sem_type>
+</parameter>
+<parameter id="minEdge">
+<default_value>0</default_value>
+<sem_type>real</sem_type>
+</parameter>
 <parameter id="numSubRects"/>
 <parameter id="rect1_col"/>
 <parameter id="rect1_len1"/>
 <parameter id="rect1_len2"/>
 <parameter id="rect1_rad"/>
 <parameter id="rect1_row"/>
+<parameter id="sigma">
+<default_value>1</default_value>
+<multivalue>false</multivalue>
+<sem_type>real</sem_type>
+</parameter>
 <parameter id="threshold"/>
 <parameter id="transition"/>
+<parameter id="usingPairs">
+<default_value>'false'</default_value>
+<multivalue>false</multivalue>
+<sem_type>string</sem_type>
+</parameter>
+<parameter id="whichEdgePair">
+<default_value>'first'</default_value>
+<multivalue>false</multivalue>
+<sem_type>string</sem_type>
+</parameter>
 </parameters>
 </docu>
 </procedure>
@@ -652,10 +698,10 @@
 <l>smallest_rectangle2 (FindLineRegions3, Row4, Column4, Phi3, Length13, Length23)</l>
 <c></c>
 <c>* find all the points within the above rects</c>
-<l>* VisionProStyleFindLine (Image, ROI_0, 'positive', Row1, Column1, rad(-90), Length2, Length1, 8, threshold, firstOrLast, XsUpperLeft, YsUpperLeft)</l>
-<l>VisionProStyleFindLine (Image, ROI_0, 'negative', Row2, Column2, rad(-90), Length21, Length11, 8, threshold1, firstOrLast1, XsUpperRight, YsUpperRight)</l>
-<l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row3, Column3, rad(0), Length22, Length12, 8, threshold2, firstOrLast2, XsLeftUpper, YsLeftUpper)</l>
-<l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row4, Column4, rad(0), Length13, Length23, 8, threshold3, firstOrLast3, XsLeftLower, YsLeftLower)</l>
+<l>* VisionProStyleFindLine (Image, ROI_0, 'positive', Row1, Column1, rad(-90), Length2, Length1, 8, threshold, sigma, firstOrLast, usingPairs, whichEdge, minEdge, maxEdge, XsUpperLeft, YsUpperLeft)</l>
+<l>VisionProStyleFindLine (Image, ROI_0, 'negative', Row2, Column2, rad(-90), Length21, Length11, 8, threshold1, sigma1, firstOrLast1, usingPairs1, whichEdge1, minEdge1, maxEdge1, XsUpperRight, YsUpperRight)</l>
+<l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row3, Column3, rad(0), Length22, Length12, 8, threshold2, sigma2, firstOrLast2, usingPairs2, whichEdge2, minEdge2, maxEdge2, XsLeftUpper, YsLeftUpper)</l>
+<l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row4, Column4, rad(0), Length13, Length23, 8, threshold3, sigma3, firstOrLast3, usingPairs3, whichEdge3, minEdge3, maxEdge3, XsLeftLower, YsLeftLower)</l>
 <c></c>
 <c>* fit left and upper base line</c>
 <l>*tuple_concat (XsUpperLeft, XsUpperRight, XsUpper)</l>
@@ -789,6 +835,7 @@
 <par name="firstOrLast" base_type="ctrl" dimension="0"/>
 <par name="ignoreFraction" base_type="ctrl" dimension="0"/>
 <par name="isVertical" base_type="ctrl" dimension="0"/>
+<par name="sigma" base_type="ctrl" dimension="0"/>
 </ic>
 <oc>
 <par name="lineX1" base_type="ctrl" dimension="0"/>
@@ -802,7 +849,7 @@
 </oc>
 </interface>
 <body>
-<l>VisionProStyleFindLine (inputImage, findLineRegion,transition,row,col,radian,len1,len2,numSubRects,threshold,firstOrLast, Xs, Ys)</l>
+<l>VisionProStyleFindLine (inputImage, findLineRegion, transition, row, col, radian, len1, len2, numSubRects, threshold, sigma, firstOrLast, 'false', 'first', 0, 100, Xs, Ys)</l>
 <c></c>
 <c></c>
 <l>if(isVertical == 'true')</l>
@@ -833,6 +880,14 @@
 <parameter id="numSubRects"/>
 <parameter id="radian"/>
 <parameter id="row"/>
+<parameter id="sigma">
+<default_type>real</default_type>
+<default_value>1</default_value>
+<sem_type>real</sem_type>
+<type_list>
+<item>real</item>
+</type_list>
+</parameter>
 <parameter id="threshold"/>
 <parameter id="transition"/>
 </parameters>
@@ -1134,6 +1189,119 @@
 <parameter id="mapToWorld"/>
 <parameter id="ptX"/>
 <parameter id="ptY"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="VisionProStyleFindLineOneStep_Pairs">
+<interface>
+<io>
+<par name="inputImage" base_type="iconic" dimension="0"/>
+</io>
+<oo>
+<par name="findLineRegion" base_type="iconic" dimension="0"/>
+</oo>
+<ic>
+<par name="row" base_type="ctrl" dimension="0"/>
+<par name="col" base_type="ctrl" dimension="0"/>
+<par name="radian" base_type="ctrl" dimension="0"/>
+<par name="len1" base_type="ctrl" dimension="0"/>
+<par name="len2" base_type="ctrl" dimension="0"/>
+<par name="transition" base_type="ctrl" dimension="0"/>
+<par name="numSubRects" base_type="ctrl" dimension="0"/>
+<par name="threshold" base_type="ctrl" dimension="0"/>
+<par name="sigma" base_type="ctrl" dimension="0"/>
+<par name="firstOrLast" base_type="ctrl" dimension="0"/>
+<par name="isVertical" base_type="ctrl" dimension="0"/>
+<par name="ignoreFraction" base_type="ctrl" dimension="0"/>
+<par name="whichEdgePair" base_type="ctrl" dimension="0"/>
+<par name="minEdge" base_type="ctrl" dimension="0"/>
+<par name="maxEdge" base_type="ctrl" dimension="0"/>
+</ic>
+</interface>
+<body>
+<l>VisionProStyleFindLine (inputImage, findLineRegion, transition, row, col, radian, len1, len2, numSubRects, threshold, sigma, firstOrLast, 'true', whichEdgePair, minEdge, maxEdge, Xs, Ys)</l>
+<c></c>
+<c></c>
+<l>if(isVertical == 'true')</l>
+<l>    FitLine2D (Ys, Xs, ignoreFraction, lineY1, lineX1, lineY2, lineX2, YsUsed, XsUsed, YsIgnored, XsIgnored)</l>
+<l>else</l>
+<l>        FitLine2D (Xs, Ys, ignoreFraction, lineX1, lineY1, lineX2, lineY2, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>endif</l>
+<l>return ()</l>
+</body>
+<docu id="VisionProStyleFindLineOneStep_Pairs">
+<parameters>
+<parameter id="col">
+<default_type>integer</default_type>
+<type_list>
+<item>integer</item>
+</type_list>
+</parameter>
+<parameter id="findLineRegion"/>
+<parameter id="firstOrLast">
+<default_value>'first'</default_value>
+<sem_type>string</sem_type>
+</parameter>
+<parameter id="ignoreFraction">
+<sem_type>real</sem_type>
+</parameter>
+<parameter id="inputImage"/>
+<parameter id="isVertical">
+<default_value>'false'</default_value>
+<sem_type>string</sem_type>
+</parameter>
+<parameter id="len1">
+<default_type>real</default_type>
+<type_list>
+<item>real</item>
+</type_list>
+</parameter>
+<parameter id="len2">
+<default_type>real</default_type>
+<type_list>
+<item>real</item>
+</type_list>
+</parameter>
+<parameter id="maxEdge">
+<sem_type>real</sem_type>
+</parameter>
+<parameter id="minEdge">
+<sem_type>real</sem_type>
+</parameter>
+<parameter id="numSubRects">
+<default_type>integer</default_type>
+<default_value>10</default_value>
+<type_list>
+<item>integer</item>
+</type_list>
+</parameter>
+<parameter id="radian">
+<default_type>real</default_type>
+<sem_type>real</sem_type>
+<type_list>
+<item>real</item>
+</type_list>
+</parameter>
+<parameter id="row">
+<default_type>integer</default_type>
+<type_list>
+<item>integer</item>
+</type_list>
+</parameter>
+<parameter id="sigma">
+<sem_type>real</sem_type>
+</parameter>
+<parameter id="threshold">
+<sem_type>number</sem_type>
+</parameter>
+<parameter id="transition">
+<default_value>'positive'</default_value>
+<sem_type>string</sem_type>
+</parameter>
+<parameter id="whichEdgePair">
+<default_value>'first'</default_value>
+<sem_type>string</sem_type>
+</parameter>
 </parameters>
 </docu>
 </procedure>
