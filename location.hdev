@@ -3,28 +3,56 @@
 <procedure name="main">
 <interface/>
 <body>
-<l>read_image (Image, 'E:/Projects/3d/3D_Image/DF3_1_Z.tif')</l>
-<l>read_shape_model ('./DF7_1_Z', ModelID)</l>
+<l>read_image (Image, 'E:/Projects/3d/I94/I94.bmp')</l>
+<l>get_image_size (Image, Width, Height)</l>
 <l>dev_close_window ()</l>
-<l>dev_open_window (0, 0, 400, 500, 'black', WindowHandle)</l>
-<l>dev_set_color ('green')</l>
-<l>dev_set_draw ('margin')</l>
+<l>dev_open_window (0, 0, 600, 800, 'black', WindowHandle)</l>
 <l>attach_background_to_window (Image, WindowHandle)</l>
-<l>I40_FindOrigin (Image, FindLineRegions, ModelID, VAxisX11, VAxisY1, VAxisX2, VAxisY2, HAxisX1, HAxisY1, HAxisX2, HAxisY2, CoorCenterY, CoorCenterX, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
-<l>dev_display (FindLineRegions)</l>
+<l>dev_set_draw ('margin')</l>
 <c></c>
-<l>gen_cross_contour_xld (Cross, YsUsed, XsUsed, 20, 0.785398)</l>
+<l>crossSize := 100</l>
+<l>numSubRects := 10</l>
+<c></c>
+<c>* find right base line</c>
+<l>baseRightRow := 3318.37</l>
+<l>baseRightColum := 3960.05</l>
+<l>baseRightRadian := rad(180)</l>
+<l>baseRightLen1 := 155.856</l>
+<l>baseRightLen2 := 923.855</l>
+<l>VisionProStyleFindLine (Image, rectBaseRight, 'positive', baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2, numSubRects, 50, 'first', baseRightXs, baseRightYs)</l>
+<l>gen_cross_contour_xld (CrossBaseRight, baseRightYs, baseRightXs, crossSize, 0.785398)</l>
+<c></c>
+<c>* find top base line</c>
+<l>baseTopRow := 586.07800000</l>
+<l>baseTopColumn := 3025.09000000</l>
+<l>baseTopRadian := rad(-91.33180000)</l>
+<l>baseTopLen1 := 243.06000000</l>
+<l>baseTopLen2 := 535.03500000</l>
+<l>VisionProStyleFindLine (Image, rectBaseTop, 'positive', baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, numSubRects, 50, 'first', baseTopXs, baseTopYs)</l>
+<l>gen_cross_contour_xld (CrossBaseTop, baseTopYs, baseTopXs, crossSize, 0.785398)</l>
+<c></c>
+<l>ignorePortion := 0.2</l>
+<c>* fit right base line</c>
+<l>FitLine2D (baseRightYs, baseRightXs, ignorePortion, lineY1RightBase, lineX1RightBase, lineY2RightBase, lineX2RightBase, YsUsedRightBase, XsUsedRightBase, YsIgnoredRightBase, XsIgnoredRightBase)</l>
+<c>* fit top base line</c>
+<l>FitLine2D (baseTopXs, baseTopYs, ignorePortion, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, XsUsedTopBase, YsUsedTopBase, XsIgnoredTopBase, YsIgnoredTopBase)</l>
+<c></c>
+<c>* display used and ignored points</c>
+<l>dev_set_color('green')</l>
+<l>tuple_concat (YsUsedRightBase, YsUsedTopBase, YsUsed)</l>
+<l>tuple_concat (XsUsedRightBase, XsUsedTopBase, XsUsed)</l>
+<l>gen_cross_contour_xld (CrossUsed, YsUsed, XsUsed, crossSize, 0.785398)</l>
+<c></c>
 <l>dev_set_color ('red')</l>
-<l>gen_cross_contour_xld (Cross1, YsIgnored, XsIgnored, 20, 0.785398)</l>
-<c>*************A***************</c>
-<c>* A1: (4.34,7.12)</c>
-<c>* A2: (-4.34,7.12)</c>
-<c>* A3: (-6.57,4.54)</c>
-<c>* A4: (-6.57, -4.54)</c>
-<c>* A5: (-4.05, -6.94)</c>
-<c>* A6: (4.05, -6.94)</c>
-<c>* A7: (6.75, -4.54)</c>
-<c>* A8: (6.75, 4.54)</c>
+<l>tuple_concat (YsIgnoredRightBase, YsIgnoredTopBase, YsIgnored)</l>
+<l>tuple_concat (XsIgnoredRightBase, XsIgnoredTopBase, XsIgnored)</l>
+<l>gen_cross_contour_xld (CrossIgnored, YsIgnored, XsIgnored, crossSize, 0.785398)</l>
+<c></c>
+<c>* make origin</c>
+<l>intersection_lines (lineY1RightBase, lineX1RightBase, lineY2RightBase, lineX2RightBase, lineY1TopBase, lineX1TopBase, lineY2TopBase, lineX2TopBase, RowOrigin, ColumnOrigin, IsOverlapping)</l>
+<l>dev_set_color ('blue')</l>
+<l>gen_cross_contour_xld (CrossOrigin, RowOrigin, ColumnOrigin, 200, 0.785398)</l>
+<c></c>
 <c></c>
 </body>
 <docu id="main">
@@ -84,6 +112,8 @@
 <par name="rect1_len1" base_type="ctrl" dimension="0"/>
 <par name="rect1_len2" base_type="ctrl" dimension="0"/>
 <par name="numSubRects" base_type="ctrl" dimension="0"/>
+<par name="threshold" base_type="ctrl" dimension="0"/>
+<par name="firstOrLast" base_type="ctrl" dimension="0"/>
 </ic>
 <oc>
 <par name="Xs" base_type="ctrl" dimension="0"/>
@@ -142,7 +172,7 @@
 <c>    </c>
 <l>   gen_rectangle2 (Rectangle, subRectCenterY, subRectCenterX, subRectPhi, subRectLen1, subRectLen2)</l>
 <l>   gen_measure_rectangle2 (subRectCenterY, subRectCenterX, subRectPhi, subRectLen1, subRectLen2, Width, Height, 'nearest_neighbor', MeasureHandle1)</l>
-<l>   measure_pos (Image, MeasureHandle1, 1, 0.5, transition, 'first', RowEdge1, ColumnEdge1, Amplitude1, Distance1)</l>
+<l>   measure_pos (Image, MeasureHandle1, 1, threshold, 'positive', firstOrLast, RowEdge1, ColumnEdge1, Amplitude1, Distance1)</l>
 <l>   Xs := [Xs,ColumnEdge1]</l>
 <l>   Ys := [Ys, RowEdge1]</l>
 <l>   close_measure (MeasureHandle1)</l>
@@ -157,12 +187,14 @@
 <parameter id="ROI_0"/>
 <parameter id="Xs"/>
 <parameter id="Ys"/>
+<parameter id="firstOrLast"/>
 <parameter id="numSubRects"/>
 <parameter id="rect1_col"/>
 <parameter id="rect1_len1"/>
 <parameter id="rect1_len2"/>
 <parameter id="rect1_rad"/>
 <parameter id="rect1_row"/>
+<parameter id="threshold"/>
 <parameter id="transition"/>
 </parameters>
 </docu>
@@ -513,10 +545,10 @@
 <l>smallest_rectangle2 (FindLineRegions3, Row4, Column4, Phi3, Length13, Length23)</l>
 <c></c>
 <c>* find all the points within the above rects</c>
-<l>*VisionProStyleFindLine (Image, ROI_0, 'positive', Row1, Column1, rad(-90), Length2, Length1, 8, XsUpperLeft, YsUpperLeft)</l>
-<l>VisionProStyleFindLine (Image, ROI_0, 'negative', Row2, Column2, rad(-90), Length21, Length11, 8, XsUpperRight, YsUpperRight)</l>
-<l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row3, Column3, rad(0), Length22, Length12, 8, XsLeftUpper, YsLeftUpper)</l>
-<l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row4, Column4, rad(0), Length13, Length23, 8, XsLeftLower, YsLeftLower)</l>
+<l>* VisionProStyleFindLine (Image, ROI_0, 'positive', Row1, Column1, rad(-90), Length2, Length1, 8, threshold, firstOrLast, XsUpperLeft, YsUpperLeft)</l>
+<l>VisionProStyleFindLine (Image, ROI_0, 'negative', Row2, Column2, rad(-90), Length21, Length11, 8, threshold1, firstOrLast1, XsUpperRight, YsUpperRight)</l>
+<l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row3, Column3, rad(0), Length22, Length12, 8, threshold2, firstOrLast2, XsLeftUpper, YsLeftUpper)</l>
+<l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row4, Column4, rad(0), Length13, Length23, 8, threshold3, firstOrLast3, XsLeftLower, YsLeftLower)</l>
 <c></c>
 <c>* fit left and upper base line</c>
 <l>*tuple_concat (XsUpperLeft, XsUpperRight, XsUpper)</l>
@@ -627,6 +659,74 @@
 <parameter id="lineX2"/>
 <parameter id="lineY1"/>
 <parameter id="lineY2"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="VisionProStyleFindLineOneStep">
+<interface>
+<io>
+<par name="inputImage" base_type="iconic" dimension="0"/>
+</io>
+<oo>
+<par name="findLineRegion" base_type="iconic" dimension="0"/>
+</oo>
+<ic>
+<par name="transition" base_type="ctrl" dimension="0"/>
+<par name="row" base_type="ctrl" dimension="0"/>
+<par name="col" base_type="ctrl" dimension="0"/>
+<par name="radian" base_type="ctrl" dimension="0"/>
+<par name="len1" base_type="ctrl" dimension="0"/>
+<par name="len2" base_type="ctrl" dimension="0"/>
+<par name="numSubRects" base_type="ctrl" dimension="0"/>
+<par name="threshold" base_type="ctrl" dimension="0"/>
+<par name="firstOrLast" base_type="ctrl" dimension="0"/>
+<par name="ignoreFraction" base_type="ctrl" dimension="0"/>
+<par name="isVertical" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="lineX1" base_type="ctrl" dimension="0"/>
+<par name="lineY1" base_type="ctrl" dimension="0"/>
+<par name="lineX2" base_type="ctrl" dimension="0"/>
+<par name="lineY2" base_type="ctrl" dimension="0"/>
+<par name="XsUsed" base_type="ctrl" dimension="0"/>
+<par name="YsUsed" base_type="ctrl" dimension="0"/>
+<par name="XsIgnored" base_type="ctrl" dimension="0"/>
+<par name="YsIgnored" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>VisionProStyleFindLine (inputImage, findLineRect,transition,row,col,radian,len1,len2,numSubRects,threshold,firstOrLast, Xs, Ys)</l>
+<c></c>
+<l>if(isVertical)</l>
+<l>    FitLine2D (Ys, Xs, ignoreFraction, lineY1, lineX1, lineY2, lineX2, YsUsed, XsUsed, YsIgnored, XsIgnored)</l>
+<l>else</l>
+<l>        FitLine2D (Xs, Ys, ignoreFraction, lineX1, lineY1, lineX2, lineY2, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>endif</l>
+<l>return ()</l>
+</body>
+<docu id="VisionProStyleFindLineOneStep">
+<parameters>
+<parameter id="XsIgnored"/>
+<parameter id="XsUsed"/>
+<parameter id="YsIgnored"/>
+<parameter id="YsUsed"/>
+<parameter id="col"/>
+<parameter id="findLineRegion"/>
+<parameter id="firstOrLast"/>
+<parameter id="ignoreFraction"/>
+<parameter id="inputImage"/>
+<parameter id="isVertical"/>
+<parameter id="len1"/>
+<parameter id="len2"/>
+<parameter id="lineX1"/>
+<parameter id="lineX2"/>
+<parameter id="lineY1"/>
+<parameter id="lineY2"/>
+<parameter id="numSubRects"/>
+<parameter id="radian"/>
+<parameter id="row"/>
+<parameter id="threshold"/>
+<parameter id="transition"/>
 </parameters>
 </docu>
 </procedure>
