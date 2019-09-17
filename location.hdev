@@ -16,10 +16,6 @@
 <c></c>
 <l>GetWorldImageMap (Image, './calibration/cameraParam.cal', './calibration/cameraPos.dat', mapToImage, mapToWorld)</l>
 <c></c>
-<l>affine_trans_point_2d (mapToImage, 0, 0, Qx, Qy)</l>
-<l>affine_trans_point_2d (mapToWorld, 1931.19, 2490.75, Qx1, Qy1)</l>
-<l>*distance_pp (Qy, Qx, Qy1, Qx1, Distance)</l>
-<c></c>
 <c>* find right base line</c>
 <l>baseRightRow := 3318.37</l>
 <l>baseRightColum := 3960.05</l>
@@ -27,7 +23,6 @@
 <l>baseRightLen1 := 155.856</l>
 <l>baseRightLen2 := 923.855</l>
 <l>VisionProStyleFindLineOneStep (Image, rectBaseRight, 'positive', baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2, numSubRects, 50, 'first', ignorePortion, 'true', lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, XsUsedRightBase, YsUsedRightBase, XsIgnoredRightBase, YsIgnoredRightBase)</l>
-<c></c>
 <c></c>
 <c>* find top base line</c>
 <l>baseTopRow := 586.07800000</l>
@@ -52,6 +47,42 @@
 <l>intersection_lines (lineY1RightBase, lineX1RightBase, lineY2RightBase, lineX2RightBase, lineY1TopBase, lineX1TopBase, lineY2TopBase, lineX2TopBase, RowOrigin, ColumnOrigin, IsOverlapping)</l>
 <l>dev_set_color ('blue')</l>
 <l>gen_cross_contour_xld (CrossOrigin, RowOrigin, ColumnOrigin, 200, 0.785398)</l>
+<c></c>
+<c></c>
+<c>* make vertical grids</c>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 4.583, mapToWorld, mapToImage, 'true', FAI2_P1_LineStartX, FAI2_P1_LineStartY, FAI2_P1_LineEndX, FAI2_P1_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 9.583, mapToWorld, mapToImage, 'true', FAI2_P2_LineStartX, FAI2_P2_LineStartY, FAI2_P2_LineEndX, FAI2_P2_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 14.583, mapToWorld, mapToImage, 'true', FAI2_P3_LineStartX, FAI2_P3_LineStartY, FAI2_P3_LineEndX, FAI2_P3_LineEndY)</l>
+<c></c>
+<c>* FAI2</c>
+<c>* make H line for FAI02</c>
+<l>rectFAI2Row :=2212.92000000</l>
+<l>rectFAI2Col :=2994.90000000</l>
+<l>rectFAI2Radian := rad(-91.97430000)</l>
+<l>rectFAI2Len1 :=60.96000000</l>
+<l>rectFAI2Len2 := 520.14300000</l>
+<l>gen_rectangle2 (findLineRegionFAI2, rectFAI2Row, rectFAI2Col, rectFAI2Radian, rectFAI2Len1, rectFAI2Len2)</l>
+<l>reduce_domain (Image, findLineRegionFAI2, ImageReduced)</l>
+<l>threshold_sub_pix (ImageReduced, Border, 128)</l>
+<l>select_contours_xld (Border, SelectedContours, 'open', rectFAI2Len2-100, rectFAI2Len2, -0.5, 0.5)</l>
+<l>fit_line_contour_xld (SelectedContours, 'tukey', -1, 0, 5, 2, lineStartY_FAI2H, lineStartX_FAI2H, lineEndY_FAI2H, lineEndX_FAI2H, Nr, Nc, Dist)</l>
+<c>* FAI2-P1</c>
+<l>intersection_lines (lineStartY_FAI2H, lineStartX_FAI2H, lineEndY_FAI2H, lineEndX_FAI2H, FAI2_P1_LineStartY, FAI2_P1_LineStartX, FAI2_P1_LineEndY, FAI2_P1_LineEndX, FAI2_P1_ROW, FAI2_P1_COL, IsOverlapping1)</l>
+<l>gen_cross_contour_xld (Cross, FAI2_P1_ROW, FAI2_P1_COL, crossSize, 0.785398)</l>
+<c>* FAI2-P2</c>
+<l>intersection_lines (lineStartY_FAI2H, lineStartX_FAI2H, lineEndY_FAI2H, lineEndX_FAI2H, FAI2_P2_LineStartY, FAI2_P2_LineStartX, FAI2_P2_LineEndY, FAI2_P2_LineEndX, FAI2_P2_ROW, FAI2_P2_COL, IsOverlapping1)</l>
+<l>gen_cross_contour_xld (Cross, FAI2_P2_ROW, FAI2_P2_COL, crossSize, 0.785398)</l>
+<c>* FAI2-P3</c>
+<l>intersection_lines (lineStartY_FAI2H, lineStartX_FAI2H, lineEndY_FAI2H, lineEndX_FAI2H, FAI2_P3_LineStartY, FAI2_P3_LineStartX, FAI2_P3_LineEndY, FAI2_P3_LineEndX, FAI2_P3_ROW, FAI2_P3_COL, IsOverlapping1)</l>
+<l>gen_cross_contour_xld (Cross, FAI2_P3_ROW, FAI2_P3_COL, crossSize, 0.785398)</l>
+<c></c>
+<c>* distances</c>
+<c>* P1</c>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI2_P1_COL, FAI2_P1_ROW, mapToWorld, distanceWorld_P1)</l>
+<c>* P2</c>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI2_P2_COL, FAI2_P2_ROW, mapToWorld, distanceWorld_P2)</l>
+<c>* P3</c>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI2_P3_COL, FAI2_P3_ROW, mapToWorld, distanceWorld_P3)</l>
 <c></c>
 <c></c>
 </body>
@@ -125,7 +156,9 @@
 <l>Xs := []</l>
 <l>Ys := []</l>
 <c></c>
+<c></c>
 <l>get_image_size (Image, Width, Height)</l>
+<c></c>
 <c></c>
 <l>leftFaced := rect1_rad&lt;rad(-90) or rect1_rad&gt;rad(90)</l>
 <l>rect1_deg := deg(rect1_rad)</l>
@@ -172,7 +205,7 @@
 <c>    </c>
 <l>   gen_rectangle2 (Rectangle, subRectCenterY, subRectCenterX, subRectPhi, subRectLen1, subRectLen2)</l>
 <l>   gen_measure_rectangle2 (subRectCenterY, subRectCenterX, subRectPhi, subRectLen1, subRectLen2, Width, Height, 'nearest_neighbor', MeasureHandle1)</l>
-<l>   measure_pos (Image, MeasureHandle1, 1, threshold, 'positive', firstOrLast, RowEdge1, ColumnEdge1, Amplitude1, Distance1)</l>
+<l>   measure_pos (Image, MeasureHandle1, 1, threshold, transition, firstOrLast, RowEdge1, ColumnEdge1, Amplitude1, Distance1)</l>
 <l>   Xs := [Xs,ColumnEdge1]</l>
 <l>   Ys := [Ys, RowEdge1]</l>
 <l>   close_measure (MeasureHandle1)</l>
@@ -838,6 +871,193 @@
 <parameter id="camPoseFile"/>
 <parameter id="image"/>
 <parameter id="map"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="TranslateLineInWorldCoordinateAndConvertBack">
+<interface>
+<ic>
+<par name="lineStartX" base_type="ctrl" dimension="0"/>
+<par name="lineStartY" base_type="ctrl" dimension="0"/>
+<par name="lineEndX" base_type="ctrl" dimension="0"/>
+<par name="lineEndY" base_type="ctrl" dimension="0"/>
+<par name="distance" base_type="ctrl" dimension="0"/>
+<par name="mapToWorld" base_type="ctrl" dimension="0"/>
+<par name="mapToImage" base_type="ctrl" dimension="0"/>
+<par name="isVertical" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="outLineStartX" base_type="ctrl" dimension="0"/>
+<par name="outLineStartY" base_type="ctrl" dimension="0"/>
+<par name="outLineEndX" base_type="ctrl" dimension="0"/>
+<par name="outLineEndY" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<c>* convert image line to world line</c>
+<l>affine_trans_point_2d (mapToWorld, lineStartX, lineStartY, lineStartX_World, lineStartY_World)</l>
+<l>affine_trans_point_2d (mapToWorld, lineEndX, lineEndY, lineEndX_World, lineEndY_World)</l>
+<c></c>
+<c>* translate world line</c>
+<l>MakeParallelLine (lineStartX_World, lineStartY_World, lineEndX_World, lineEndY_World, distance, isVertical, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<c></c>
+<c>* convert world line back to image line</c>
+<l>affine_trans_point_2d (mapToImage, outLineStartX, outLineStartY, outLineStartX, outLineStartY)</l>
+<l>affine_trans_point_2d (mapToImage, outLineEndX, outLineEndY, outLineEndX, outLineEndY)</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="TranslateLineInWorldCoordinateAndConvertBack">
+<parameters>
+<parameter id="distance"/>
+<parameter id="isVertical">
+<sem_type>string</sem_type>
+</parameter>
+<parameter id="lineEndX"/>
+<parameter id="lineEndY"/>
+<parameter id="lineStartX"/>
+<parameter id="lineStartY"/>
+<parameter id="mapToImage"/>
+<parameter id="mapToWorld"/>
+<parameter id="outLineEndX"/>
+<parameter id="outLineEndY"/>
+<parameter id="outLineStartX"/>
+<parameter id="outLineStartY"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="MakeParallelLine">
+<interface>
+<ic>
+<par name="lineStartX" base_type="ctrl" dimension="0"/>
+<par name="lineStartY" base_type="ctrl" dimension="0"/>
+<par name="lineEndX" base_type="ctrl" dimension="0"/>
+<par name="lineEndY" base_type="ctrl" dimension="0"/>
+<par name="offset" base_type="ctrl" dimension="0"/>
+<par name="isVertical" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="outLineStartX" base_type="ctrl" dimension="0"/>
+<par name="outLineStartY" base_type="ctrl" dimension="0"/>
+<par name="outLineEndX" base_type="ctrl" dimension="0"/>
+<par name="outLineEndY" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>if(isVertical == 'true')</l>
+<l>    TranslateLineNotVertical (lineStartY, lineStartX, lineEndY, lineEndX, offset, outLineStartY, outLineStartX, outLineEndY, outLineEndX)</l>
+<l>else</l>
+<l>    TranslateLineNotVertical (lineStartX, lineStartY, lineEndX, lineEndY, offset, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<l>endif</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="MakeParallelLine">
+<parameters>
+<parameter id="isVertical">
+<description lang="zh_CN">Whether the line is near or actually vertical</description>
+<sem_type>string</sem_type>
+</parameter>
+<parameter id="lineEndX"/>
+<parameter id="lineEndY"/>
+<parameter id="lineStartX"/>
+<parameter id="lineStartY"/>
+<parameter id="offset">
+<description lang="zh_CN">Positive direction points outward from (0,0)</description>
+<sem_type>real</sem_type>
+</parameter>
+<parameter id="outLineEndX"/>
+<parameter id="outLineEndY"/>
+<parameter id="outLineStartX"/>
+<parameter id="outLineStartY"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="TranslateLineNotVertical">
+<interface>
+<ic>
+<par name="lineStartX" base_type="ctrl" dimension="0"/>
+<par name="lineStartY" base_type="ctrl" dimension="0"/>
+<par name="lineEndX" base_type="ctrl" dimension="0"/>
+<par name="lineEndY" base_type="ctrl" dimension="0"/>
+<par name="offset" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="outLineStartX" base_type="ctrl" dimension="0"/>
+<par name="outLineStartY" base_type="ctrl" dimension="0"/>
+<par name="outLineEndX" base_type="ctrl" dimension="0"/>
+<par name="outLineEndY" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>xDiff := lineEndX - lineStartX</l>
+<l>yDiff := lineEndY - lineStartY</l>
+<c></c>
+<l>m := yDiff / xDiff</l>
+<l>b := lineStartY - yDiff / xDiff * lineStartX</l>
+<c></c>
+<l>alpha := atan(m)</l>
+<c></c>
+<l>bIncre := offset / cos(alpha)</l>
+<c></c>
+<l>newB := b + bIncre</l>
+<c></c>
+<c></c>
+<c>* sample output points</c>
+<l>outLineStartX := lineStartX</l>
+<l>outLineStartY := m * outLineStartX + newB</l>
+<l>outLineEndX := lineEndX</l>
+<l>outLineEndY := m * outLineEndX + newB</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="TranslateLineNotVertical">
+<parameters>
+<parameter id="lineEndX"/>
+<parameter id="lineEndY"/>
+<parameter id="lineStartX"/>
+<parameter id="lineStartY"/>
+<parameter id="offset"/>
+<parameter id="outLineEndX"/>
+<parameter id="outLineEndY"/>
+<parameter id="outLineStartX"/>
+<parameter id="outLineStartY"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="DistancePLInWorld">
+<interface>
+<ic>
+<par name="lineStartX" base_type="ctrl" dimension="0"/>
+<par name="lineStartY" base_type="ctrl" dimension="0"/>
+<par name="lineEndX" base_type="ctrl" dimension="0"/>
+<par name="lineEndY" base_type="ctrl" dimension="0"/>
+<par name="ptX" base_type="ctrl" dimension="0"/>
+<par name="ptY" base_type="ctrl" dimension="0"/>
+<par name="mapToWorld" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="distanceWorld" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>affine_trans_point_2d (mapToWorld, lineStartX, lineStartY, lineStartX_World, lineStartY_World)</l>
+<l>affine_trans_point_2d (mapToWorld, ptX, ptY, ptX_World, ptY_World)</l>
+<l>affine_trans_point_2d (mapToWorld, lineEndX, lineEndY, lineEndX_World, lineEndY_World)</l>
+<c></c>
+<l>distance_pl (ptY_World, ptX_World, lineStartY_World, lineStartX_World, lineEndY_World, lineEndX_World, distanceWorld)</l>
+<l>return ()</l>
+</body>
+<docu id="DistancePLInWorld">
+<parameters>
+<parameter id="distanceWorld"/>
+<parameter id="lineEndX"/>
+<parameter id="lineEndY"/>
+<parameter id="lineStartX"/>
+<parameter id="lineStartY"/>
+<parameter id="mapToWorld"/>
+<parameter id="ptX"/>
+<parameter id="ptY"/>
 </parameters>
 </docu>
 </procedure>
