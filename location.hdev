@@ -49,12 +49,14 @@
 <l>gen_cross_contour_xld (CrossOrigin, RowOrigin, ColumnOrigin, 200, 0.785398)</l>
 <c></c>
 <c></c>
+<c></c>
+<c></c>
+<c>****************************************************FAI2***********************************</c>
 <c>* make vertical grids</c>
 <l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 4.583, mapToWorld, mapToImage, 'true', FAI2_P1_LineStartX, FAI2_P1_LineStartY, FAI2_P1_LineEndX, FAI2_P1_LineEndY)</l>
 <l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 9.583, mapToWorld, mapToImage, 'true', FAI2_P2_LineStartX, FAI2_P2_LineStartY, FAI2_P2_LineEndX, FAI2_P2_LineEndY)</l>
 <l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 14.583, mapToWorld, mapToImage, 'true', FAI2_P3_LineStartX, FAI2_P3_LineStartY, FAI2_P3_LineEndX, FAI2_P3_LineEndY)</l>
 <c></c>
-<c>* FAI2</c>
 <c>* make H line for FAI02</c>
 <l>rectFAI2Row :=2212.92000000</l>
 <l>rectFAI2Col :=2994.90000000</l>
@@ -83,6 +85,36 @@
 <l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI2_P2_COL, FAI2_P2_ROW, mapToWorld, distanceWorld_P2)</l>
 <c>* P3</c>
 <l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI2_P3_COL, FAI2_P3_ROW, mapToWorld, distanceWorld_P3)</l>
+<c></c>
+<c>**********************************************FAI3************************************</c>
+<l>rectFAI3Row := 2310.61000000</l>
+<l>rectFAI3Col := 3025.99000000</l>
+<l>rectFAI3Radian := rad(88.76800000)</l>
+<l>rectFAI3Len1 := 140.37300000</l>
+<l>rectFAI3Len2 := 503.62100000</l>
+<l>VisionProStyleFindLineOneStep (Image, rectFAI3, 'positive', rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, numSubRects, 50, 'first', ignorePortion, 'false', lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3, XsUsedFAI3, YsUsedFAI3, XsIgnoredFAI3, YsIgnoredFAI3)</l>
+<l>dev_set_color('green')</l>
+<l>gen_cross_contour_xld (Cross1, YsUsedFAI3, XsUsedFAI3, crossSize, 0.785398)</l>
+<l>dev_set_color ('red')</l>
+<l>gen_cross_contour_xld (Cross2, YsIgnoredFAI3, XsIgnoredFAI3, crossSize, 0.785398)</l>
+<c>* translate base right</c>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 5.299, mapToWorld, mapToImage, 'true', FAI3_P1_LineStartX, FAI3_P1_LineStartY, FAI3_P1_LineEndX, FAI3_P1_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 9.299, mapToWorld, mapToImage, 'true', FAI3_P2_LineStartX, FAI3_P2_LineStartY, FAI3_P2_LineEndX, FAI3_P2_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 13.299, mapToWorld, mapToImage, 'true', FAI3_P3_LineStartX, FAI3_P3_LineStartY, FAI3_P3_LineEndX, FAI3_P3_LineEndY)</l>
+<c>* P1</c>
+<l>dev_set_color ('blue')</l>
+<l>intersection_lines (lineY1FAI3, lineX1FAI3, lineY2FAI3, lineX2FAI3, FAI3_P1_LineStartY, FAI3_P1_LineStartX, FAI3_P1_LineEndY, FAI3_P1_LineEndX, RowFAI3_P1, ColumnFAI3_P1, IsOverlapping2)</l>
+<l>gen_cross_contour_xld (Cross3, RowFAI3_P1, ColumnFAI3_P1, crossSize, 0.785398)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, ColumnFAI3_P1, RowFAI3_P1, mapToWorld, distanceWorld_FAI3_P1)</l>
+<c>* P2</c>
+<l>intersection_lines (lineY1FAI3, lineX1FAI3, lineY2FAI3, lineX2FAI3, FAI3_P2_LineStartY, FAI3_P2_LineStartX, FAI3_P2_LineEndY, FAI3_P2_LineEndX, RowFAI3_P2, ColumnFAI3_P2, IsOverlapping2)</l>
+<l>gen_cross_contour_xld (Cross3, RowFAI3_P2, ColumnFAI3_P2, crossSize, 0.785398)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, ColumnFAI3_P2, RowFAI3_P2, mapToWorld, distanceWorld_FAI3_P2)</l>
+<c></c>
+<c>* P3</c>
+<l>intersection_lines (lineY1FAI3, lineX1FAI3, lineY2FAI3, lineX2FAI3, FAI3_P3_LineStartY, FAI3_P3_LineStartX, FAI3_P3_LineEndY, FAI3_P3_LineEndX, RowFAI3_P3, ColumnFAI3_P3, IsOverlapping2)</l>
+<l>gen_cross_contour_xld (Cross3, RowFAI3_P3, ColumnFAI3_P3, crossSize, 0.785398)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, ColumnFAI3_P3, RowFAI3_P3, mapToWorld, distanceWorld_FAI3_P3)</l>
 <c></c>
 <c></c>
 </body>
