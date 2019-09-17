@@ -12,6 +12,8 @@
 <c></c>
 <l>crossSize := 100</l>
 <l>numSubRects := 10</l>
+<l>ignorePortion := 0.2</l>
+<c></c>
 <c></c>
 <c>* find right base line</c>
 <l>baseRightRow := 3318.37</l>
@@ -19,8 +21,8 @@
 <l>baseRightRadian := rad(180)</l>
 <l>baseRightLen1 := 155.856</l>
 <l>baseRightLen2 := 923.855</l>
-<l>VisionProStyleFindLine (Image, rectBaseRight, 'positive', baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2, numSubRects, 50, 'first', baseRightXs, baseRightYs)</l>
-<l>gen_cross_contour_xld (CrossBaseRight, baseRightYs, baseRightXs, crossSize, 0.785398)</l>
+<l>VisionProStyleFindLineOneStep (Image, rectBaseRight, 'positive', baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2, numSubRects, 50, 'first', ignorePortion, 'true', lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, XsUsedRightBase, YsUsedRightBase, XsIgnoredRightBase, YsIgnoredRightBase)</l>
+<c></c>
 <c></c>
 <c>* find top base line</c>
 <l>baseTopRow := 586.07800000</l>
@@ -28,14 +30,7 @@
 <l>baseTopRadian := rad(-91.33180000)</l>
 <l>baseTopLen1 := 243.06000000</l>
 <l>baseTopLen2 := 535.03500000</l>
-<l>VisionProStyleFindLine (Image, rectBaseTop, 'positive', baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, numSubRects, 50, 'first', baseTopXs, baseTopYs)</l>
-<l>gen_cross_contour_xld (CrossBaseTop, baseTopYs, baseTopXs, crossSize, 0.785398)</l>
-<c></c>
-<l>ignorePortion := 0.2</l>
-<c>* fit right base line</c>
-<l>FitLine2D (baseRightYs, baseRightXs, ignorePortion, lineY1RightBase, lineX1RightBase, lineY2RightBase, lineX2RightBase, YsUsedRightBase, XsUsedRightBase, YsIgnoredRightBase, XsIgnoredRightBase)</l>
-<c>* fit top base line</c>
-<l>FitLine2D (baseTopXs, baseTopYs, ignorePortion, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, XsUsedTopBase, YsUsedTopBase, XsIgnoredTopBase, YsIgnoredTopBase)</l>
+<l>VisionProStyleFindLineOneStep (Image, rectBaseTop, 'positive', baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, numSubRects, 50, 'first', ignorePortion, 'false', lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, XsUsedTopBase, YsUsedTopBase, XsIgnoredTopBase, YsIgnoredTopBase)</l>
 <c></c>
 <c>* display used and ignored points</c>
 <l>dev_set_color('green')</l>
@@ -697,7 +692,8 @@
 <body>
 <l>VisionProStyleFindLine (inputImage, findLineRect,transition,row,col,radian,len1,len2,numSubRects,threshold,firstOrLast, Xs, Ys)</l>
 <c></c>
-<l>if(isVertical)</l>
+<c></c>
+<l>if(isVertical == 'true')</l>
 <l>    FitLine2D (Ys, Xs, ignoreFraction, lineY1, lineX1, lineY2, lineX2, YsUsed, XsUsed, YsIgnored, XsIgnored)</l>
 <l>else</l>
 <l>        FitLine2D (Xs, Ys, ignoreFraction, lineX1, lineY1, lineX2, lineY2, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
