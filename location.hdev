@@ -14,6 +14,11 @@
 <l>numSubRects := 10</l>
 <l>ignorePortion := 0.2</l>
 <c></c>
+<l>GetWorldImageMap (Image, './calibration/cameraParam.cal', './calibration/cameraPos.dat', mapToImage, mapToWorld)</l>
+<c></c>
+<l>affine_trans_point_2d (mapToImage, 0, 0, Qx, Qy)</l>
+<l>affine_trans_point_2d (mapToWorld, 1931.19, 2490.75, Qx1, Qy1)</l>
+<l>*distance_pp (Qy, Qx, Qy1, Qx1, Distance)</l>
 <c></c>
 <c>* find right base line</c>
 <l>baseRightRow := 3318.37</l>
@@ -723,6 +728,116 @@
 <parameter id="row"/>
 <parameter id="threshold"/>
 <parameter id="transition"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="GetWorldImageMap">
+<interface>
+<io>
+<par name="Image" base_type="iconic" dimension="0"/>
+</io>
+<ic>
+<par name="camParamFile" base_type="ctrl" dimension="0"/>
+<par name="camPoseFile" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="mapToImage" base_type="ctrl" dimension="0"/>
+<par name="mapToWorld" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>read_pose (camPoseFile, Pose)</l>
+<l>read_cam_par (camParamFile, CameraParam)</l>
+<l>get_image_size (Image, Width, Height)</l>
+<c></c>
+<c>* generate 9 image-to-world coordinate pairs</c>
+<l>XsImage := []</l>
+<l>YsImage := []</l>
+<l>XsWorld := []</l>
+<l>YsWorld := []</l>
+<c></c>
+<l>for row := -1 to 1 by 1</l>
+<l>    for column := -1 to 1 by 1</l>
+<l>        xImage := Width/2 + 100* column</l>
+<l>        XsImage := [XsImage, xImage]</l>
+<l>        yImage := Height/2 + 100 * row</l>
+<l>        YsImage := [YsImage, yImage]</l>
+<c>        </c>
+<l>        image_points_to_world_plane (CameraParam, Pose, yImage, xImage, 'mm', xWorld, yWorld)</l>
+<l>        XsWorld := [XsWorld, xWorld]</l>
+<l>        YsWorld := [YsWorld, yWorld]</l>
+<l>    endfor</l>
+<l>endfor</l>
+<c></c>
+<l>vector_to_similarity (XsWorld, YsWorld, XsImage, YsImage, mapToImage)</l>
+<l>vector_to_similarity (XsImage, YsImage, XsWorld, YsWorld, mapToWorld)</l>
+<c></c>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="GetWorldImageMap">
+<parameters>
+<parameter id="Image">
+<description lang="zh_CN">Getting maps that convert image coordintates to and from world</description>
+</parameter>
+<parameter id="camParamFile">
+<sem_type>string</sem_type>
+</parameter>
+<parameter id="camPoseFile">
+<sem_type>string</sem_type>
+</parameter>
+<parameter id="mapToImage"/>
+<parameter id="mapToWorld"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="GetImageToWorldMap">
+<interface>
+<io>
+<par name="image" base_type="iconic" dimension="0"/>
+</io>
+<ic>
+<par name="camParamFile" base_type="ctrl" dimension="0"/>
+<par name="camPoseFile" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="map" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>read_pose (camPoseFile, Pose)</l>
+<l>read_cam_par (camParamFile, CameraParam)</l>
+<l>get_image_size (image, Width, Height)</l>
+<c></c>
+<c>* generate 9 image-to-world coordinate pairs</c>
+<l>XsImage := []</l>
+<l>YsImage := []</l>
+<l>XsWorld := []</l>
+<l>YsWorld := []</l>
+<c></c>
+<l>for row := -1 to 1 by 1</l>
+<l>    for column := -1 to 1 by 1</l>
+<l>        xImage := Width/2 + 100* column</l>
+<l>        XsImage := [XsImage, xImage]</l>
+<l>        yImage := Height/2 + 100 * row</l>
+<l>        YsImage := [YsImage, yImage]</l>
+<c>        </c>
+<l>        image_points_to_world_plane (CameraParam, Pose, yImage, xImage, 'mm', xWorld, yWorld)</l>
+<l>        XsWorld := [XsWorld, xWorld]</l>
+<l>        YsWorld := [YsWorld, yWorld]</l>
+<l>    endfor</l>
+<l>endfor</l>
+<c></c>
+<l>vector_to_similarity (XsImage, YsImage, XsWorld, YsWorld, map)</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="GetImageToWorldMap">
+<parameters>
+<parameter id="camParamFile"/>
+<parameter id="camPoseFile"/>
+<parameter id="image"/>
+<parameter id="map"/>
 </parameters>
 </docu>
 </procedure>
