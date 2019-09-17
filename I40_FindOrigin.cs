@@ -143,7 +143,8 @@ public partial class HDevelopExport
   }
 
   public void FitLine2D (HTuple hv_Xs, HTuple hv_Ys, HTuple hv_ignorePortion, out HTuple hv_lineX1, 
-      out HTuple hv_lineY1, out HTuple hv_lineX2, out HTuple hv_lineY2)
+      out HTuple hv_lineY1, out HTuple hv_lineX2, out HTuple hv_lineY2, out HTuple hv_XsUsed, 
+      out HTuple hv_YsUsed, out HTuple hv_XsIgnored, out HTuple hv_YsIgnored)
   {
 
 
@@ -152,19 +153,28 @@ public partial class HDevelopExport
 
     // Local control variables 
 
-    HTuple hv_numPointsLeft = new HTuple(), hv_numThrows = new HTuple();
+    HTuple hv_totalPoints = new HTuple(), hv_numPointsLeft = new HTuple();
     HTuple hv_fiterrors = new HTuple(), hv_i = new HTuple();
     HTuple hv_Distance = new HTuple(), hv_Indices = new HTuple();
-    HTuple hv_XsBest = new HTuple(), hv_YsBest = new HTuple();
     HTuple hv_ErrorBest = new HTuple(), hv_index = new HTuple();
     // Initialize local and output iconic variables 
     hv_lineX1 = new HTuple();
     hv_lineY1 = new HTuple();
     hv_lineX2 = new HTuple();
     hv_lineY2 = new HTuple();
+    hv_XsUsed = new HTuple();
+    hv_YsUsed = new HTuple();
+    hv_XsIgnored = new HTuple();
+    hv_YsIgnored = new HTuple();
     hv_lineX1.Dispose();hv_lineY1.Dispose();hv_lineX2.Dispose();hv_lineY2.Dispose();
     fit_line2D_rough(hv_Xs, hv_Ys, out hv_lineX1, out hv_lineY1, out hv_lineX2, out hv_lineY2);
 
+    hv_totalPoints.Dispose();
+    using (HDevDisposeHelper dh = new HDevDisposeHelper())
+    {
+    hv_totalPoints = new HTuple(hv_Xs.TupleLength()
+        );
+    }
     //number of points to ignore
     hv_numPointsLeft.Dispose();
     using (HDevDisposeHelper dh = new HDevDisposeHelper())
@@ -172,8 +182,6 @@ public partial class HDevelopExport
     hv_numPointsLeft = (1.0-hv_ignorePortion)*(new HTuple(hv_Xs.TupleLength()
         ));
     }
-    hv_numThrows.Dispose();
-    hv_numThrows = 0;
 
     //calculate fitness of each point
     hv_fiterrors.Dispose();
@@ -202,15 +210,19 @@ public partial class HDevelopExport
     HOperatorSet.TupleSortIndex(hv_fiterrors, out hv_Indices);
 
     //select the best fits
-    hv_XsBest.Dispose();
-    hv_XsBest = new HTuple();
-    hv_YsBest.Dispose();
-    hv_YsBest = new HTuple();
+    hv_XsUsed.Dispose();
+    hv_XsUsed = new HTuple();
+    hv_YsUsed.Dispose();
+    hv_YsUsed = new HTuple();
+    hv_XsIgnored.Dispose();
+    hv_XsIgnored = new HTuple();
+    hv_YsIgnored.Dispose();
+    hv_YsIgnored = new HTuple();
     hv_ErrorBest.Dispose();
     hv_ErrorBest = new HTuple();
-    HTuple end_val19 = hv_numPointsLeft;
-    HTuple step_val19 = 1;
-    for (hv_i=0; hv_i.Continue(end_val19, step_val19); hv_i = hv_i.TupleAdd(step_val19))
+    HTuple end_val21 = hv_totalPoints-1;
+    HTuple step_val21 = 1;
+    for (hv_i=0; hv_i.Continue(end_val21, step_val21); hv_i = hv_i.TupleAdd(step_val21))
     {
       hv_index.Dispose();
       using (HDevDisposeHelper dh = new HDevDisposeHelper())
@@ -218,53 +230,77 @@ public partial class HDevelopExport
       hv_index = hv_Indices.TupleSelect(
           hv_i);
       }
-      using (HDevDisposeHelper dh = new HDevDisposeHelper())
+      if ((int)(new HTuple(hv_i.TupleLess(hv_numPointsLeft))) != 0)
       {
-      {
-      HTuple 
-        ExpTmpLocalVar_XsBest = hv_XsBest.TupleConcat(
-          hv_Xs.TupleSelect(hv_index));
-      hv_XsBest.Dispose();
-      hv_XsBest = ExpTmpLocalVar_XsBest;
+        using (HDevDisposeHelper dh = new HDevDisposeHelper())
+        {
+        {
+        HTuple 
+          ExpTmpLocalVar_XsUsed = hv_XsUsed.TupleConcat(
+            hv_Xs.TupleSelect(hv_index));
+        hv_XsUsed.Dispose();
+        hv_XsUsed = ExpTmpLocalVar_XsUsed;
+        }
+        }
+        using (HDevDisposeHelper dh = new HDevDisposeHelper())
+        {
+        {
+        HTuple 
+          ExpTmpLocalVar_YsUsed = hv_YsUsed.TupleConcat(
+            hv_Ys.TupleSelect(hv_index));
+        hv_YsUsed.Dispose();
+        hv_YsUsed = ExpTmpLocalVar_YsUsed;
+        }
+        }
+        using (HDevDisposeHelper dh = new HDevDisposeHelper())
+        {
+        {
+        HTuple 
+          ExpTmpLocalVar_ErrorBest = hv_ErrorBest.TupleConcat(
+            hv_fiterrors.TupleSelect(hv_index));
+        hv_ErrorBest.Dispose();
+        hv_ErrorBest = ExpTmpLocalVar_ErrorBest;
+        }
+        }
       }
-      }
-      using (HDevDisposeHelper dh = new HDevDisposeHelper())
+      else
       {
-      {
-      HTuple 
-        ExpTmpLocalVar_YsBest = hv_YsBest.TupleConcat(
-          hv_Ys.TupleSelect(hv_index));
-      hv_YsBest.Dispose();
-      hv_YsBest = ExpTmpLocalVar_YsBest;
-      }
-      }
-      using (HDevDisposeHelper dh = new HDevDisposeHelper())
-      {
-      {
-      HTuple 
-        ExpTmpLocalVar_ErrorBest = hv_ErrorBest.TupleConcat(
-          hv_fiterrors.TupleSelect(hv_index));
-      hv_ErrorBest.Dispose();
-      hv_ErrorBest = ExpTmpLocalVar_ErrorBest;
-      }
+        using (HDevDisposeHelper dh = new HDevDisposeHelper())
+        {
+        {
+        HTuple 
+          ExpTmpLocalVar_XsIgnored = hv_XsIgnored.TupleConcat(
+            hv_Xs.TupleSelect(hv_index));
+        hv_XsIgnored.Dispose();
+        hv_XsIgnored = ExpTmpLocalVar_XsIgnored;
+        }
+        }
+        using (HDevDisposeHelper dh = new HDevDisposeHelper())
+        {
+        {
+        HTuple 
+          ExpTmpLocalVar_YsIgnored = hv_YsIgnored.TupleConcat(
+            hv_Ys.TupleSelect(hv_index));
+        hv_YsIgnored.Dispose();
+        hv_YsIgnored = ExpTmpLocalVar_YsIgnored;
+        }
+        }
       }
     }
 
     //fit line again
     hv_lineX1.Dispose();hv_lineY1.Dispose();hv_lineX2.Dispose();hv_lineY2.Dispose();
-    fit_line2D_rough(hv_XsBest, hv_YsBest, out hv_lineX1, out hv_lineY1, out hv_lineX2, 
+    fit_line2D_rough(hv_XsUsed, hv_YsUsed, out hv_lineX1, out hv_lineY1, out hv_lineX2, 
         out hv_lineY2);
 
 
 
+    hv_totalPoints.Dispose();
     hv_numPointsLeft.Dispose();
-    hv_numThrows.Dispose();
     hv_fiterrors.Dispose();
     hv_i.Dispose();
     hv_Distance.Dispose();
     hv_Indices.Dispose();
-    hv_XsBest.Dispose();
-    hv_YsBest.Dispose();
     hv_ErrorBest.Dispose();
     hv_index.Dispose();
 
@@ -437,10 +473,11 @@ public partial class HDevelopExport
     return;
   }
 
-  public void I40_FindOrigin (HObject ho_Image, out HObject ho_FindLineRegions, out HObject ho_PointsFound, 
-      HTuple hv_ModelID, out HTuple hv_VAxisX1, out HTuple hv_VAxisY1, out HTuple hv_VAxisX2, 
-      out HTuple hv_VAxisY2, out HTuple hv_HAxisX1, out HTuple hv_HAxisY1, out HTuple hv_HAxisX2, 
-      out HTuple hv_HAxisY2, out HTuple hv_CoorCenterY, out HTuple hv_CoorCenterX)
+  public void I40_FindOrigin (HObject ho_Image, out HObject ho_FindLineRegions, HTuple hv_ModelID, 
+      out HTuple hv_VAxisX1, out HTuple hv_VAxisY1, out HTuple hv_VAxisX2, out HTuple hv_VAxisY2, 
+      out HTuple hv_HAxisX1, out HTuple hv_HAxisY1, out HTuple hv_HAxisX2, out HTuple hv_HAxisY2, 
+      out HTuple hv_CoorCenterY, out HTuple hv_CoorCenterX, out HTuple hv_XsUsed, 
+      out HTuple hv_YsUsed, out HTuple hv_XsIgnored, out HTuple hv_YsIgnored)
   {
 
 
@@ -455,8 +492,7 @@ public partial class HDevelopExport
     HObject ho_Region, ho_BinImage, ho_Contours, ho_Rectangle1;
     HObject ho_RegionMoved1, ho_Rectangle2, ho_RegionMoved2;
     HObject ho_Rectangle3, ho_RegionMoved3, ho_FindLineRegions2;
-    HObject ho_FindLineRegions3, ho_PointsFound2, ho_PointsFound3;
-    HObject ho_PointsFound4, ho_PointsFound5;
+    HObject ho_FindLineRegions3, ho_PointsFound4, ho_PointsFound5;
 
     // Local control variables 
 
@@ -480,13 +516,16 @@ public partial class HDevelopExport
     HTuple hv_YsLeft = new HTuple(), hv_ignorePortion = new HTuple();
     HTuple hv_lineX1Horizontal = new HTuple(), hv_lineY1Horizontal = new HTuple();
     HTuple hv_lineX2Horizontal = new HTuple(), hv_lineY2Horizontal = new HTuple();
+    HTuple hv_XsUsed1 = new HTuple(), hv_YsUsed1 = new HTuple();
+    HTuple hv_XsIgnored1 = new HTuple(), hv_YsIgnored1 = new HTuple();
     HTuple hv_lineY1Vertical = new HTuple(), hv_lineX1Vertical = new HTuple();
     HTuple hv_lineY2Vertical = new HTuple(), hv_lineX2Vertical = new HTuple();
+    HTuple hv_YsUsed2 = new HTuple(), hv_XsUsed2 = new HTuple();
+    HTuple hv_YsIgnored2 = new HTuple(), hv_XsIgnored2 = new HTuple();
     HTuple hv_Row = new HTuple(), hv_Column = new HTuple();
     HTuple hv_IsOverlapping = new HTuple(), hv_IsOverlapping1 = new HTuple();
     // Initialize local and output iconic variables 
     HOperatorSet.GenEmptyObj(out ho_FindLineRegions);
-    HOperatorSet.GenEmptyObj(out ho_PointsFound);
     HOperatorSet.GenEmptyObj(out ho_ROI_0);
     HOperatorSet.GenEmptyObj(out ho_ImageReduced);
     HOperatorSet.GenEmptyObj(out ho_EdgeAmplitude);
@@ -501,8 +540,6 @@ public partial class HDevelopExport
     HOperatorSet.GenEmptyObj(out ho_RegionMoved3);
     HOperatorSet.GenEmptyObj(out ho_FindLineRegions2);
     HOperatorSet.GenEmptyObj(out ho_FindLineRegions3);
-    HOperatorSet.GenEmptyObj(out ho_PointsFound2);
-    HOperatorSet.GenEmptyObj(out ho_PointsFound3);
     HOperatorSet.GenEmptyObj(out ho_PointsFound4);
     HOperatorSet.GenEmptyObj(out ho_PointsFound5);
     hv_VAxisX1 = new HTuple();
@@ -515,6 +552,10 @@ public partial class HDevelopExport
     hv_HAxisY2 = new HTuple();
     hv_CoorCenterY = new HTuple();
     hv_CoorCenterX = new HTuple();
+    hv_XsUsed = new HTuple();
+    hv_YsUsed = new HTuple();
+    hv_XsIgnored = new HTuple();
+    hv_YsIgnored = new HTuple();
     hv_Width.Dispose();
     hv_Width = 2032;
     hv_Height.Dispose();
@@ -559,7 +600,7 @@ public partial class HDevelopExport
     {
     ho_Rectangle1.Dispose();
     HOperatorSet.GenRectangle2(out ho_Rectangle1, 1676.14, 792.335, (new HTuple(90)).TupleRad()
-        , 60, 220.943);
+        , 60, 220);
     }
     using (HDevDisposeHelper dh = new HDevDisposeHelper())
     {
@@ -640,21 +681,9 @@ public partial class HDevelopExport
     {
     ho_ROI_0.Dispose();hv_XsLeftLower.Dispose();hv_YsLeftLower.Dispose();
     VisionProStyleFindLine(ho_Image, out ho_ROI_0, "positive", hv_Row4, hv_Column4, 
-        (new HTuple(0)).TupleRad(), hv_Length23, hv_Length13, 8, out hv_XsLeftLower, 
+        (new HTuple(0)).TupleRad(), hv_Length13, hv_Length23, 8, out hv_XsLeftLower, 
         out hv_YsLeftLower);
     }
-
-    //display all the found points on the line
-    //gen_cross_contour_xld (PointsFound, YsUpperLeft, XsUpperLeft, 50, 0.785398)
-    ho_PointsFound.Dispose();
-    HOperatorSet.GenCrossContourXld(out ho_PointsFound, hv_YsUpperRight, hv_XsUpperRight, 
-        50, 0.785398);
-    ho_PointsFound2.Dispose();
-    HOperatorSet.GenCrossContourXld(out ho_PointsFound2, hv_YsLeftUpper, hv_XsLeftUpper, 
-        50, 0.785398);
-    ho_PointsFound3.Dispose();
-    HOperatorSet.GenCrossContourXld(out ho_PointsFound3, hv_YsLeftLower, hv_XsLeftLower, 
-        50, 0.785398);
 
     //fit left and upper base line
     //tuple_concat (XsUpperLeft, XsUpperRight, XsUpper)
@@ -666,12 +695,23 @@ public partial class HDevelopExport
 
     hv_ignorePortion.Dispose();
     hv_ignorePortion = 0.2;
-    hv_lineX1Horizontal.Dispose();hv_lineY1Horizontal.Dispose();hv_lineX2Horizontal.Dispose();hv_lineY2Horizontal.Dispose();
+    hv_lineX1Horizontal.Dispose();hv_lineY1Horizontal.Dispose();hv_lineX2Horizontal.Dispose();hv_lineY2Horizontal.Dispose();hv_XsUsed1.Dispose();hv_YsUsed1.Dispose();hv_XsIgnored1.Dispose();hv_YsIgnored1.Dispose();
     FitLine2D(hv_XsUpperRight, hv_YsUpperRight, hv_ignorePortion, out hv_lineX1Horizontal, 
-        out hv_lineY1Horizontal, out hv_lineX2Horizontal, out hv_lineY2Horizontal);
-    hv_lineY1Vertical.Dispose();hv_lineX1Vertical.Dispose();hv_lineY2Vertical.Dispose();hv_lineX2Vertical.Dispose();
+        out hv_lineY1Horizontal, out hv_lineX2Horizontal, out hv_lineY2Horizontal, 
+        out hv_XsUsed1, out hv_YsUsed1, out hv_XsIgnored1, out hv_YsIgnored1);
+    hv_lineY1Vertical.Dispose();hv_lineX1Vertical.Dispose();hv_lineY2Vertical.Dispose();hv_lineX2Vertical.Dispose();hv_YsUsed2.Dispose();hv_XsUsed2.Dispose();hv_YsIgnored2.Dispose();hv_XsIgnored2.Dispose();
     FitLine2D(hv_YsLeft, hv_XsLeft, hv_ignorePortion, out hv_lineY1Vertical, out hv_lineX1Vertical, 
-        out hv_lineY2Vertical, out hv_lineX2Vertical);
+        out hv_lineY2Vertical, out hv_lineX2Vertical, out hv_YsUsed2, out hv_XsUsed2, 
+        out hv_YsIgnored2, out hv_XsIgnored2);
+
+    hv_XsUsed.Dispose();
+    HOperatorSet.TupleConcat(hv_XsUsed1, hv_XsUsed2, out hv_XsUsed);
+    hv_YsUsed.Dispose();
+    HOperatorSet.TupleConcat(hv_YsUsed1, hv_YsUsed2, out hv_YsUsed);
+    hv_XsIgnored.Dispose();
+    HOperatorSet.TupleConcat(hv_XsIgnored1, hv_XsIgnored2, out hv_XsIgnored);
+    hv_YsIgnored.Dispose();
+    HOperatorSet.TupleConcat(hv_YsIgnored1, hv_YsIgnored2, out hv_YsIgnored);
 
     hv_Row.Dispose();hv_Column.Dispose();hv_IsOverlapping.Dispose();
     HOperatorSet.IntersectionLines(hv_lineY1Vertical, hv_lineX1Vertical, hv_lineY2Vertical, 
@@ -713,32 +753,6 @@ public partial class HDevelopExport
 
 
     //concat objects necessary for displaying
-    //concat_obj (PointsFound, PointsFound1, PointsFound)
-    {
-    HObject ExpTmpOutVar_0;
-    HOperatorSet.ConcatObj(ho_PointsFound, ho_PointsFound2, out ExpTmpOutVar_0);
-    ho_PointsFound.Dispose();
-    ho_PointsFound = ExpTmpOutVar_0;
-    }
-    {
-    HObject ExpTmpOutVar_0;
-    HOperatorSet.ConcatObj(ho_PointsFound, ho_PointsFound3, out ExpTmpOutVar_0);
-    ho_PointsFound.Dispose();
-    ho_PointsFound = ExpTmpOutVar_0;
-    }
-    {
-    HObject ExpTmpOutVar_0;
-    HOperatorSet.ConcatObj(ho_PointsFound, ho_PointsFound4, out ExpTmpOutVar_0);
-    ho_PointsFound.Dispose();
-    ho_PointsFound = ExpTmpOutVar_0;
-    }
-    {
-    HObject ExpTmpOutVar_0;
-    HOperatorSet.ConcatObj(ho_PointsFound, ho_PointsFound5, out ExpTmpOutVar_0);
-    ho_PointsFound.Dispose();
-    ho_PointsFound = ExpTmpOutVar_0;
-    }
-    //concat_obj (FindLineRegions, FindLineRegions, FindLineRegions)
     {
     HObject ExpTmpOutVar_0;
     HOperatorSet.ConcatObj(ho_FindLineRegions, ho_FindLineRegions2, out ExpTmpOutVar_0
@@ -767,8 +781,6 @@ public partial class HDevelopExport
     ho_RegionMoved3.Dispose();
     ho_FindLineRegions2.Dispose();
     ho_FindLineRegions3.Dispose();
-    ho_PointsFound2.Dispose();
-    ho_PointsFound3.Dispose();
     ho_PointsFound4.Dispose();
     ho_PointsFound5.Dispose();
 
@@ -812,10 +824,18 @@ public partial class HDevelopExport
     hv_lineY1Horizontal.Dispose();
     hv_lineX2Horizontal.Dispose();
     hv_lineY2Horizontal.Dispose();
+    hv_XsUsed1.Dispose();
+    hv_YsUsed1.Dispose();
+    hv_XsIgnored1.Dispose();
+    hv_YsIgnored1.Dispose();
     hv_lineY1Vertical.Dispose();
     hv_lineX1Vertical.Dispose();
     hv_lineY2Vertical.Dispose();
     hv_lineX2Vertical.Dispose();
+    hv_YsUsed2.Dispose();
+    hv_XsUsed2.Dispose();
+    hv_YsIgnored2.Dispose();
+    hv_XsIgnored2.Dispose();
     hv_Row.Dispose();
     hv_Column.Dispose();
     hv_IsOverlapping.Dispose();
@@ -1256,7 +1276,8 @@ public partial class HDevelopExport
 
     // Local iconic variables 
 
-    HObject ho_Image, ho_FindLineRegions, ho_PointsFound;
+    HObject ho_Image, ho_FindLineRegions, ho_Cross;
+    HObject ho_Cross1;
 
     // Local control variables 
 
@@ -1266,25 +1287,35 @@ public partial class HDevelopExport
     HTuple hv_HAxisX1 = new HTuple(), hv_HAxisY1 = new HTuple();
     HTuple hv_HAxisX2 = new HTuple(), hv_HAxisY2 = new HTuple();
     HTuple hv_CoorCenterY = new HTuple(), hv_CoorCenterX = new HTuple();
+    HTuple hv_XsUsed = new HTuple(), hv_YsUsed = new HTuple();
+    HTuple hv_XsIgnored = new HTuple(), hv_YsIgnored = new HTuple();
     // Initialize local and output iconic variables 
     HOperatorSet.GenEmptyObj(out ho_Image);
     HOperatorSet.GenEmptyObj(out ho_FindLineRegions);
-    HOperatorSet.GenEmptyObj(out ho_PointsFound);
+    HOperatorSet.GenEmptyObj(out ho_Cross);
+    HOperatorSet.GenEmptyObj(out ho_Cross1);
     ho_Image.Dispose();
     HOperatorSet.ReadImage(out ho_Image, "E:/Projects/3d/3D_Image/DF3_1_Z.tif");
     hv_ModelID.Dispose();
     HOperatorSet.ReadShapeModel("./DF7_1_Z", out hv_ModelID);
     //dev_close_window(...);
     //dev_open_window(...);
+    HOperatorSet.SetColor(hv_ExpDefaultWinHandle, "green");
     HOperatorSet.SetDraw(hv_ExpDefaultWinHandle, "margin");
     HOperatorSet.AttachBackgroundToWindow(ho_Image, hv_ExpDefaultWinHandle);
-    ho_FindLineRegions.Dispose();ho_PointsFound.Dispose();hv_VAxisX11.Dispose();hv_VAxisY1.Dispose();hv_VAxisX2.Dispose();hv_VAxisY2.Dispose();hv_HAxisX1.Dispose();hv_HAxisY1.Dispose();hv_HAxisX2.Dispose();hv_HAxisY2.Dispose();hv_CoorCenterY.Dispose();hv_CoorCenterX.Dispose();
-    I40_FindOrigin(ho_Image, out ho_FindLineRegions, out ho_PointsFound, hv_ModelID, 
-        out hv_VAxisX11, out hv_VAxisY1, out hv_VAxisX2, out hv_VAxisY2, out hv_HAxisX1, 
-        out hv_HAxisY1, out hv_HAxisX2, out hv_HAxisY2, out hv_CoorCenterY, out hv_CoorCenterX);
+    ho_FindLineRegions.Dispose();hv_VAxisX11.Dispose();hv_VAxisY1.Dispose();hv_VAxisX2.Dispose();hv_VAxisY2.Dispose();hv_HAxisX1.Dispose();hv_HAxisY1.Dispose();hv_HAxisX2.Dispose();hv_HAxisY2.Dispose();hv_CoorCenterY.Dispose();hv_CoorCenterX.Dispose();hv_XsUsed.Dispose();hv_YsUsed.Dispose();hv_XsIgnored.Dispose();hv_YsIgnored.Dispose();
+    I40_FindOrigin(ho_Image, out ho_FindLineRegions, hv_ModelID, out hv_VAxisX11, 
+        out hv_VAxisY1, out hv_VAxisX2, out hv_VAxisY2, out hv_HAxisX1, out hv_HAxisY1, 
+        out hv_HAxisX2, out hv_HAxisY2, out hv_CoorCenterY, out hv_CoorCenterX, out hv_XsUsed, 
+        out hv_YsUsed, out hv_XsIgnored, out hv_YsIgnored);
     HOperatorSet.DispObj(ho_FindLineRegions, hv_ExpDefaultWinHandle);
-    HOperatorSet.DispObj(ho_PointsFound, hv_ExpDefaultWinHandle);
 
+    ho_Cross.Dispose();
+    HOperatorSet.GenCrossContourXld(out ho_Cross, hv_YsUsed, hv_XsUsed, 20, 0.785398);
+    HOperatorSet.SetColor(hv_ExpDefaultWinHandle, "red");
+    ho_Cross1.Dispose();
+    HOperatorSet.GenCrossContourXld(out ho_Cross1, hv_YsIgnored, hv_XsIgnored, 20, 
+        0.785398);
     //************A***************
     //A1: (4.34,7.12)
     //A2: (-4.34,7.12)
@@ -1297,7 +1328,8 @@ public partial class HDevelopExport
 
     ho_Image.Dispose();
     ho_FindLineRegions.Dispose();
-    ho_PointsFound.Dispose();
+    ho_Cross.Dispose();
+    ho_Cross1.Dispose();
 
     hv_ModelID.Dispose();
     hv_WindowHandle.Dispose();
@@ -1311,6 +1343,10 @@ public partial class HDevelopExport
     hv_HAxisY2.Dispose();
     hv_CoorCenterY.Dispose();
     hv_CoorCenterX.Dispose();
+    hv_XsUsed.Dispose();
+    hv_YsUsed.Dispose();
+    hv_XsIgnored.Dispose();
+    hv_YsIgnored.Dispose();
 
   }
 

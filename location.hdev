@@ -7,12 +7,15 @@
 <l>read_shape_model ('./DF7_1_Z', ModelID)</l>
 <l>dev_close_window ()</l>
 <l>dev_open_window (0, 0, 400, 500, 'black', WindowHandle)</l>
+<l>dev_set_color ('green')</l>
 <l>dev_set_draw ('margin')</l>
 <l>attach_background_to_window (Image, WindowHandle)</l>
-<l>I40_FindOrigin (Image, FindLineRegions, PointsFound, ModelID, VAxisX11, VAxisY1, VAxisX2, VAxisY2, HAxisX1, HAxisY1, HAxisX2, HAxisY2, CoorCenterY, CoorCenterX)</l>
+<l>I40_FindOrigin (Image, FindLineRegions, ModelID, VAxisX11, VAxisY1, VAxisX2, VAxisY2, HAxisX1, HAxisY1, HAxisX2, HAxisY2, CoorCenterY, CoorCenterX, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>dev_display (FindLineRegions)</l>
-<l>dev_display (PointsFound)</l>
 <c></c>
+<l>gen_cross_contour_xld (Cross, YsUsed, XsUsed, 20, 0.785398)</l>
+<l>dev_set_color ('red')</l>
+<l>gen_cross_contour_xld (Cross1, YsIgnored, XsIgnored, 20, 0.785398)</l>
 <c>*************A***************</c>
 <c>* A1: (4.34,7.12)</c>
 <c>* A2: (-4.34,7.12)</c>
@@ -176,14 +179,18 @@
 <par name="lineY1" base_type="ctrl" dimension="0"/>
 <par name="lineX2" base_type="ctrl" dimension="0"/>
 <par name="lineY2" base_type="ctrl" dimension="0"/>
+<par name="XsUsed" base_type="ctrl" dimension="0"/>
+<par name="YsUsed" base_type="ctrl" dimension="0"/>
+<par name="XsIgnored" base_type="ctrl" dimension="0"/>
+<par name="YsIgnored" base_type="ctrl" dimension="0"/>
 </oc>
 </interface>
 <body>
 <l>fit_line2D_rough (Xs, Ys, lineX1, lineY1, lineX2, lineY2)</l>
 <c></c>
+<l>totalPoints := |Xs|</l>
 <c>* number of points to ignore</c>
 <l>numPointsLeft := (1.0-ignorePortion) * |Xs|</l>
-<l>numThrows := 0</l>
 <c></c>
 <c>* calculate fitness of each point</c>
 <l>fiterrors := []</l>
@@ -195,18 +202,25 @@
 <l>tuple_sort_index (fiterrors, Indices)</l>
 <c></c>
 <c>* select the best fits</c>
-<l>XsBest := []</l>
-<l>YsBest := []</l>
+<l>XsUsed := []</l>
+<l>YsUsed := []</l>
+<l>XsIgnored := []</l>
+<l>YsIgnored := []</l>
 <l>ErrorBest := []</l>
-<l>for i := 0 to numPointsLeft by 1</l>
+<l>for i := 0 to totalPoints-1 by 1</l>
 <l>    index := Indices[i]</l>
-<l>    XsBest := [XsBest, Xs[index]]</l>
-<l>    YsBest := [YsBest, Ys[index]]</l>
+<l>   if(i &lt; numPointsLeft)</l>
+<l>           XsUsed := [XsUsed, Xs[index]]</l>
+<l>    YsUsed := [YsUsed, Ys[index]]</l>
 <l>    ErrorBest := [ErrorBest, fiterrors[index]]</l>
+<l>   else</l>
+<l>       XsIgnored := [XsIgnored, Xs[index]]</l>
+<l>       YsIgnored := [YsIgnored, Ys[index]]</l>
+<l>   endif</l>
 <l>endfor</l>
 <c></c>
 <c>* fit line again</c>
-<l>fit_line2D_rough (XsBest, YsBest, lineX1, lineY1, lineX2, lineY2)</l>
+<l>fit_line2D_rough (XsUsed, YsUsed, lineX1, lineY1, lineX2, lineY2)</l>
 <c></c>
 <c></c>
 <l>return ()</l>
@@ -214,7 +228,11 @@
 <docu id="FitLine2D">
 <parameters>
 <parameter id="Xs"/>
+<parameter id="XsIgnored"/>
+<parameter id="XsUsed"/>
 <parameter id="Ys"/>
+<parameter id="YsIgnored"/>
+<parameter id="YsUsed"/>
 <parameter id="ignorePortion"/>
 <parameter id="lineX1"/>
 <parameter id="lineX2"/>
@@ -423,7 +441,6 @@
 </io>
 <oo>
 <par name="FindLineRegions" base_type="iconic" dimension="0"/>
-<par name="PointsFound" base_type="iconic" dimension="0"/>
 </oo>
 <ic>
 <par name="ModelID" base_type="ctrl" dimension="0"/>
@@ -439,6 +456,10 @@
 <par name="HAxisY2" base_type="ctrl" dimension="0"/>
 <par name="CoorCenterY" base_type="ctrl" dimension="0"/>
 <par name="CoorCenterX" base_type="ctrl" dimension="0"/>
+<par name="XsUsed" base_type="ctrl" dimension="0"/>
+<par name="YsUsed" base_type="ctrl" dimension="0"/>
+<par name="XsIgnored" base_type="ctrl" dimension="0"/>
+<par name="YsIgnored" base_type="ctrl" dimension="0"/>
 </oc>
 </interface>
 <body>
@@ -468,7 +489,7 @@
 <l>*gen_rectangle2 (Rectangle, 331.86700000, 510.16200000, rad(-90.00000000), 40, 90.95780000)</l>
 <l>*move_region (Rectangle, RegionMoved, -centerModelY, -centerModelX)</l>
 <c>* upper right find line</c>
-<l>gen_rectangle2 (Rectangle1, 1676.14, 792.335, rad(90), 60, 220.943)</l>
+<l>gen_rectangle2 (Rectangle1, 1676.14, 792.335, rad(90), 60, 220)</l>
 <l>move_region (Rectangle1, RegionMoved1, -centerModelY, -centerModelX)</l>
 <c>* left upper find line</c>
 <l>gen_rectangle2 (Rectangle2, 477.38200000, 370.80400000, rad(0.00000000), 60, 75.89940000)</l>
@@ -495,13 +516,7 @@
 <l>*VisionProStyleFindLine (Image, ROI_0, 'positive', Row1, Column1, rad(-90), Length2, Length1, 8, XsUpperLeft, YsUpperLeft)</l>
 <l>VisionProStyleFindLine (Image, ROI_0, 'negative', Row2, Column2, rad(-90), Length21, Length11, 8, XsUpperRight, YsUpperRight)</l>
 <l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row3, Column3, rad(0), Length22, Length12, 8, XsLeftUpper, YsLeftUpper)</l>
-<l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row4, Column4, rad(0), Length23, Length13, 8, XsLeftLower, YsLeftLower)</l>
-<c></c>
-<c>* display all the found points on the line</c>
-<l>*gen_cross_contour_xld (PointsFound, YsUpperLeft, XsUpperLeft, 50, 0.785398)</l>
-<l>gen_cross_contour_xld (PointsFound, YsUpperRight, XsUpperRight, 50, 0.785398)</l>
-<l>gen_cross_contour_xld (PointsFound2, YsLeftUpper, XsLeftUpper, 50, 0.785398)</l>
-<l>gen_cross_contour_xld (PointsFound3, YsLeftLower, XsLeftLower, 50, 0.785398)</l>
+<l>VisionProStyleFindLine (Image, ROI_0, 'positive', Row4, Column4, rad(0), Length13, Length23, 8, XsLeftLower, YsLeftLower)</l>
 <c></c>
 <c>* fit left and upper base line</c>
 <l>*tuple_concat (XsUpperLeft, XsUpperRight, XsUpper)</l>
@@ -510,8 +525,13 @@
 <l>tuple_concat (YsLeftUpper, YsLeftLower, YsLeft)</l>
 <c></c>
 <l>ignorePortion := 0.2</l>
-<l>FitLine2D (XsUpperRight, YsUpperRight, ignorePortion, lineX1Horizontal, lineY1Horizontal, lineX2Horizontal, lineY2Horizontal)</l>
-<l>FitLine2D (YsLeft, XsLeft, ignorePortion, lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical)</l>
+<l>FitLine2D (XsUpperRight, YsUpperRight, ignorePortion, lineX1Horizontal, lineY1Horizontal, lineX2Horizontal, lineY2Horizontal, XsUsed1, YsUsed1, XsIgnored1, YsIgnored1)</l>
+<l>FitLine2D (YsLeft, XsLeft, ignorePortion, lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical, YsUsed2, XsUsed2, YsIgnored2, XsIgnored2)</l>
+<c></c>
+<l>tuple_concat (XsUsed1, XsUsed2, XsUsed)</l>
+<l>tuple_concat (YsUsed1, YsUsed2, YsUsed)</l>
+<l>tuple_concat (XsIgnored1, XsIgnored2, XsIgnored)</l>
+<l>tuple_concat (YsIgnored1,YsIgnored2, YsIgnored)</l>
 <c></c>
 <l>intersection_lines (lineY1Vertical, lineX1Vertical, lineY2Vertical, lineX2Vertical, lineY1Horizontal, lineX1Horizontal, lineY2Horizontal, lineX2Horizontal, Row, Column, IsOverlapping)</l>
 <c></c>
@@ -531,12 +551,6 @@
 <c></c>
 <c></c>
 <c>* concat objects necessary for displaying</c>
-<l>*concat_obj (PointsFound, PointsFound1, PointsFound)</l>
-<l>concat_obj (PointsFound, PointsFound2, PointsFound)</l>
-<l>concat_obj (PointsFound, PointsFound3, PointsFound)</l>
-<l>concat_obj (PointsFound, PointsFound4, PointsFound)</l>
-<l>concat_obj (PointsFound, PointsFound5, PointsFound)</l>
-<l>*concat_obj (FindLineRegions, FindLineRegions, FindLineRegions)</l>
 <l>concat_obj (FindLineRegions, FindLineRegions2, FindLineRegions)</l>
 <l>concat_obj (FindLineRegions, FindLineRegions3, FindLineRegions)</l>
 <l>return ()</l>
@@ -552,11 +566,14 @@
 <parameter id="HAxisY2"/>
 <parameter id="Image"/>
 <parameter id="ModelID"/>
-<parameter id="PointsFound"/>
 <parameter id="VAxisX1"/>
 <parameter id="VAxisX2"/>
 <parameter id="VAxisY1"/>
 <parameter id="VAxisY2"/>
+<parameter id="XsIgnored"/>
+<parameter id="XsUsed"/>
+<parameter id="YsIgnored"/>
+<parameter id="YsUsed"/>
 </parameters>
 </docu>
 </procedure>
