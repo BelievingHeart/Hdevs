@@ -14,6 +14,8 @@
 <l>numSubRects := 10</l>
 <l>ignorePortion := 0.2</l>
 <c></c>
+<l>findLineRects := []</l>
+<c></c>
 <l>GetWorldImageMap (Image, './calibration/cameraParam.cal', './calibration/cameraPos.dat', mapToImage, mapToWorld)</l>
 <c></c>
 <c>* find right base line</c>
@@ -24,6 +26,7 @@
 <l>baseRightLen2 := 923.855</l>
 <l>VisionProStyleFindLineOneStep (Image, rectBaseRight, 'positive', baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2, numSubRects, 50, 'first', ignorePortion, 'true', lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, XsUsedRightBase, YsUsedRightBase, XsIgnoredRightBase, YsIgnoredRightBase)</l>
 <c></c>
+<c></c>
 <c>* find top base line</c>
 <l>baseTopRow := 586.07800000</l>
 <l>baseTopColumn := 3025.09000000</l>
@@ -31,6 +34,7 @@
 <l>baseTopLen1 := 243.06000000</l>
 <l>baseTopLen2 := 535.03500000</l>
 <l>VisionProStyleFindLineOneStep (Image, rectBaseTop, 'positive', baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, numSubRects, 50, 'first', ignorePortion, 'false', lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, XsUsedTopBase, YsUsedTopBase, XsIgnoredTopBase, YsIgnoredTopBase)</l>
+<l>concat_obj (rectBaseRight, rectBaseTop, FindLineRects)</l>
 <c></c>
 <c>* display used and ignored points</c>
 <l>dev_set_color('green')</l>
@@ -64,6 +68,8 @@
 <l>rectFAI2Len1 :=60.96000000</l>
 <l>rectFAI2Len2 := 520.14300000</l>
 <l>gen_rectangle2 (findLineRegionFAI2, rectFAI2Row, rectFAI2Col, rectFAI2Radian, rectFAI2Len1, rectFAI2Len2)</l>
+<l>concat_obj (FindLineRects, findLineRegionFAI2, FindLineRects)</l>
+<c></c>
 <l>reduce_domain (Image, findLineRegionFAI2, ImageReduced)</l>
 <l>threshold_sub_pix (ImageReduced, Border, 128)</l>
 <l>select_contours_xld (Border, SelectedContours, 'open', rectFAI2Len2-100, rectFAI2Len2, -0.5, 0.5)</l>
@@ -92,7 +98,9 @@
 <l>rectFAI3Radian := rad(88.76800000)</l>
 <l>rectFAI3Len1 := 140.37300000</l>
 <l>rectFAI3Len2 := 503.62100000</l>
-<l>VisionProStyleFindLineOneStep (Image, rectFAI3, 'positive', rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, numSubRects, 50, 'first', ignorePortion, 'false', lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3, XsUsedFAI3, YsUsedFAI3, XsIgnoredFAI3, YsIgnoredFAI3)</l>
+<l>VisionProStyleFindLineOneStep (Image, rectFAI3, 'positive', rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, numSubRects, 120, 'first', ignorePortion, 'false', lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3, XsUsedFAI3, YsUsedFAI3, XsIgnoredFAI3, YsIgnoredFAI3)</l>
+<l>concat_obj (FindLineRects, rectFAI3, FindLineRects)</l>
+<c></c>
 <l>dev_set_color('green')</l>
 <l>gen_cross_contour_xld (Cross1, YsUsedFAI3, XsUsedFAI3, crossSize, 0.785398)</l>
 <l>dev_set_color ('red')</l>
@@ -110,13 +118,47 @@
 <l>intersection_lines (lineY1FAI3, lineX1FAI3, lineY2FAI3, lineX2FAI3, FAI3_P2_LineStartY, FAI3_P2_LineStartX, FAI3_P2_LineEndY, FAI3_P2_LineEndX, RowFAI3_P2, ColumnFAI3_P2, IsOverlapping2)</l>
 <l>gen_cross_contour_xld (Cross3, RowFAI3_P2, ColumnFAI3_P2, crossSize, 0.785398)</l>
 <l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, ColumnFAI3_P2, RowFAI3_P2, mapToWorld, distanceWorld_FAI3_P2)</l>
-<c></c>
 <c>* P3</c>
 <l>intersection_lines (lineY1FAI3, lineX1FAI3, lineY2FAI3, lineX2FAI3, FAI3_P3_LineStartY, FAI3_P3_LineStartX, FAI3_P3_LineEndY, FAI3_P3_LineEndX, RowFAI3_P3, ColumnFAI3_P3, IsOverlapping2)</l>
 <l>gen_cross_contour_xld (Cross3, RowFAI3_P3, ColumnFAI3_P3, crossSize, 0.785398)</l>
 <l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, ColumnFAI3_P3, RowFAI3_P3, mapToWorld, distanceWorld_FAI3_P3)</l>
 <c></c>
 <c></c>
+<c>***********************************************FAI4*******************************</c>
+<l>rectFAI4Row := 4275.51000000</l>
+<l>rectFAI4Col := 2960.01000000</l>
+<l>rectFAI4Radian := rad(89)</l>
+<l>rectFAI4Len1 := 126.79500000</l>
+<l>rectFAI4Len2 := 525.15600000</l>
+<l>VisionProStyleFindLineOneStep (Image, rectFAI4, 'negative', rectFAI4Row, rectFAI4Col, rectFAI4Radian, rectFAI4Len1, rectFAI4Len2, numSubRects, 50, 'first', ignorePortion, 'false', lineX1FAI4, lineY1FAI4, lineX2FAI4, lineY2FAI4, XsUsedFAI4, YsUsedFAI4, XsIgnoredFAI4, YsIgnoredFAI4)</l>
+<l>concat_obj (FindLineRects, rectFAI4, FindLineRects)</l>
+<c></c>
+<l>dev_set_color('green')</l>
+<l>gen_cross_contour_xld (Cross1, YsUsedFAI4, XsUsedFAI4, crossSize, 0.785398)</l>
+<l>dev_set_color ('red')</l>
+<l>gen_cross_contour_xld (Cross2, YsIgnoredFAI4, XsIgnoredFAI4, crossSize, 0.785398)</l>
+<c></c>
+<l>dev_set_color ('blue')</l>
+<c>* P1</c>
+<l>intersection_lines (lineY1FAI4, lineX1FAI4, lineY2FAI4, lineX2FAI4, FAI3_P1_LineStartY, FAI3_P1_LineStartX, FAI3_P1_LineEndY, FAI3_P1_LineEndX, RowFAI3_P1, ColumnFAI3_P1, IsOverlapping2)</l>
+<l>gen_cross_contour_xld (Cross3, RowFAI3_P1, ColumnFAI3_P1, crossSize, 0.785398)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, ColumnFAI3_P1, RowFAI3_P1, mapToWorld, distanceWorld_FAI4_P1)</l>
+<c>* P2</c>
+<l>intersection_lines (lineY1FAI4, lineX1FAI4, lineY2FAI4, lineX2FAI4, FAI3_P2_LineStartY, FAI3_P2_LineStartX, FAI3_P2_LineEndY, FAI3_P2_LineEndX, RowFAI3_P2, ColumnFAI3_P2, IsOverlapping2)</l>
+<l>gen_cross_contour_xld (Cross3, RowFAI3_P2, ColumnFAI3_P2, crossSize, 0.785398)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, ColumnFAI3_P2, RowFAI3_P2, mapToWorld, distanceWorld_FAI4_P2)</l>
+<c>* P3</c>
+<l>intersection_lines (lineY1FAI4, lineX1FAI4, lineY2FAI4, lineX2FAI4, FAI3_P3_LineStartY, FAI3_P3_LineStartX, FAI3_P3_LineEndY, FAI3_P3_LineEndX, RowFAI3_P3, ColumnFAI3_P3, IsOverlapping2)</l>
+<l>gen_cross_contour_xld (Cross3, RowFAI3_P3, ColumnFAI3_P3, crossSize, 0.785398)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, ColumnFAI3_P3, RowFAI3_P3, mapToWorld, distanceWorld_FAI4_P3)</l>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<l>dev_set_color ('yellow')</l>
+<l>dev_display (FindLineRects)</l>
 </body>
 <docu id="main">
 <parameters/>
@@ -760,7 +802,7 @@
 </oc>
 </interface>
 <body>
-<l>VisionProStyleFindLine (inputImage, findLineRect,transition,row,col,radian,len1,len2,numSubRects,threshold,firstOrLast, Xs, Ys)</l>
+<l>VisionProStyleFindLine (inputImage, findLineRegion,transition,row,col,radian,len1,len2,numSubRects,threshold,firstOrLast, Xs, Ys)</l>
 <c></c>
 <c></c>
 <l>if(isVertical == 'true')</l>
@@ -1073,10 +1115,12 @@
 </oc>
 </interface>
 <body>
+<c>* transform image points to world points</c>
 <l>affine_trans_point_2d (mapToWorld, lineStartX, lineStartY, lineStartX_World, lineStartY_World)</l>
 <l>affine_trans_point_2d (mapToWorld, ptX, ptY, ptX_World, ptY_World)</l>
 <l>affine_trans_point_2d (mapToWorld, lineEndX, lineEndY, lineEndX_World, lineEndY_World)</l>
 <c></c>
+<c>* cal world distance</c>
 <l>distance_pl (ptY_World, ptX_World, lineStartY_World, lineStartX_World, lineEndY_World, lineEndX_World, distanceWorld)</l>
 <l>return ()</l>
 </body>
