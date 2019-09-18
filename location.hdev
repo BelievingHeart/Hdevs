@@ -196,6 +196,56 @@
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <c></c>
 <c></c>
+<c>*************************************FAI 6******************************************</c>
+<l>rectFAI6Row := 2904.49000000</l>
+<l>rectFAI6Col := 1422.92000000</l>
+<l>rectFAI6Radian := rad(89)</l>
+<l>rectFAI6Len1 := 71.98270000</l>
+<l>rectFAI6Len2 := 315.33800000</l>
+<l>VisionProStyleFindLineOneStep (Image, rect, 'positive', rectFAI6Row, rectFAI6Col, rectFAI6Radian, rectFAI6Len1, rectFAI6Len2, numSubRects, 80, 'first', ignorePortion, 'false', 1, lineX1FAI6, lineY1FAI6, lineX2FAI6, lineY2FAI6, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>concat_obj (FindLineRects, rect, FindLineRects)</l>
+<l>crossesXUsed := [crossesXUsed, XsUsed]</l>
+<l>crossesYused := [crossesYused, YsUsed]</l>
+<l>crossesXIgnored := [crossesXIgnored, XsIgnored]</l>
+<l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
+<c></c>
+<c>* translate base right</c>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 22.024, mapToWorld, mapToImage, 'true', FAI6_P1_LineStartX, FAI6_P1_LineStartY, FAI6_P1_LineEndX, FAI6_P1_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 24.024, mapToWorld, mapToImage, 'true', FAI6_P2_LineStartX, FAI6_P2_LineStartY, FAI6_P2_LineEndX, FAI6_P2_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 26.024, mapToWorld, mapToImage, 'true', FAI6_P3_LineStartX, FAI6_P3_LineStartY, FAI6_P3_LineEndX, FAI6_P3_LineEndY)</l>
+<c></c>
+<c>* P1</c>
+<l>intersection_lines (lineY1FAI6, lineX1FAI6, lineY2FAI6, lineX2FAI6, FAI6_P1_LineStartY, FAI6_P1_LineStartX, FAI6_P1_LineEndY, FAI6_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI6_P1)</l>
+<l>intersectXs := [intersectXs, colIntersect]</l>
+<l>intersectYs := [intersectYs, rowIntersect]</l>
+<c>* P2</c>
+<l>intersection_lines (lineY1FAI6, lineX1FAI6, lineY2FAI6, lineX2FAI6, FAI6_P2_LineStartY, FAI6_P2_LineStartX, FAI6_P2_LineEndY, FAI6_P2_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI6_P2)</l>
+<l>intersectXs := [intersectXs, colIntersect]</l>
+<l>intersectYs := [intersectYs, rowIntersect]</l>
+<c>* P3</c>
+<l>intersection_lines (lineY1FAI6, lineX1FAI6, lineY2FAI6, lineX2FAI6, FAI6_P3_LineStartY, FAI6_P3_LineStartX, FAI6_P3_LineEndY, FAI6_P3_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI6_P3)</l>
+<l>intersectXs := [intersectXs, colIntersect]</l>
+<l>intersectYs := [intersectYs, rowIntersect]</l>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
 <l>dev_set_color ('red')</l>
 <l>gen_cross_contour_xld (Cross4, crossesYIgnored, crossesXIgnored, crossSize, 0.785398)</l>
 <l>dev_set_color ('green')</l>
