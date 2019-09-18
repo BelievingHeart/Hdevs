@@ -16,6 +16,17 @@
 <c></c>
 <l>findLineRects := []</l>
 <c></c>
+<c>* record find line points</c>
+<l>crossesXUsed := []</l>
+<l>crossesYused := []</l>
+<l>crossesXIgnored := []</l>
+<l>crossesYIgnored := []</l>
+<c></c>
+<c>* record line-line intersections</c>
+<l>intersectXs := []</l>
+<l>intersectsYs := []</l>
+<c></c>
+<c></c>
 <l>GetWorldImageMap (Image, './calibration/cameraParam.cal', './calibration/cameraPos.dat', mapToImage, mapToWorld)</l>
 <c></c>
 <c>* find right base line</c>
@@ -33,7 +44,7 @@
 <l>baseTopRadian := rad(-91.33180000)</l>
 <l>baseTopLen1 := 243.06000000</l>
 <l>baseTopLen2 := 535.03500000</l>
-<l>VisionProStyleFindLineOneStep (Image, rectBaseTop, 'positive', baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, numSubRects, 50, 'first', ignorePortion, 'false', 1, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, XsUsedTopBase, YsUsedTopBase, XsIgnoredTopBase, YsIgnoredTopBase)</l>
+<l>VisionProStyleFindLineOneStep (Image, rectBaseTop, 'positive', baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, numSubRects, 50, 'last', ignorePortion, 'false', 1, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, XsUsedTopBase, YsUsedTopBase, XsIgnoredTopBase, YsIgnoredTopBase)</l>
 <l>concat_obj (rectBaseRight, rectBaseTop, FindLineRects)</l>
 <c></c>
 <c>* display used and ignored points</c>
@@ -64,16 +75,19 @@
 <c>* make H line for FAI02</c>
 <l>rectFAI2Row :=2212.92000000</l>
 <l>rectFAI2Col :=2994.90000000</l>
-<l>rectFAI2Radian := rad(-91.97430000)</l>
+<l>rectFAI2Radian := rad(88)</l>
 <l>rectFAI2Len1 :=60.96000000</l>
 <l>rectFAI2Len2 := 520.14300000</l>
 <l>gen_rectangle2 (findLineRegionFAI2, rectFAI2Row, rectFAI2Col, rectFAI2Radian, rectFAI2Len1, rectFAI2Len2)</l>
 <l>concat_obj (FindLineRects, findLineRegionFAI2, FindLineRects)</l>
 <c></c>
-<l>reduce_domain (Image, findLineRegionFAI2, ImageReduced)</l>
-<l>threshold_sub_pix (ImageReduced, Border, 128)</l>
-<l>select_contours_xld (Border, SelectedContours, 'open', rectFAI2Len2-100, rectFAI2Len2, -0.5, 0.5)</l>
-<l>fit_line_contour_xld (SelectedContours, 'tukey', -1, 0, 5, 2, lineStartY_FAI2H, lineStartX_FAI2H, lineEndY_FAI2H, lineEndX_FAI2H, Nr, Nc, Dist)</l>
+<l>VisionProStyleFindLineOneStep_Pairs (Image, findLineRegionFAI2, rectFAI2Row, rectFAI2Col, rectFAI2Radian, rectFAI2Len1, rectFAI2Len2, 'positive', 10, 6, 1, 'first', 'false', 0.2, 'first', 1, 10, XsUsedFAI2, YsUsedFAI2, XsIgnoredFAI2, YsIgnoredFAI2, lineStartX_FAI2H, lineStartY_FAI2H, lineEndX_FAI2H, lineEndY_FAI2H)</l>
+<l>dev_set_color('green')</l>
+<l>gen_cross_contour_xld (Cross1, YsUsedFAI2, XsUsedFAI2, crossSize, 0.785398)</l>
+<l>dev_set_color ('red')</l>
+<l>gen_cross_contour_xld (Cross2, YsIgnoredFAI2, XsIgnoredFAI2, crossSize, 0.785398)</l>
+<c></c>
+<l>dev_set_color ('blue')</l>
 <c>* FAI2-P1</c>
 <l>intersection_lines (lineStartY_FAI2H, lineStartX_FAI2H, lineEndY_FAI2H, lineEndX_FAI2H, FAI2_P1_LineStartY, FAI2_P1_LineStartX, FAI2_P1_LineEndY, FAI2_P1_LineEndX, FAI2_P1_ROW, FAI2_P1_COL, IsOverlapping1)</l>
 <l>gen_cross_contour_xld (Cross, FAI2_P1_ROW, FAI2_P1_COL, crossSize, 0.785398)</l>
@@ -1217,20 +1231,34 @@
 <par name="minEdge" base_type="ctrl" dimension="0"/>
 <par name="maxEdge" base_type="ctrl" dimension="0"/>
 </ic>
+<oc>
+<par name="XsUsed" base_type="ctrl" dimension="0"/>
+<par name="YsUsed" base_type="ctrl" dimension="0"/>
+<par name="XsIgnored" base_type="ctrl" dimension="0"/>
+<par name="YsIgnored" base_type="ctrl" dimension="0"/>
+<par name="lineX1" base_type="ctrl" dimension="0"/>
+<par name="lineY1" base_type="ctrl" dimension="0"/>
+<par name="lineX2" base_type="ctrl" dimension="0"/>
+<par name="lineY2" base_type="ctrl" dimension="0"/>
+</oc>
 </interface>
 <body>
-<l>VisionProStyleFindLine (inputImage, findLineRegion, transition, row, col, radian, len1, len2, numSubRects, threshold, sigma, firstOrLast, 'true', whichEdgePair, minEdge, maxEdge, Xs, Ys)</l>
+<l>VisionProStyleFindLine (inputImage, findLineRegion, transition, row, col, radian, len1, len2, numSubRects, threshold, sigma, firstOrLast, 'true', whichEdgePair, minEdge, maxEdge, XsUsed, YsUsed)</l>
 <c></c>
 <c></c>
 <l>if(isVertical == 'true')</l>
-<l>    FitLine2D (Ys, Xs, ignoreFraction, lineY1, lineX1, lineY2, lineX2, YsUsed, XsUsed, YsIgnored, XsIgnored)</l>
+<l>    FitLine2D (YsUsed, XsUsed, ignoreFraction, lineY1, lineX1, lineY2, lineX2, YsUsed, XsUsed, YsIgnored, XsIgnored)</l>
 <l>else</l>
-<l>        FitLine2D (Xs, Ys, ignoreFraction, lineX1, lineY1, lineX2, lineY2, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>    FitLine2D (XsUsed, YsUsed, ignoreFraction, lineX1, lineY1, lineX2, lineY2, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>endif</l>
 <l>return ()</l>
 </body>
 <docu id="VisionProStyleFindLineOneStep_Pairs">
 <parameters>
+<parameter id="XsIgnored"/>
+<parameter id="XsUsed"/>
+<parameter id="YsIgnored"/>
+<parameter id="YsUsed"/>
 <parameter id="col">
 <default_type>integer</default_type>
 <type_list>
@@ -1262,6 +1290,10 @@
 <item>real</item>
 </type_list>
 </parameter>
+<parameter id="lineX1"/>
+<parameter id="lineX2"/>
+<parameter id="lineY1"/>
+<parameter id="lineY2"/>
 <parameter id="maxEdge">
 <sem_type>real</sem_type>
 </parameter>
