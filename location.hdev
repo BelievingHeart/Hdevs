@@ -24,7 +24,7 @@
 <c></c>
 <c>* record line-line intersections</c>
 <l>intersectXs := []</l>
-<l>intersectsYs := []</l>
+<l>intersectYs := []</l>
 <c></c>
 <c></c>
 <l>GetWorldImageMap (Image, './calibration/cameraParam.cal', './calibration/cameraPos.dat', mapToImage, mapToWorld)</l>
@@ -35,8 +35,11 @@
 <l>baseRightRadian := rad(180)</l>
 <l>baseRightLen1 := 155.856</l>
 <l>baseRightLen2 := 923.855</l>
-<l>VisionProStyleFindLineOneStep (Image, rectBaseRight, 'positive', baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2, numSubRects, 50, 'first', ignorePortion, 'true', 1, lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, XsUsedRightBase, YsUsedRightBase, XsIgnoredRightBase, YsIgnoredRightBase)</l>
-<c></c>
+<l>VisionProStyleFindLineOneStep (Image, rectBaseRight, 'positive', baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2, numSubRects, 50, 'first', ignorePortion, 'true', 1, lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>crossesXUsed := [crossesXUsed, XsUsed]</l>
+<l>crossesYused := [crossesYused, YsUsed]</l>
+<l>crossesXIgnored := [crossesXIgnored, XsIgnored]</l>
+<l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
 <c>* find top base line</c>
 <l>baseTopRow := 586.07800000</l>
@@ -44,24 +47,19 @@
 <l>baseTopRadian := rad(-91.33180000)</l>
 <l>baseTopLen1 := 243.06000000</l>
 <l>baseTopLen2 := 535.03500000</l>
-<l>VisionProStyleFindLineOneStep (Image, rectBaseTop, 'positive', baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, numSubRects, 50, 'last', ignorePortion, 'false', 1, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, XsUsedTopBase, YsUsedTopBase, XsIgnoredTopBase, YsIgnoredTopBase)</l>
+<l>VisionProStyleFindLineOneStep (Image, rectBaseTop, 'positive', baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, numSubRects, 80, 'last', ignorePortion, 'false', 1, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (rectBaseRight, rectBaseTop, FindLineRects)</l>
+<l>crossesXUsed := [crossesXUsed, XsUsed]</l>
+<l>crossesYused := [crossesYused, YsUsed]</l>
+<l>crossesXIgnored := [crossesXIgnored, XsIgnored]</l>
+<l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
-<c>* display used and ignored points</c>
-<l>dev_set_color('green')</l>
-<l>tuple_concat (YsUsedRightBase, YsUsedTopBase, YsUsed)</l>
-<l>tuple_concat (XsUsedRightBase, XsUsedTopBase, XsUsed)</l>
-<l>gen_cross_contour_xld (CrossUsed, YsUsed, XsUsed, crossSize, 0.785398)</l>
 <c></c>
-<l>dev_set_color ('red')</l>
-<l>tuple_concat (YsIgnoredRightBase, YsIgnoredTopBase, YsIgnored)</l>
-<l>tuple_concat (XsIgnoredRightBase, XsIgnoredTopBase, XsIgnored)</l>
-<l>gen_cross_contour_xld (CrossIgnored, YsIgnored, XsIgnored, crossSize, 0.785398)</l>
 <c></c>
 <c>* make origin</c>
-<l>intersection_lines (lineY1RightBase, lineX1RightBase, lineY2RightBase, lineX2RightBase, lineY1TopBase, lineX1TopBase, lineY2TopBase, lineX2TopBase, RowOrigin, ColumnOrigin, IsOverlapping)</l>
-<l>dev_set_color ('blue')</l>
-<l>gen_cross_contour_xld (CrossOrigin, RowOrigin, ColumnOrigin, 200, 0.785398)</l>
+<l>intersection_lines (lineY1RightBase, lineX1RightBase, lineY2RightBase, lineX2RightBase, lineY1TopBase, lineX1TopBase, lineY2TopBase, lineX2TopBase, rowIntersect, colIntersect, IsOverlapping)</l>
+<l>intersectXs := [intersectXs, colIntersect]</l>
+<l>intersectYs := [intersectYs, rowIntersect]</l>
 <c></c>
 <c></c>
 <c></c>
@@ -78,33 +76,32 @@
 <l>rectFAI2Radian := rad(88)</l>
 <l>rectFAI2Len1 :=60.96000000</l>
 <l>rectFAI2Len2 := 520.14300000</l>
-<l>gen_rectangle2 (findLineRegionFAI2, rectFAI2Row, rectFAI2Col, rectFAI2Radian, rectFAI2Len1, rectFAI2Len2)</l>
+<c></c>
+<l>VisionProStyleFindLineOneStep_Pairs (Image, findLineRegionFAI2, rectFAI2Row, rectFAI2Col, rectFAI2Radian, rectFAI2Len1, rectFAI2Len2, 'positive', 10, 6, 1, 'first', 'false', 0.2, 'first', 1, 10, XsUsed, YsUsed, XsIgnored, YsIgnored, lineStartX_FAI2H, lineStartY_FAI2H, lineEndX_FAI2H, lineEndY_FAI2H)</l>
 <l>concat_obj (FindLineRects, findLineRegionFAI2, FindLineRects)</l>
+<l>crossesXUsed := [crossesXUsed, XsUsed]</l>
+<l>crossesYused := [crossesYused, YsUsed]</l>
+<l>crossesXIgnored := [crossesXIgnored, XsIgnored]</l>
+<l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep_Pairs (Image, findLineRegionFAI2, rectFAI2Row, rectFAI2Col, rectFAI2Radian, rectFAI2Len1, rectFAI2Len2, 'positive', 10, 6, 1, 'first', 'false', 0.2, 'first', 1, 10, XsUsedFAI2, YsUsedFAI2, XsIgnoredFAI2, YsIgnoredFAI2, lineStartX_FAI2H, lineStartY_FAI2H, lineEndX_FAI2H, lineEndY_FAI2H)</l>
-<l>dev_set_color('green')</l>
-<l>gen_cross_contour_xld (Cross1, YsUsedFAI2, XsUsedFAI2, crossSize, 0.785398)</l>
-<l>dev_set_color ('red')</l>
-<l>gen_cross_contour_xld (Cross2, YsIgnoredFAI2, XsIgnoredFAI2, crossSize, 0.785398)</l>
-<c></c>
-<l>dev_set_color ('blue')</l>
 <c>* FAI2-P1</c>
-<l>intersection_lines (lineStartY_FAI2H, lineStartX_FAI2H, lineEndY_FAI2H, lineEndX_FAI2H, FAI2_P1_LineStartY, FAI2_P1_LineStartX, FAI2_P1_LineEndY, FAI2_P1_LineEndX, FAI2_P1_ROW, FAI2_P1_COL, IsOverlapping1)</l>
-<l>gen_cross_contour_xld (Cross, FAI2_P1_ROW, FAI2_P1_COL, crossSize, 0.785398)</l>
-<c>* FAI2-P2</c>
-<l>intersection_lines (lineStartY_FAI2H, lineStartX_FAI2H, lineEndY_FAI2H, lineEndX_FAI2H, FAI2_P2_LineStartY, FAI2_P2_LineStartX, FAI2_P2_LineEndY, FAI2_P2_LineEndX, FAI2_P2_ROW, FAI2_P2_COL, IsOverlapping1)</l>
-<l>gen_cross_contour_xld (Cross, FAI2_P2_ROW, FAI2_P2_COL, crossSize, 0.785398)</l>
-<c>* FAI2-P3</c>
-<l>intersection_lines (lineStartY_FAI2H, lineStartX_FAI2H, lineEndY_FAI2H, lineEndX_FAI2H, FAI2_P3_LineStartY, FAI2_P3_LineStartX, FAI2_P3_LineEndY, FAI2_P3_LineEndX, FAI2_P3_ROW, FAI2_P3_COL, IsOverlapping1)</l>
-<l>gen_cross_contour_xld (Cross, FAI2_P3_ROW, FAI2_P3_COL, crossSize, 0.785398)</l>
+<l>intersection_lines (lineStartY_FAI2H, lineStartX_FAI2H, lineEndY_FAI2H, lineEndX_FAI2H, FAI2_P1_LineStartY, FAI2_P1_LineStartX, FAI2_P1_LineEndY, FAI2_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping1)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_P1)</l>
+<l>intersectXs := [intersectXs, colIntersect]</l>
+<l>intersectYs := [intersectYs, rowIntersect]</l>
 <c></c>
-<c>* distances</c>
-<c>* P1</c>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI2_P1_COL, FAI2_P1_ROW, mapToWorld, distanceWorld_P1)</l>
-<c>* P2</c>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI2_P2_COL, FAI2_P2_ROW, mapToWorld, distanceWorld_P2)</l>
-<c>* P3</c>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI2_P3_COL, FAI2_P3_ROW, mapToWorld, distanceWorld_P3)</l>
+<c>* FAI2-P2</c>
+<l>intersection_lines (lineStartY_FAI2H, lineStartX_FAI2H, lineEndY_FAI2H, lineEndX_FAI2H, FAI2_P2_LineStartY, FAI2_P2_LineStartX, FAI2_P2_LineEndY, FAI2_P2_LineEndX, rowIntersect, colIntersect, IsOverlapping1)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_P2)</l>
+<l>intersectXs := [intersectXs, colIntersect]</l>
+<l>intersectYs := [intersectYs, rowIntersect]</l>
+<c></c>
+<c>* FAI2-P3</c>
+<l>intersection_lines (lineStartY_FAI2H, lineStartX_FAI2H, lineEndY_FAI2H, lineEndX_FAI2H, FAI2_P3_LineStartY, FAI2_P3_LineStartX, FAI2_P3_LineEndY, FAI2_P3_LineEndX, rowIntersect, colIntersect, IsOverlapping1)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_P3)</l>
+<l>intersectXs := [intersectXs, colIntersect]</l>
+<l>intersectYs := [intersectYs, rowIntersect]</l>
+<c></c>
 <c></c>
 <c>**********************************************FAI3************************************</c>
 <l>rectFAI3Row := 2310.61000000</l>
@@ -112,31 +109,33 @@
 <l>rectFAI3Radian := rad(88.76800000)</l>
 <l>rectFAI3Len1 := 140.37300000</l>
 <l>rectFAI3Len2 := 503.62100000</l>
-<l>VisionProStyleFindLineOneStep (Image, rectFAI3, 'positive', rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, numSubRects, 120, 'first', ignorePortion, 'false', 1, lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3, XsUsedFAI3, YsUsedFAI3, XsIgnoredFAI3, YsIgnoredFAI3)</l>
+<l>VisionProStyleFindLineOneStep (Image, rectFAI3, 'positive', rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, numSubRects, 120, 'first', ignorePortion, 'false', 1, lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rectFAI3, FindLineRects)</l>
+<l>crossesXUsed := [crossesXUsed, XsUsed]</l>
+<l>crossesYused := [crossesYused, YsUsed]</l>
+<l>crossesXIgnored := [crossesXIgnored, XsIgnored]</l>
+<l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
-<l>dev_set_color('green')</l>
-<l>gen_cross_contour_xld (Cross1, YsUsedFAI3, XsUsedFAI3, crossSize, 0.785398)</l>
-<l>dev_set_color ('red')</l>
-<l>gen_cross_contour_xld (Cross2, YsIgnoredFAI3, XsIgnoredFAI3, crossSize, 0.785398)</l>
 <c>* translate base right</c>
 <l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 5.299, mapToWorld, mapToImage, 'true', FAI3_P1_LineStartX, FAI3_P1_LineStartY, FAI3_P1_LineEndX, FAI3_P1_LineEndY)</l>
 <l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 9.299, mapToWorld, mapToImage, 'true', FAI3_P2_LineStartX, FAI3_P2_LineStartY, FAI3_P2_LineEndX, FAI3_P2_LineEndY)</l>
 <l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 13.299, mapToWorld, mapToImage, 'true', FAI3_P3_LineStartX, FAI3_P3_LineStartY, FAI3_P3_LineEndX, FAI3_P3_LineEndY)</l>
 <c>* P1</c>
-<l>dev_set_color ('blue')</l>
-<l>intersection_lines (lineY1FAI3, lineX1FAI3, lineY2FAI3, lineX2FAI3, FAI3_P1_LineStartY, FAI3_P1_LineStartX, FAI3_P1_LineEndY, FAI3_P1_LineEndX, RowFAI3_P1, ColumnFAI3_P1, IsOverlapping2)</l>
-<l>gen_cross_contour_xld (Cross3, RowFAI3_P1, ColumnFAI3_P1, crossSize, 0.785398)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, ColumnFAI3_P1, RowFAI3_P1, mapToWorld, distanceWorld_FAI3_P1)</l>
+<l>intersection_lines (lineY1FAI3, lineX1FAI3, lineY2FAI3, lineX2FAI3, FAI3_P1_LineStartY, FAI3_P1_LineStartX, FAI3_P1_LineEndY, FAI3_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI3_P1)</l>
+<l>intersectXs := [intersectXs, colIntersect]</l>
+<l>intersectYs := [intersectYs, rowIntersect]</l>
 <c>* P2</c>
-<l>intersection_lines (lineY1FAI3, lineX1FAI3, lineY2FAI3, lineX2FAI3, FAI3_P2_LineStartY, FAI3_P2_LineStartX, FAI3_P2_LineEndY, FAI3_P2_LineEndX, RowFAI3_P2, ColumnFAI3_P2, IsOverlapping2)</l>
-<l>gen_cross_contour_xld (Cross3, RowFAI3_P2, ColumnFAI3_P2, crossSize, 0.785398)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, ColumnFAI3_P2, RowFAI3_P2, mapToWorld, distanceWorld_FAI3_P2)</l>
-<c>* P3</c>
-<l>intersection_lines (lineY1FAI3, lineX1FAI3, lineY2FAI3, lineX2FAI3, FAI3_P3_LineStartY, FAI3_P3_LineStartX, FAI3_P3_LineEndY, FAI3_P3_LineEndX, RowFAI3_P3, ColumnFAI3_P3, IsOverlapping2)</l>
-<l>gen_cross_contour_xld (Cross3, RowFAI3_P3, ColumnFAI3_P3, crossSize, 0.785398)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, ColumnFAI3_P3, RowFAI3_P3, mapToWorld, distanceWorld_FAI3_P3)</l>
+<l>intersection_lines (lineY1FAI3, lineX1FAI3, lineY2FAI3, lineX2FAI3, FAI3_P2_LineStartY, FAI3_P2_LineStartX, FAI3_P2_LineEndY, FAI3_P2_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI3_P2)</l>
+<l>intersectXs := [intersectXs, colIntersect]</l>
+<l>intersectYs := [intersectYs, rowIntersect]</l>
 <c></c>
+<c>* P3</c>
+<l>intersection_lines (lineY1FAI3, lineX1FAI3, lineY2FAI3, lineX2FAI3, FAI3_P3_LineStartY, FAI3_P3_LineStartX, FAI3_P3_LineEndY, FAI3_P3_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI3_P3)</l>
+<l>intersectXs := [intersectXs, colIntersect]</l>
+<l>intersectYs := [intersectYs, rowIntersect]</l>
 <c></c>
 <c>***********************************************FAI4*******************************</c>
 <l>rectFAI4Row := 4275.51000000</l>
@@ -144,33 +143,37 @@
 <l>rectFAI4Radian := rad(89)</l>
 <l>rectFAI4Len1 := 126.79500000</l>
 <l>rectFAI4Len2 := 525.15600000</l>
-<l>VisionProStyleFindLineOneStep (Image, rectFAI4, 'negative', rectFAI4Row, rectFAI4Col, rectFAI4Radian, rectFAI4Len1, rectFAI4Len2, numSubRects, 50, 'first', ignorePortion, 'false', 1, lineX1FAI4, lineY1FAI4, lineX2FAI4, lineY2FAI4, XsUsedFAI4, YsUsedFAI4, XsIgnoredFAI4, YsIgnoredFAI4)</l>
+<l>VisionProStyleFindLineOneStep (Image, rectFAI4, 'negative', rectFAI4Row, rectFAI4Col, rectFAI4Radian, rectFAI4Len1, rectFAI4Len2, numSubRects, 50, 'first', ignorePortion, 'false', 1, lineX1FAI4, lineY1FAI4, lineX2FAI4, lineY2FAI4, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rectFAI4, FindLineRects)</l>
+<l>crossesXUsed := [crossesXUsed, XsUsed]</l>
+<l>crossesYused := [crossesYused, YsUsed]</l>
+<l>crossesXIgnored := [crossesXIgnored, XsIgnored]</l>
+<l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
-<l>dev_set_color('green')</l>
-<l>gen_cross_contour_xld (Cross1, YsUsedFAI4, XsUsedFAI4, crossSize, 0.785398)</l>
-<l>dev_set_color ('red')</l>
-<l>gen_cross_contour_xld (Cross2, YsIgnoredFAI4, XsIgnoredFAI4, crossSize, 0.785398)</l>
-<c></c>
-<l>dev_set_color ('blue')</l>
 <c>* P1</c>
-<l>intersection_lines (lineY1FAI4, lineX1FAI4, lineY2FAI4, lineX2FAI4, FAI3_P1_LineStartY, FAI3_P1_LineStartX, FAI3_P1_LineEndY, FAI3_P1_LineEndX, RowFAI3_P1, ColumnFAI3_P1, IsOverlapping2)</l>
-<l>gen_cross_contour_xld (Cross3, RowFAI3_P1, ColumnFAI3_P1, crossSize, 0.785398)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, ColumnFAI3_P1, RowFAI3_P1, mapToWorld, distanceWorld_FAI4_P1)</l>
+<l>intersection_lines (lineY1FAI4, lineX1FAI4, lineY2FAI4, lineX2FAI4, FAI3_P1_LineStartY, FAI3_P1_LineStartX, FAI3_P1_LineEndY, FAI3_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI4_P1)</l>
+<l>intersectXs := [intersectXs, colIntersect]</l>
+<l>intersectYs := [intersectYs, rowIntersect]</l>
 <c>* P2</c>
-<l>intersection_lines (lineY1FAI4, lineX1FAI4, lineY2FAI4, lineX2FAI4, FAI3_P2_LineStartY, FAI3_P2_LineStartX, FAI3_P2_LineEndY, FAI3_P2_LineEndX, RowFAI3_P2, ColumnFAI3_P2, IsOverlapping2)</l>
-<l>gen_cross_contour_xld (Cross3, RowFAI3_P2, ColumnFAI3_P2, crossSize, 0.785398)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, ColumnFAI3_P2, RowFAI3_P2, mapToWorld, distanceWorld_FAI4_P2)</l>
+<l>intersection_lines (lineY1FAI4, lineX1FAI4, lineY2FAI4, lineX2FAI4, FAI3_P2_LineStartY, FAI3_P2_LineStartX, FAI3_P2_LineEndY, FAI3_P2_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI4_P2)</l>
+<l>intersectXs := [intersectXs, colIntersect]</l>
+<l>intersectYs := [intersectYs, rowIntersect]</l>
 <c>* P3</c>
-<l>intersection_lines (lineY1FAI4, lineX1FAI4, lineY2FAI4, lineX2FAI4, FAI3_P3_LineStartY, FAI3_P3_LineStartX, FAI3_P3_LineEndY, FAI3_P3_LineEndX, RowFAI3_P3, ColumnFAI3_P3, IsOverlapping2)</l>
-<l>gen_cross_contour_xld (Cross3, RowFAI3_P3, ColumnFAI3_P3, crossSize, 0.785398)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, ColumnFAI3_P3, RowFAI3_P3, mapToWorld, distanceWorld_FAI4_P3)</l>
+<l>intersection_lines (lineY1FAI4, lineX1FAI4, lineY2FAI4, lineX2FAI4, FAI3_P3_LineStartY, FAI3_P3_LineStartX, FAI3_P3_LineEndY, FAI3_P3_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI4_P3)</l>
+<l>intersectXs := [intersectXs, colIntersect]</l>
+<l>intersectYs := [intersectYs, rowIntersect]</l>
 <c></c>
 <c></c>
-<c></c>
-<c></c>
-<c></c>
-<c></c>
+<l>dev_set_color ('red')</l>
+<l>gen_cross_contour_xld (Cross4, crossesYIgnored, crossesXIgnored, crossSize, 0.785398)</l>
+<l>dev_set_color ('green')</l>
+<l>gen_cross_contour_xld (Cross4, crossesYused, crossesXUsed, crossSize, 0.785398)</l>
+<l>dev_set_color ('blue')</l>
+<l>dev_set_line_width (2)</l>
+<l>gen_cross_contour_xld (Cross4, intersectYs, intersectXs, 200, 0)</l>
 <l>dev_set_color ('yellow')</l>
 <l>dev_display (FindLineRects)</l>
 </body>
