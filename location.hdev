@@ -5,11 +5,9 @@
 <body>
 <l>read_image (Image, 'E:/Projects/3d/I94/I94TopFace/Image_20190918091134087.bmp')</l>
 <l>get_image_size (Image, Width, Height)</l>
-<l>*dev_close_window ()</l>
-<l>*dev_open_window (0, 0, 600, 800, 'black', WindowHandle)</l>
-<l>*attach_background_to_window (Image, WindowHandle)</l>
-<l>dev_set_draw ('margin')</l>
 <c></c>
+<c></c>
+<l>dev_set_draw ('margin')</l>
 <c></c>
 <l>crossSize := 100</l>
 <l>numSubRects := 10</l>
@@ -27,6 +25,49 @@
 <l>intersectXs := []</l>
 <l>intersectYs := []</l>
 <c></c>
+<c>* set units and positions</c>
+<l>xCoeff := 0.0072</l>
+<l>yCoeff := 0.0072</l>
+<c></c>
+<l>FAI2_LEN_P1 := -4.583 * xCoeff</l>
+<l>FAI2_LEN_P2 := -9.583 * xCoeff</l>
+<l>FAI2_LEN_P3 := -14.583 * xCoeff</l>
+<c></c>
+<l>FAI3_LEN_P1 := -5.299 * xCoeff</l>
+<l>FAI3_LEN_P2 := -9.299 * xCoeff</l>
+<l>FAI3_LEN_P3 := -13.299 * xCoeff</l>
+<c></c>
+<l>FAI4_LEN_P1 := -5.299 * xCoeff</l>
+<l>FAI4_LEN_P2 := -9.299 * xCoeff</l>
+<l>FAI4_LEN_P3 := -13.299 * xCoeff</l>
+<c></c>
+<l>FAI5_LEN_P1 := -5.299 * xCoeff</l>
+<l>FAI5_LEN_P2 := -9.299 * xCoeff</l>
+<l>FAI5_LEN_P3 := -13.299 * xCoeff</l>
+<c></c>
+<l>FAI6_LEN_P1 := -22.024 * xCoeff</l>
+<l>FAI6_LEN_P2 := -24.024 * xCoeff</l>
+<l>FAI6_LEN_P3 := -26.024 * xCoeff</l>
+<c></c>
+<l>FAI9_LEN_P1 := -21.753 * xCoeff</l>
+<l>FAI9_LEN_P2 := -23.753 * xCoeff</l>
+<l>FAI9_LEN_P3 := -25.753 * xCoeff</l>
+<c></c>
+<c></c>
+<l>FAI12_LEN_P1 := 23.213 * yCoeff</l>
+<l>FAI12_LEN_P2 := 34.97 * yCoeff</l>
+<c></c>
+<l>FAI16_LEN_P1 := 13.071 * yCoeff</l>
+<l>FAI16_LEN_P2 := 20.213 * yCoeff</l>
+<c></c>
+<l>FAI17_LEN_P1 := 1.53 * yCoeff</l>
+<l>FAI17_LEN_P2 := 9.827 * yCoeff</l>
+<c></c>
+<l>FAI19_LEN_P1 := 2.157 * yCoeff</l>
+<l>FAI19_LEN_P2 := 13.791 * yCoeff</l>
+<c></c>
+<l>FAI20_LEN_X := -9.299 * xCoeff</l>
+<l>FAI20_LEN_Y := 7.886 * yCoeff</l>
 <c></c>
 <c>* find model</c>
 <l>modelPath := 'E:/Projects/3d/Hdevs/Image_20190918091134087'</l>
