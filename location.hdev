@@ -1754,10 +1754,10 @@
 <c>    * 右上</c>
 <l>    radianOut := -atan(vecRow / vecCol)</l>
 <l>elseif (vecCol &lt; 0 and vecRow &gt;=0)</l>
-<c>    * 左上</c>
+<c>    * 左下</c>
 <l>     radianOut := rad(-180) - atan(vecRow / vecCol)</l>
 <l>else</l>
-<c>    * 左下</c>
+<c>    * 左上</c>
 <l>     radianOut := rad(180) - atan(vecRow / vecCol)</l>
 <l>endif</l>
 <c></c>
