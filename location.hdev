@@ -29,34 +29,47 @@
 <c></c>
 <c></c>
 <c>* find model</c>
-<l>*gen_rectangle1 (ROI_0, 781.414, 2350.33, 2047.11, 3728.51)</l>
-<l>*reduce_domain (Image, ROI_0, ImageReduced)</l>
-<l>*area_center (ROI_0, Area, RowCenterModel, ColumnCenterModel)</l>
-<l>*create_shape_model (ImageReduced, 'auto', -0.1, 0.1, 'auto', 'auto', 'use_polarity', 'auto', 'auto', ModelID)</l>
-<l>*write_shape_model(ModelID, Area)</l>
+<l>modelPath := 'E:/Projects/3d/Hdevs/Image_20190918091134087'</l>
+<l>Threshold := 128</l>
+<l>rowModel := 1171.5</l>
+<l>colModel := 3678.5</l>
+<l>read_shape_model (modelPath, ModelID)</l>
+<l>gen_rectangle1 (ROI_0, 53.9, 1940.83, 3017.1, 4961.63)</l>
+<l>reduce_domain (Image, ROI_0, ImageReduced)</l>
+<l>threshold_sub_pix (ImageReduced, Border, 128)</l>
+<l>find_shape_model (ImageReduced, ModelID, -0.39, 0.79, 0.5, 1, 0.5, 'least_squares', 0, 0.9, Row, Column, Angle, Score)</l>
+<l>vector_angle_to_rigid (0, 0, 0, Row, Column, Angle, MovementImageToImage)</l>
 <c></c>
 <c></c>
 <l>GetWorldImageMap (Image, './calibration/cameraParam.cal', './calibration/cameraPos.dat', mapToImage, mapToWorld, Pose, CameraParam)</l>
 <c></c>
+<c></c>
 <c>* find right base line</c>
-<l>baseRightRow := 3614.64000000</l>
-<l>baseRightColum := 4804.56000000</l>
-<l>baseRightRadian := rad(-180)</l>
+<l>baseRightRow := 3614.64000000 - rowModel</l>
+<l>baseRightColum := 4804.56000000 - colModel</l>
+<l>baseRightRadian := rad(180)</l>
 <l>baseRightLen1 := 287.58000000</l>
 <l>baseRightLen2 := 1070.83000000</l>
+<c></c>
+<c></c>
+<l>AffineTransRect2 (baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2, MovementImageToImage, baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2)</l>
 <l>VisionProStyleFindLineOneStep (Image, rectBaseRight, 'positive', baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2, numSubRects, 40, 'first', ignorePortion, 'true', 1, lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>GenLineRegion (lineRegionRightBase, lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 5120, 5120)</l>
 <l>crossesXUsed := [crossesXUsed, XsUsed]</l>
 <l>crossesYused := [crossesYused, YsUsed]</l>
 <l>crossesXIgnored := [crossesXIgnored, XsIgnored]</l>
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
 <c>* find top base line</c>
-<l>baseTopRow := 162.42300000</l>
-<l>baseTopColumn := 3614.30000000</l>
+<l>baseTopRow := 162.42300000 - rowModel</l>
+<l>baseTopColumn := 3614.30000000 - colModel</l>
 <l>baseTopRadian := rad(-90.00000000)</l>
 <l>baseTopLen1 := 279.69400000</l>
 <l>baseTopLen2 := 627.82500000</l>
+<c></c>
+<l>AffineTransRect2 (baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, MovementImageToImage, baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2)</l>
 <l>VisionProStyleFindLineOneStep (Image, rectBaseTop, 'positive', baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, numSubRects, 50, 'last', ignorePortion, 'false', 1, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>GenLineRegion (lineRegionTopBase, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, 5120, 5120)</l>
 <l>concat_obj (rectBaseRight, rectBaseTop, FindLineRects)</l>
 <l>crossesXUsed := [crossesXUsed, XsUsed]</l>
 <l>crossesYused := [crossesYused, YsUsed]</l>
@@ -1634,19 +1647,38 @@
 </oc>
 </interface>
 <body>
-<l>affine_trans_point_2d (map, col, row, colOut, rowOut)</l>
+<l>affine_trans_point_2d (map, row, col, rowOut, colOut)</l>
 <l>len1Out := len1</l>
 <l>len2Out := len2</l>
 <c></c>
-<l>topCenterCol := col + cos(radian)</l>
-<l>topCenterRow := row - sin(radian)</l>
+<l>topCenterCol := col + cos(radian) * len1</l>
+<l>topCenterRow := row - sin(radian) * len2</l>
 <c></c>
-<l>affine_trans_point_2d (map, topCenterCol, topCenterRow, topCenterColTrans, topCenterRowTrans)</l>
+<l>affine_trans_point_2d (map, topCenterRow, topCenterCol, topCenterRowTrans, topCenterColTrans)</l>
 <c></c>
-<l>vecCol := topCenterColTrans - topCenterCol</l>
-<l>vecRow := topCenterRowTrans - topCenterRow</l>
 <c></c>
-<l>radianOut := -atan(vecRow / vecCol)</l>
+<c></c>
+<l>vecCol := topCenterColTrans - colOut</l>
+<l>vecRow := topCenterRowTrans - rowOut</l>
+<l>epslon := 0.0000000001</l>
+<l>if(abs(vecRow) &lt; epslon)</l>
+<l>    vecRow := epslon</l>
+<l>endif</l>
+<c></c>
+<l>if(vecCol &gt;=0 and vecRow &gt;=0)</l>
+<c>    * 右下</c>
+<l>    radianOut := -atan(vecRow / vecCol)</l>
+<l>elseif (vecCol &gt;= 0 and vecRow &lt; 0)</l>
+<c>    * 右上</c>
+<l>    radianOut := -atan(vecRow / vecCol)</l>
+<l>elseif (vecCol &lt; 0 and vecRow &gt;=0)</l>
+<c>    * 左上</c>
+<l>     radianOut := rad(-180) - atan(vecRow / vecCol)</l>
+<l>else</l>
+<c>    * 左下</c>
+<l>     radianOut := rad(180) + atan(vecRow / vecCol)</l>
+<l>endif</l>
+<c></c>
 <c></c>
 <c></c>
 <l>return ()</l>
@@ -1664,6 +1696,77 @@
 <parameter id="radianOut"/>
 <parameter id="row"/>
 <parameter id="rowOut"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="GenLineRegion">
+<interface>
+<oo>
+<par name="lineRegion" base_type="iconic" dimension="0"/>
+</oo>
+<ic>
+<par name="lineXStart" base_type="ctrl" dimension="0"/>
+<par name="lineYStart" base_type="ctrl" dimension="0"/>
+<par name="lineXEnd" base_type="ctrl" dimension="0"/>
+<par name="lineYEnd" base_type="ctrl" dimension="0"/>
+<par name="imageWidth" base_type="ctrl" dimension="0"/>
+<par name="imageHeight" base_type="ctrl" dimension="0"/>
+</ic>
+</interface>
+<body>
+<l>xDiff := lineXEnd - lineXStart</l>
+<l>yDiff := lineYEnd - lineYStart</l>
+<c></c>
+<l>epslon := 0.0000000001</l>
+<l>if(abs(xDiff) &lt; epslon)</l>
+<l>    xDiff := epslon</l>
+<l>endif</l>
+<c></c>
+<l>m := yDiff/xDiff</l>
+<l>b := lineYStart - m* lineXStart</l>
+<c></c>
+<l>xStart := 0</l>
+<l>xEnd := imageWidth</l>
+<c></c>
+<l>yStart := m* xStart +b</l>
+<l>if(yStart&gt; imageHeight or yStart &lt; 0)</l>
+<l>    yStart := 0</l>
+<l>    xStart := (yStart - b)/m</l>
+<l>endif</l>
+<c></c>
+<l>yEnd := m* xEnd +b</l>
+<l>if(yEnd&gt; imageHeight or yEnd &lt; 0)</l>
+<l>    yEnd := imageHeight</l>
+<l>    xEnd := (yEnd - b)/m</l>
+<l>endif</l>
+<c></c>
+<l>gen_region_line (lineRegion, yStart, xStart, yEnd, xEnd)</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="GenLineRegion">
+<parameters>
+<parameter id="imageHeight">
+<default_type>integer</default_type>
+<default_value>5120</default_value>
+<sem_type>integer</sem_type>
+<type_list>
+<item>integer</item>
+</type_list>
+</parameter>
+<parameter id="imageWidth">
+<default_type>integer</default_type>
+<default_value>5120</default_value>
+<sem_type>integer</sem_type>
+<type_list>
+<item>integer</item>
+</type_list>
+</parameter>
+<parameter id="lineRegion"/>
+<parameter id="lineXEnd"/>
+<parameter id="lineXStart"/>
+<parameter id="lineYEnd"/>
+<parameter id="lineYStart"/>
 </parameters>
 </docu>
 </procedure>
