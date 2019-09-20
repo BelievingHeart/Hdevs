@@ -3,12 +3,13 @@
 <procedure name="main">
 <interface/>
 <body>
-<l>read_image (Image, 'E:/Projects/3d/I94/I94.bmp')</l>
+<l>read_image (Image, 'E:/Projects/3d/I94/I94TopFace/Image_20190918091134087.bmp')</l>
 <l>get_image_size (Image, Width, Height)</l>
-<l>dev_close_window ()</l>
-<l>dev_open_window (0, 0, 600, 800, 'black', WindowHandle)</l>
-<l>attach_background_to_window (Image, WindowHandle)</l>
+<l>*dev_close_window ()</l>
+<l>*dev_open_window (0, 0, 600, 800, 'black', WindowHandle)</l>
+<l>*attach_background_to_window (Image, WindowHandle)</l>
 <l>dev_set_draw ('margin')</l>
+<c></c>
 <c></c>
 <l>crossSize := 100</l>
 <l>numSubRects := 10</l>
@@ -27,27 +28,35 @@
 <l>intersectYs := []</l>
 <c></c>
 <c></c>
+<c>* find model</c>
+<l>*gen_rectangle1 (ROI_0, 781.414, 2350.33, 2047.11, 3728.51)</l>
+<l>*reduce_domain (Image, ROI_0, ImageReduced)</l>
+<l>*area_center (ROI_0, Area, RowCenterModel, ColumnCenterModel)</l>
+<l>*create_shape_model (ImageReduced, 'auto', -0.1, 0.1, 'auto', 'auto', 'use_polarity', 'auto', 'auto', ModelID)</l>
+<l>*write_shape_model(ModelID, Area)</l>
+<c></c>
+<c></c>
 <l>GetWorldImageMap (Image, './calibration/cameraParam.cal', './calibration/cameraPos.dat', mapToImage, mapToWorld, Pose, CameraParam)</l>
 <c></c>
 <c>* find right base line</c>
-<l>baseRightRow := 3318.37</l>
-<l>baseRightColum := 3960.05</l>
-<l>baseRightRadian := rad(180)</l>
-<l>baseRightLen1 := 155.856</l>
-<l>baseRightLen2 := 923.855</l>
-<l>VisionProStyleFindLineOneStep (Image, rectBaseRight, 'positive', baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2, numSubRects, 50, 'first', ignorePortion, 'true', 1, lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>baseRightRow := 3614.64000000</l>
+<l>baseRightColum := 4804.56000000</l>
+<l>baseRightRadian := rad(-180)</l>
+<l>baseRightLen1 := 287.58000000</l>
+<l>baseRightLen2 := 1070.83000000</l>
+<l>VisionProStyleFindLineOneStep (Image, rectBaseRight, 'positive', baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2, numSubRects, 40, 'first', ignorePortion, 'true', 1, lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>crossesXUsed := [crossesXUsed, XsUsed]</l>
 <l>crossesYused := [crossesYused, YsUsed]</l>
 <l>crossesXIgnored := [crossesXIgnored, XsIgnored]</l>
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
 <c>* find top base line</c>
-<l>baseTopRow := 586.07800000</l>
-<l>baseTopColumn := 3025.09000000</l>
-<l>baseTopRadian := rad(-91.33180000)</l>
-<l>baseTopLen1 := 243.06000000</l>
-<l>baseTopLen2 := 535.03500000</l>
-<l>VisionProStyleFindLineOneStep (Image, rectBaseTop, 'positive', baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, numSubRects, 80, 'last', ignorePortion, 'false', 1, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>baseTopRow := 162.42300000</l>
+<l>baseTopColumn := 3614.30000000</l>
+<l>baseTopRadian := rad(-90.00000000)</l>
+<l>baseTopLen1 := 279.69400000</l>
+<l>baseTopLen2 := 627.82500000</l>
+<l>VisionProStyleFindLineOneStep (Image, rectBaseTop, 'positive', baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, numSubRects, 50, 'last', ignorePortion, 'false', 1, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (rectBaseRight, rectBaseTop, FindLineRects)</l>
 <l>crossesXUsed := [crossesXUsed, XsUsed]</l>
 <l>crossesYused := [crossesYused, YsUsed]</l>
@@ -67,14 +76,19 @@
 <l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 9.583, mapToWorld, mapToImage, 'true', FAI2_P2_LineStartX, FAI2_P2_LineStartY, FAI2_P2_LineEndX, FAI2_P2_LineEndY)</l>
 <l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 14.583, mapToWorld, mapToImage, 'true', FAI2_P3_LineStartX, FAI2_P3_LineStartY, FAI2_P3_LineEndX, FAI2_P3_LineEndY)</l>
 <c></c>
-<c>* make H line for FAI02</c>
-<l>rectFAI2Row :=2212.92000000</l>
-<l>rectFAI2Col :=2994.90000000</l>
-<l>rectFAI2Radian := rad(88)</l>
-<l>rectFAI2Len1 :=60.96000000</l>
-<l>rectFAI2Len2 := 520.14300000</l>
+<c>* make H line for FAI2</c>
+<l>rectFAI2Row :=2173.39000000</l>
+<l>rectFAI2Col :=3668.38000000</l>
+<l>rectFAI2Radian := rad(89)</l>
+<l>rectFAI2Len1 :=70.89500000</l>
+<l>rectFAI2Len2 := 655.18000000</l>
+<l>VisionProStyleFindLineOneStep_Pairs (Image, findLineRegionFAI2, rectFAI2Row, rectFAI2Col, rectFAI2Radian, rectFAI2Len1, rectFAI2Len2, 'positive', 40, 5, 1, 'first', 'false', 0.3, 'last', 1, 10, XsUsed, YsUsed, XsIgnored, YsIgnored, lineStartX_FAI2H, lineStartY_FAI2H, lineEndX_FAI2H, lineEndY_FAI2H)</l>
+<l>dev_set_color ('green')</l>
+<l>gen_cross_contour_xld (Cross, YsUsed, XsUsed, 100, 0.785398)</l>
+<l>dev_set_color ('red')</l>
+<l>gen_cross_contour_xld (Cross1, YsIgnored, XsIgnored, 100, 0.785398)</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep_Pairs (Image, findLineRegionFAI2, rectFAI2Row, rectFAI2Col, rectFAI2Radian, rectFAI2Len1, rectFAI2Len2, 'positive', 10, 6, 1, 'first', 'false', 0.2, 'first', 1, 10, XsUsed, YsUsed, XsIgnored, YsIgnored, lineStartX_FAI2H, lineStartY_FAI2H, lineEndX_FAI2H, lineEndY_FAI2H)</l>
+<c></c>
 <l>concat_obj (FindLineRects, findLineRegionFAI2, FindLineRects)</l>
 <l>crossesXUsed := [crossesXUsed, XsUsed]</l>
 <l>crossesYused := [crossesYused, YsUsed]</l>
@@ -101,12 +115,12 @@
 <c></c>
 <c></c>
 <c>**********************************************FAI3************************************</c>
-<l>rectFAI3Row := 2310.61000000</l>
-<l>rectFAI3Col := 3025.99000000</l>
-<l>rectFAI3Radian := rad(88.76800000)</l>
-<l>rectFAI3Len1 := 140.37300000</l>
-<l>rectFAI3Len2 := 503.62100000</l>
-<l>VisionProStyleFindLineOneStep (Image, rectFAI3, 'positive', rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, numSubRects, 120, 'first', ignorePortion, 'false', 1, lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>rectFAI3Row := 2269.30000000</l>
+<l>rectFAI3Col := 3612.45000000</l>
+<l>rectFAI3Radian := rad(90)</l>
+<l>rectFAI3Len1 := 175.88000000</l>
+<l>rectFAI3Len2 := 623.96700000</l>
+<l>VisionProStyleFindLineOneStep (Image, rectFAI3, 'positive', rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, numSubRects, 50, 'first', ignorePortion, 'false', 1, lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rectFAI3, FindLineRects)</l>
 <l>crossesXUsed := [crossesXUsed, XsUsed]</l>
 <l>crossesYused := [crossesYused, YsUsed]</l>
@@ -135,11 +149,11 @@
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <c></c>
 <c>***********************************************FAI4*******************************</c>
-<l>rectFAI4Row := 4275.51000000</l>
-<l>rectFAI4Col := 2960.01000000</l>
-<l>rectFAI4Radian := rad(89)</l>
-<l>rectFAI4Len1 := 126.79500000</l>
-<l>rectFAI4Len2 := 525.15600000</l>
+<l>rectFAI4Row := 4712.30000000</l>
+<l>rectFAI4Col := 3567.21000000</l>
+<l>rectFAI4Radian := rad(90)</l>
+<l>rectFAI4Len1 := 107.89900000</l>
+<l>rectFAI4Len2 := 559.30000000</l>
 <l>VisionProStyleFindLineOneStep (Image, rectFAI4, 'negative', rectFAI4Row, rectFAI4Col, rectFAI4Radian, rectFAI4Len1, rectFAI4Len2, numSubRects, 50, 'first', ignorePortion, 'false', 1, lineX1FAI4, lineY1FAI4, lineX2FAI4, lineY2FAI4, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rectFAI4, FindLineRects)</l>
 <l>crossesXUsed := [crossesXUsed, XsUsed]</l>
@@ -164,11 +178,11 @@
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <c></c>
 <c>*************************************FAI 5***************************************</c>
-<l>rectFAI5Row := 4436.63000000</l>
-<l>rectFAI5Col := 2925.47000000</l>
+<l>rectFAI5Row := 4890.45000000</l>
+<l>rectFAI5Col := 3599.13000000</l>
 <l>rectFAI5Radian := rad(89)</l>
-<l>rectFAI5Len1 := 172.12300000</l>
-<l>rectFAI5Len2 := 788.85200000</l>
+<l>rectFAI5Len1 := 156.70400000</l>
+<l>rectFAI5Len2 := 970.77200000</l>
 <l>VisionProStyleFindLineOneStep (Image, rect, 'positive', rectFAI5Row, rectFAI5Col, rectFAI5Radian, rectFAI5Len1, rectFAI5Len2, numSubRects, 80, 'first', ignorePortion, 'false', 1, lineX1FAI5, lineY1FAI5, lineX2FAI5, lineY2FAI5, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rect, FindLineRects)</l>
 <l>crossesXUsed := [crossesXUsed, XsUsed]</l>
@@ -194,11 +208,11 @@
 <c></c>
 <c></c>
 <c>*************************************FAI 6******************************************</c>
-<l>rectFAI6Row := 2904.49000000</l>
-<l>rectFAI6Col := 1422.92000000</l>
-<l>rectFAI6Radian := rad(89)</l>
-<l>rectFAI6Len1 := 71.98270000</l>
-<l>rectFAI6Len2 := 315.33800000</l>
+<l>rectFAI6Row := 3017.82000000</l>
+<l>rectFAI6Col := 1671.50000000</l>
+<l>rectFAI6Radian := rad(90)</l>
+<l>rectFAI6Len1 := 101.93600000</l>
+<l>rectFAI6Len2 := 370.58900000</l>
 <l>VisionProStyleFindLineOneStep (Image, rect, 'positive', rectFAI6Row, rectFAI6Col, rectFAI6Radian, rectFAI6Len1, rectFAI6Len2, numSubRects, 80, 'first', ignorePortion, 'false', 1, lineX1FAI6, lineY1FAI6, lineX2FAI6, lineY2FAI6, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rect, FindLineRects)</l>
 <l>crossesXUsed := [crossesXUsed, XsUsed]</l>
@@ -228,9 +242,9 @@
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <c></c>
 <c>*************************************FAI9********************************************</c>
-<l>rectFAI9Row := 1736.88000000</l>
-<l>rectFAI9Col := 1486.15000000</l>
-<l>rectFAI9Radian := rad(-91)</l>
+<l>rectFAI9Row := 1584.57000000</l>
+<l>rectFAI9Col := 1744.61000000</l>
+<l>rectFAI9Radian := rad(-90)</l>
 <l>rectFAI9Len1 := 97.95910000</l>
 <l>rectFAI9Len2 := 275.13700000</l>
 <l>VisionProStyleFindLineOneStep (Image, rect, 'positive', rectFAI9Row, rectFAI9Col, rectFAI9Radian, rectFAI9Len1, rectFAI9Len2, numSubRects, 80, 'first', ignorePortion, 'false', 1, lineX1FAI9, lineY1FAI9, lineX2FAI9, lineY2FAI9, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
@@ -262,12 +276,12 @@
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <c></c>
 <c>******************************FAI12**************************</c>
-<l>rectFAI12Row := 3542.15000000</l>
-<l>rectFAI12Col := 1974.14000000</l>
+<l>rectFAI12Row := 3817.80000000</l>
+<l>rectFAI12Col := 2372.51000000</l>
 <l>rectFAI12Radian := rad(0)</l>
 <l>rectFAI12Len1 := 209.09700000</l>
 <l>rectFAI12Len2 := 477.84200000</l>
-<l>VisionProStyleFindLineOneStep (Image, rect, 'positive', rectFAI12Row, rectFAI12Col, rectFAI12Radian, rectFAI12Len1, rectFAI12Len2, numSubRects, 80, 'first', ignorePortion, 'true', 1, lineX1FAI12, lineY1FAI12, lineX2FAI12, lineY2FAI12, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rect, 'positive', rectFAI12Row, rectFAI12Col, rectFAI12Radian, rectFAI12Len1, rectFAI12Len2, numSubRects, 50, 'first', ignorePortion, 'true', 1, lineX1FAI12, lineY1FAI12, lineX2FAI12, lineY2FAI12, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rect, FindLineRects)</l>
 <l>crossesXUsed := [crossesXUsed, XsUsed]</l>
 <l>crossesYused := [crossesYused, YsUsed]</l>
@@ -275,8 +289,8 @@
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
 <c>* translate TOP right</c>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, 23.213, mapToWorld, mapToImage, 'true', FAI12_P1_LineStartX, FAI12_P1_LineStartY, FAI12_P1_LineEndX, FAI12_P1_LineEndY)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, 34.97, mapToWorld, mapToImage, 'true', FAI12_P2_LineStartX, FAI12_P2_LineStartY, FAI12_P2_LineEndX, FAI12_P2_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -23.213, mapToWorld, mapToImage, 'true', FAI12_P1_LineStartX, FAI12_P1_LineStartY, FAI12_P1_LineEndX, FAI12_P1_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -34.97, mapToWorld, mapToImage, 'true', FAI12_P2_LineStartX, FAI12_P2_LineStartY, FAI12_P2_LineEndX, FAI12_P2_LineEndY)</l>
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI12, lineX1FAI12, lineY2FAI12, lineX2FAI12, FAI12_P1_LineStartY, FAI12_P1_LineStartX, FAI12_P1_LineEndY, FAI12_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
@@ -291,9 +305,9 @@
 <c></c>
 <c></c>
 <c>*********************************FAI16*************************</c>
-<l>rectFAI16Row := 2255.14000000</l>
-<l>rectFAI16Col := 862.01000000</l>
-<l>rectFAI16Radian := rad(-2)</l>
+<l>rectFAI16Row := 2276.47000000</l>
+<l>rectFAI16Col := 992.65500000</l>
+<l>rectFAI16Radian := rad(-1)</l>
 <l>rectFAI16Len1 := 175.95600000</l>
 <l>rectFAI16Len2 := 391.84500000</l>
 <l>VisionProStyleFindLineOneStep (Image, rect, 'positive', rectFAI16Row, rectFAI16Col, rectFAI16Radian, rectFAI16Len1, rectFAI16Len2, numSubRects, 80, 'first', ignorePortion, 'true', 1, lineX1FAI16, lineY1FAI16, lineX2FAI16, lineY2FAI16, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
@@ -304,8 +318,8 @@
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
 <c>* translate base top</c>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, 13.071, mapToWorld, mapToImage, 'true', FAI16_P1_LineStartX, FAI16_P1_LineStartY, FAI16_P1_LineEndX, FAI16_P1_LineEndY)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, 20.213, mapToWorld, mapToImage, 'true', FAI16_P2_LineStartX, FAI16_P2_LineStartY, FAI16_P2_LineEndX, FAI16_P2_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -13.071, mapToWorld, mapToImage, 'true', FAI16_P1_LineStartX, FAI16_P1_LineStartY, FAI16_P1_LineEndX, FAI16_P1_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -20.213, mapToWorld, mapToImage, 'true', FAI16_P2_LineStartX, FAI16_P2_LineStartY, FAI16_P2_LineEndX, FAI16_P2_LineEndY)</l>
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI16, lineX1FAI16, lineY2FAI16, lineX2FAI16, FAI16_P1_LineStartY, FAI16_P1_LineStartX, FAI16_P1_LineEndY, FAI16_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
@@ -320,8 +334,8 @@
 <c></c>
 <c></c>
 <c>**************************FAI17*******************************</c>
-<l>rectFAI17Row := 1219.57000000</l>
-<l>rectFAI17Col := 2217.55000000</l>
+<l>rectFAI17Row := 909.27300000</l>
+<l>rectFAI17Col := 2644.21000000</l>
 <l>rectFAI17Radian := rad(-1)</l>
 <l>rectFAI17Len1 := 161.07100000</l>
 <l>rectFAI17Len2 := 356.53500000</l>
@@ -332,9 +346,9 @@
 <l>crossesXIgnored := [crossesXIgnored, XsIgnored]</l>
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
-<c>* translate top right</c>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, 1.53, mapToWorld, mapToImage, 'true', FAI17_P1_LineStartX, FAI17_P1_LineStartY, FAI17_P1_LineEndX, FAI17_P1_LineEndY)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, 9.827, mapToWorld, mapToImage, 'true', FAI17_P2_LineStartX, FAI17_P2_LineStartY, FAI17_P2_LineEndX, FAI17_P2_LineEndY)</l>
+<c>* translate top base</c>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -1.53, mapToWorld, mapToImage, 'true', FAI17_P1_LineStartX, FAI17_P1_LineStartY, FAI17_P1_LineEndX, FAI17_P1_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -9.827, mapToWorld, mapToImage, 'true', FAI17_P2_LineStartX, FAI17_P2_LineStartY, FAI17_P2_LineEndX, FAI17_P2_LineEndY)</l>
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI17, lineX1FAI17, lineY2FAI17, lineX2FAI17, FAI17_P1_LineStartY, FAI17_P1_LineStartX, FAI17_P1_LineEndY, FAI17_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
@@ -349,9 +363,9 @@
 <c></c>
 <c></c>
 <c>********************************FAI19**************************</c>
-<l>rectFAI19Row := 1424.73000000</l>
-<l>rectFAI19Col := 3860.72000000</l>
-<l>rectFAI19Radian := rad(178.12200000)</l>
+<l>rectFAI19Row := 1178.78000000</l>
+<l>rectFAI19Col := 4665.06000000</l>
+<l>rectFAI19Radian := rad(179.12200000)</l>
 <l>rectFAI19Len1 := 172.44100000</l>
 <l>rectFAI19Len2 := 573.70700000</l>
 <l>VisionProStyleFindLineOneStep (Image, rect, 'positive', rectFAI19Row, rectFAI19Col, rectFAI19Radian, rectFAI19Len1, rectFAI19Len2, numSubRects, 80, 'first', 0.3, 'true', 1, lineX1FAI19, lineY1FAI19, lineX2FAI19, lineY2FAI19, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
@@ -362,8 +376,8 @@
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
 <c>* translate top base</c>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, 2.157, mapToWorld, mapToImage, 'true', FAI19_P1_LineStartX, FAI19_P1_LineStartY, FAI19_P1_LineEndX, FAI19_P1_LineEndY)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, 13.791, mapToWorld, mapToImage, 'true', FAI19_P2_LineStartX, FAI19_P2_LineStartY, FAI19_P2_LineEndX, FAI19_P2_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -2.157, mapToWorld, mapToImage, 'true', FAI19_P1_LineStartX, FAI19_P1_LineStartY, FAI19_P1_LineEndX, FAI19_P1_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -13.791, mapToWorld, mapToImage, 'true', FAI19_P2_LineStartX, FAI19_P2_LineStartY, FAI19_P2_LineEndX, FAI19_P2_LineEndY)</l>
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI19, lineX1FAI19, lineY2FAI19, lineX2FAI19, FAI19_P1_LineStartY, FAI19_P1_LineStartX, FAI19_P1_LineEndY, FAI19_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
@@ -381,17 +395,17 @@
 <c></c>
 <c>*****************************FAI20********************************</c>
 <c>* 定圆心</c>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, 7.886, mapToWorld, mapToImage, 'true', FAI20_P2_LineStartX, FAI20_P2_LineStartY, FAI20_P2_LineEndX, FAI20_P2_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -7.886, mapToWorld, mapToImage, 'true', FAI20_P2_LineStartX, FAI20_P2_LineStartY, FAI20_P2_LineEndX, FAI20_P2_LineEndY)</l>
 <l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 9.299, mapToWorld, mapToImage, 'true', FAI20V_P1_LineStartX, FAI20V_P1_LineStartY, FAI20V_P1_LineEndX, FAI20V_P1_LineEndY)</l>
 <l>intersection_lines (FAI20_P2_LineStartY, FAI20_P2_LineStartX, FAI20_P2_LineEndY, FAI20_P2_LineEndX, FAI20V_P1_LineStartY, FAI20V_P1_LineStartX, FAI20V_P1_LineEndY, FAI20V_P1_LineEndX, rowCenterTop, colCenterTop, IsOverlapping2)</l>
 <l>intersectXs := [intersectXs, colCenterTop]</l>
 <l>intersectYs := [intersectYs, rowCenterTop]</l>
 <c></c>
-<l>rectFAI20TRRow := 709.46300000</l>
-<l>rectFAI20TRCol := 3762.13000000</l>
-<l>rectFAI20TRRadian := rad(-141.23400000)</l>
+<l>rectFAI20TRRow := 268.18300000</l>
+<l>rectFAI20TRCol := 4567.96000000</l>
+<l>rectFAI20TRRadian := rad(-136.26700000)</l>
 <l>rectFAI20TRLen1 := 84.64630000</l>
-<l>rectFAI20TRLen2 := 41.16280000</l>
+<l>rectFAI20TRLen2 := 45.46210000</l>
 <l>VisionProStyleFindLineOneStep (Image, rect, 'negative', rectFAI20TRRow, rectFAI20TRCol, rectFAI20TRRadian, rectFAI20TRLen1, rectFAI20TRLen2, 2, 50, 'first', 0, 'false', 1, lineX1FAI20TR, lineY1FAI20TR, lineX2FAI20TR, lineY2FAI20TR, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rect, FindLineRects)</l>
 <l>crossesXUsed := [crossesXUsed, XsUsed]</l>
@@ -399,11 +413,11 @@
 <l>crossesXIgnored := [crossesXIgnored, XsIgnored]</l>
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
-<l>rectFAI20LFRow := 2142.51000000</l>
-<l>rectFAI20LFCol := 2290.66000000</l>
-<l>rectFAI20LFRadian := rad(38.84170000)</l>
-<l>rectFAI20LFLen1 := 69.44570000</l>
-<l>rectFAI20LFLen2 := 47.95030000</l>
+<l>rectFAI20LFRow := 2098.83000000</l>
+<l>rectFAI20LFCol := 2763.07000000</l>
+<l>rectFAI20LFRadian := rad(42.96080000)</l>
+<l>rectFAI20LFLen1 := 80.07090000</l>
+<l>rectFAI20LFLen2 := 40.95030000</l>
 <l>VisionProStyleFindLineOneStep (Image, rect, 'negative', rectFAI20LFRow, rectFAI20LFCol, rectFAI20LFRadian, rectFAI20LFLen1, rectFAI20LFLen2, 2, 50, 'first', 0, 'false', 1, lineX1FAI20LF, lineY1FAI20LF, lineX2FAI20LF, lineY2FAI20LF, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rect, FindLineRects)</l>
 <l>crossesXUsed := [crossesXUsed, XsUsed]</l>
