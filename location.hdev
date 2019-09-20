@@ -434,10 +434,6 @@
 <l>gen_cross_contour_xld (Cross4, intersectYs, intersectXs, 200, 0)</l>
 <l>dev_set_color ('yellow')</l>
 <l>dev_display (FindLineRects)</l>
-<c></c>
-<c></c>
-<c></c>
-<c></c>
 </body>
 <docu id="main">
 <parameters/>
@@ -1602,6 +1598,58 @@
 <default_value>'first'</default_value>
 <sem_type>string</sem_type>
 </parameter>
+</parameters>
+</docu>
+</procedure>
+<procedure name="AffineTransRect2">
+<interface>
+<ic>
+<par name="row" base_type="ctrl" dimension="0"/>
+<par name="col" base_type="ctrl" dimension="0"/>
+<par name="radian" base_type="ctrl" dimension="0"/>
+<par name="len1" base_type="ctrl" dimension="0"/>
+<par name="len2" base_type="ctrl" dimension="0"/>
+<par name="map" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="rowOut" base_type="ctrl" dimension="0"/>
+<par name="colOut" base_type="ctrl" dimension="0"/>
+<par name="radianOut" base_type="ctrl" dimension="0"/>
+<par name="len1Out" base_type="ctrl" dimension="0"/>
+<par name="len2Out" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>affine_trans_point_2d (map, col, row, colOut, rowOut)</l>
+<l>len1Out := len1</l>
+<l>len2Out := len2</l>
+<c></c>
+<l>topCenterCol := col + cos(radian)</l>
+<l>topCenterRow := row - sin(radian)</l>
+<c></c>
+<l>affine_trans_point_2d (map, topCenterCol, topCenterRow, topCenterColTrans, topCenterRowTrans)</l>
+<c></c>
+<l>vecCol := topCenterColTrans - topCenterCol</l>
+<l>vecRow := topCenterRowTrans - topCenterRow</l>
+<c></c>
+<l>radianOut := -atan(vecRow / vecCol)</l>
+<c></c>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="AffineTransRect2">
+<parameters>
+<parameter id="col"/>
+<parameter id="colOut"/>
+<parameter id="len1"/>
+<parameter id="len1Out"/>
+<parameter id="len2"/>
+<parameter id="len2Out"/>
+<parameter id="map"/>
+<parameter id="radian"/>
+<parameter id="radianOut"/>
+<parameter id="row"/>
+<parameter id="rowOut"/>
 </parameters>
 </docu>
 </procedure>
