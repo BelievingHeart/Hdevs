@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="18.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<l>read_pose ('E:/Projects/校正标定/919/CamPose.dat', Pose)</l>
+<l>read_cam_par ('E:/Projects/校正标定/919/CamParams.cal', CameraParam)</l>
+<c></c>
+<l>read_image (Image, 'E:/Projects/校正标定/919/Image_20190920191500730.bmp')</l>
+<c></c>
+<l>get_image_size (Image, Width, Height)</l>
+<c></c>
+<l>XsPixel := []</l>
+<l>YsPixel := []</l>
+<c></c>
+<l>for i := -1 to 1 by 1</l>
+<l>    for j:= -1 to 1 by 1</l>
+<l>        XsPixel := [XsPixel, Width/2 +i *100]</l>
+<l>        YsPixel := [YsPixel, Height/2 + i*100]</l>
+<l>    endfor</l>
+<l>endfor</l>
+<c></c>
+<l>image_points_to_world_plane (CameraParam, Pose, YsPixel, XsPixel, 'mm', XsWorld, YsWorld)</l>
+<c></c>
+<l>vector_to_hom_mat2d (XsPixel, YsPixel, XsWorld, YsWorld, MapToWorld)</l>
+<l>vector_to_hom_mat2d (XsWorld, YsWorld, XsPixel, YsPixel, MapToImage)</l>
+<c></c>
+<c></c>
+<l>gen_rectangle2 (ROI_0, 2541.35, 800.024, rad(-1.70283), 287.167, 1812.22)</l>
+<l>reduce_domain (Image, ROI_0, ImageReduced)</l>
+<c></c>
+<l>threshold_sub_pix (ImageReduced, Border, 20)</l>
+<c></c>
+<l>area_center_xld (Border, Area, Row, Column, PointOrder)</l>
+<c></c>
+<l>FitLine2D (Column, Row, 0.2, lineX1, lineY1, lineX2, lineY2)</l>
+<c></c>
+<l>OffsetLineInWorldAndConvertBack (lineX1, lineY1, lineX2, lineY2, 22.5, 'true', MapToWorld, MapToImage, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<c></c>
+<c></c>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+<procedure name="FitLine2D">
+<interface>
+<ic>
+<par name="Xs" base_type="ctrl" dimension="0"/>
+<par name="Ys" base_type="ctrl" dimension="0"/>
+<par name="ignorePortion" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="lineX1" base_type="ctrl" dimension="0"/>
+<par name="lineY1" base_type="ctrl" dimension="0"/>
+<par name="lineX2" base_type="ctrl" dimension="0"/>
+<par name="lineY2" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>fit_line2D_rough (Xs, Ys, lineX1, lineY1, lineX2, lineY2)</l>
+<c></c>
+<l>totalPoints := |Xs|</l>
+<c>* number of points to ignore</c>
+<l>numPointsLeft := (1.0-ignorePortion) * |Xs|</l>
+<c></c>
+<c>* calculate fitness of each point</c>
+<l>fiterrors := []</l>
+<l>for i := 0 to |Xs|-1 by 1</l>
+<l>    distance_pl (Ys[i], Xs[i], lineY1, lineX1, lineY2, lineX2, Distance)</l>
+<l>    fiterrors := [fiterrors, Distance]</l>
+<l>endfor</l>
+<c></c>
+<l>tuple_sort_index (fiterrors, Indices)</l>
+<c></c>
+<c>* select the best fits</c>
+<l>XsUsed := []</l>
+<l>YsUsed := []</l>
+<l>XsIgnored := []</l>
+<l>YsIgnored := []</l>
+<l>ErrorBest := []</l>
+<l>for i := 0 to totalPoints-1 by 1</l>
+<l>    index := Indices[i]</l>
+<l>   if(i &lt; numPointsLeft)</l>
+<l>           XsUsed := [XsUsed, Xs[index]]</l>
+<l>    YsUsed := [YsUsed, Ys[index]]</l>
+<l>    ErrorBest := [ErrorBest, fiterrors[index]]</l>
+<l>   else</l>
+<l>       XsIgnored := [XsIgnored, Xs[index]]</l>
+<l>       YsIgnored := [YsIgnored, Ys[index]]</l>
+<l>   endif</l>
+<l>endfor</l>
+<c></c>
+<c>* fit line again</c>
+<l>fit_line2D_rough (XsUsed, YsUsed, lineX1, lineY1, lineX2, lineY2)</l>
+<c></c>
+<c></c>
+<l>return ()</l>
+<c></c>
+</body>
+<docu id="FitLine2D">
+<parameters>
+<parameter id="Xs"/>
+<parameter id="Ys"/>
+<parameter id="ignorePortion"/>
+<parameter id="lineX1"/>
+<parameter id="lineX2"/>
+<parameter id="lineY1"/>
+<parameter id="lineY2"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="fit_line2D_rough">
+<interface>
+<ic>
+<par name="Xs" base_type="ctrl" dimension="0"/>
+<par name="Ys" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="lineX1" base_type="ctrl" dimension="0"/>
+<par name="lineY1" base_type="ctrl" dimension="0"/>
+<par name="lineX2" base_type="ctrl" dimension="0"/>
+<par name="lineY2" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>tuple_sum (Xs, SumX)</l>
+<l>AverageX := SumX / |Xs|</l>
+<c></c>
+<l>tuple_sum (Ys, SumY)</l>
+<l>AverageY := SumY / |Ys|</l>
+<c></c>
+<l>SumUpper := 0</l>
+<l>SumLower := 0</l>
+<l>for i := 0 to |Xs|-1 by 1</l>
+<l>    incrementUpper := (Xs[i]-AverageX) * (Ys[i]-AverageY)</l>
+<l>    incrementLower := (AverageX-Xs[i]) * (AverageX-Xs[i])</l>
+<l>    SumUpper := SumUpper + incrementUpper</l>
+<l>    SumLower := SumLower + incrementLower</l>
+<l>endfor</l>
+<c></c>
+<l>m := SumUpper / SumLower</l>
+<l>b := AverageY - m*AverageX</l>
+<c></c>
+<c></c>
+<c></c>
+<c>* sample two point</c>
+<l>tuple_max (Xs, lineX1)</l>
+<l>tuple_min (Xs, lineX2)</l>
+<c></c>
+<l>lineY1 := m * lineX1 + b</l>
+<l>lineY2 := m * lineX2 + b</l>
+<l>return ()</l>
+</body>
+<docu id="fit_line2D_rough">
+<parameters>
+<parameter id="Xs"/>
+<parameter id="Ys"/>
+<parameter id="lineX1"/>
+<parameter id="lineX2"/>
+<parameter id="lineY1"/>
+<parameter id="lineY2"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="OffsetLineInWorldAndConvertBack">
+<interface>
+<ic>
+<par name="lineStartX" base_type="ctrl" dimension="0"/>
+<par name="lineStartY" base_type="ctrl" dimension="0"/>
+<par name="lineEndX" base_type="ctrl" dimension="0"/>
+<par name="lineEndY" base_type="ctrl" dimension="0"/>
+<par name="distance" base_type="ctrl" dimension="0"/>
+<par name="isVertical" base_type="ctrl" dimension="0"/>
+<par name="mapToWorld" base_type="ctrl" dimension="0"/>
+<par name="mapToImage" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="outLineStartX" base_type="ctrl" dimension="0"/>
+<par name="outLineStartY" base_type="ctrl" dimension="0"/>
+<par name="outLineEndX" base_type="ctrl" dimension="0"/>
+<par name="outLineEndY" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>affine_trans_point_2d (mapToWorld, lineStartX, lineStartY, lineStartX, lineStartY)</l>
+<l>affine_trans_point_2d (mapToWorld, lineEndX, lineEndY, lineEndX, lineEndY)</l>
+<c></c>
+<c></c>
+<c>* translate world line</c>
+<l>MakeParallelLine (lineStartX, lineStartY, lineEndX, lineEndY, distance, isVertical, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<c></c>
+<l>affine_trans_point_2d (mapToImage, outLineStartX, outLineStartY, outLineStartX, outLineStartY)</l>
+<l>affine_trans_point_2d (mapToImage, outLineEndX, outLineEndY, outLineEndX, outLineEndY)</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="OffsetLineInWorldAndConvertBack">
+<parameters>
+<parameter id="distance"/>
+<parameter id="isVertical"/>
+<parameter id="lineEndX"/>
+<parameter id="lineEndY"/>
+<parameter id="lineStartX"/>
+<parameter id="lineStartY"/>
+<parameter id="mapToImage"/>
+<parameter id="mapToWorld"/>
+<parameter id="outLineEndX"/>
+<parameter id="outLineEndY"/>
+<parameter id="outLineStartX"/>
+<parameter id="outLineStartY"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="MakeParallelLine">
+<interface>
+<ic>
+<par name="lineStartX" base_type="ctrl" dimension="0"/>
+<par name="lineStartY" base_type="ctrl" dimension="0"/>
+<par name="lineEndX" base_type="ctrl" dimension="0"/>
+<par name="lineEndY" base_type="ctrl" dimension="0"/>
+<par name="offset" base_type="ctrl" dimension="0"/>
+<par name="isVertical" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="outLineStartX" base_type="ctrl" dimension="0"/>
+<par name="outLineStartY" base_type="ctrl" dimension="0"/>
+<par name="outLineEndX" base_type="ctrl" dimension="0"/>
+<par name="outLineEndY" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>if (isVertical == 'true')</l>
+<l>    TranslateLineNotVertical (lineStartY, lineStartX, lineEndY, lineEndX, offset, outLineStartY, outLineStartX, outLineEndY, outLineEndX)</l>
+<l>else</l>
+<l>    TranslateLineNotVertical (lineStartX, lineStartY, lineEndX, lineEndY, offset, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<l>endif</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="MakeParallelLine">
+<parameters>
+<parameter id="isVertical">
+<description lang="zh_CN">Whether the line is near or actually vertical</description>
+<sem_type>string</sem_type>
+</parameter>
+<parameter id="lineEndX"/>
+<parameter id="lineEndY"/>
+<parameter id="lineStartX"/>
+<parameter id="lineStartY"/>
+<parameter id="offset">
+<description lang="zh_CN">Positive direction points outward from (0,0)</description>
+<sem_type>real</sem_type>
+</parameter>
+<parameter id="outLineEndX"/>
+<parameter id="outLineEndY"/>
+<parameter id="outLineStartX"/>
+<parameter id="outLineStartY"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="TranslateLineNotVertical">
+<interface>
+<ic>
+<par name="lineStartX" base_type="ctrl" dimension="0"/>
+<par name="lineStartY" base_type="ctrl" dimension="0"/>
+<par name="lineEndX" base_type="ctrl" dimension="0"/>
+<par name="lineEndY" base_type="ctrl" dimension="0"/>
+<par name="offset" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="outLineStartX" base_type="ctrl" dimension="0"/>
+<par name="outLineStartY" base_type="ctrl" dimension="0"/>
+<par name="outLineEndX" base_type="ctrl" dimension="0"/>
+<par name="outLineEndY" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>xDiff := lineEndX - lineStartX</l>
+<l>yDiff := lineEndY - lineStartY</l>
+<c></c>
+<l>m := yDiff / xDiff</l>
+<l>b := lineStartY - yDiff / xDiff * lineStartX</l>
+<c></c>
+<l>alpha := atan(m)</l>
+<c></c>
+<l>bIncre := offset / cos(alpha)</l>
+<c></c>
+<l>newB := b + bIncre</l>
+<c></c>
+<c></c>
+<c>* sample output points</c>
+<l>outLineStartX := lineStartX</l>
+<l>outLineStartY := m * outLineStartX + newB</l>
+<l>outLineEndX := lineEndX</l>
+<l>outLineEndY := m * outLineEndX + newB</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="TranslateLineNotVertical">
+<parameters>
+<parameter id="lineEndX"/>
+<parameter id="lineEndY"/>
+<parameter id="lineStartX"/>
+<parameter id="lineStartY"/>
+<parameter id="offset"/>
+<parameter id="outLineEndX"/>
+<parameter id="outLineEndY"/>
+<parameter id="outLineStartX"/>
+<parameter id="outLineStartY"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="GenLineRegion">
+<interface>
+<oo>
+<par name="lineRegion" base_type="iconic" dimension="0"/>
+</oo>
+<ic>
+<par name="lineXStart" base_type="ctrl" dimension="0"/>
+<par name="lineYStart" base_type="ctrl" dimension="0"/>
+<par name="lineXEnd" base_type="ctrl" dimension="0"/>
+<par name="lineYEnd" base_type="ctrl" dimension="0"/>
+<par name="imageWidth" base_type="ctrl" dimension="0"/>
+<par name="imageHeight" base_type="ctrl" dimension="0"/>
+</ic>
+</interface>
+<body>
+<l>xDiff := lineXEnd - lineXStart</l>
+<l>yDiff := lineYEnd - lineYStart</l>
+<c></c>
+<l>epslon := 0.0000000001</l>
+<l>if(abs(xDiff) &lt; epslon)</l>
+<l>    xDiff := epslon</l>
+<l>endif</l>
+<c></c>
+<l>m := yDiff/xDiff</l>
+<l>b := lineYStart - m* lineXStart</l>
+<c></c>
+<l>xStart := 0</l>
+<l>xEnd := imageWidth</l>
+<c></c>
+<l>yStart := m* xStart +b</l>
+<l>if(yStart&gt; imageHeight or yStart &lt; 0)</l>
+<l>    yStart := 0</l>
+<l>    xStart := (yStart - b)/m</l>
+<l>endif</l>
+<c></c>
+<l>yEnd := m* xEnd +b</l>
+<l>if(yEnd&gt; imageHeight or yEnd &lt; 0)</l>
+<l>    yEnd := imageHeight</l>
+<l>    xEnd := (yEnd - b)/m</l>
+<l>endif</l>
+<c></c>
+<l>gen_region_line (lineRegion, yStart, xStart, yEnd, xEnd)</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="GenLineRegion">
+<parameters>
+<parameter id="imageHeight"/>
+<parameter id="imageWidth"/>
+<parameter id="lineRegion"/>
+<parameter id="lineXEnd"/>
+<parameter id="lineXStart"/>
+<parameter id="lineYEnd"/>
+<parameter id="lineYStart"/>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>
