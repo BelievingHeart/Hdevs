@@ -270,7 +270,7 @@
 <l>rectFAI9Len1 := 97.95910000</l>
 <l>rectFAI9Len2 := 275.13700000</l>
 <l>AffineTransRect2 (rectFAI9Row, rectFAI9Col, rectFAI9Radian, rectFAI9Len1, rectFAI9Len2, MovementImageToImage, rectFAI9Row, rectFAI9Col, rectFAI9Radian, rectFAI9Len1, rectFAI9Len2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion7, 'positive', rectFAI9Row, rectFAI9Col, rectFAI9Radian, rectFAI9Len1, rectFAI9Len2, numSubRects, 80, 'first', ignorePortion, 'false', 1, Width, Height, lineX1FAI9, lineY1FAI9, lineX2FAI9, lineY2FAI9, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'positive', rectFAI9Row, rectFAI9Col, rectFAI9Radian, rectFAI9Len1, rectFAI9Len2, numSubRects, 80, 'first', ignorePortion, 'false', 1, Width, Height, lineX1FAI9, lineY1FAI9, lineX2FAI9, lineY2FAI9, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rect, FindLineRects)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <c></c>
@@ -440,7 +440,7 @@
 <c></c>
 <l>rectFAI20TRRow := 268.18300000 -rowModel</l>
 <l>rectFAI20TRCol := 4567.96000000 - colModel</l>
-<l>rectFAI20TRRadian := rad(-136.26700000)</l>
+<l>rectFAI20TRRadian := rad(-122.84800000)</l>
 <l>rectFAI20TRLen1 := 84.64630000</l>
 <l>rectFAI20TRLen2 := 45.46210000</l>
 <l>AffineTransRect2 (rectFAI20TRRow, rectFAI20TRCol, rectFAI20TRRadian, rectFAI20TRLen1, rectFAI20TRLen2, MovementImageToImage, rectFAI20TRRow, rectFAI20TRCol, rectFAI20TRRadian, rectFAI20TRLen1, rectFAI20TRLen2)</l>
@@ -455,7 +455,7 @@
 <c></c>
 <l>rectFAI20LFRow := 2098.83000000 - rowModel</l>
 <l>rectFAI20LFCol := 2763.07000000 - colModel</l>
-<l>rectFAI20LFRadian := rad(42.96080000)</l>
+<l>rectFAI20LFRadian := rad(58.47500000)</l>
 <l>rectFAI20LFLen1 := 80.07090000</l>
 <l>rectFAI20LFLen2 := 40.95030000</l>
 <l>AffineTransRect2 (rectFAI20LFRow, rectFAI20LFCol, rectFAI20LFRadian, rectFAI20LFLen1, rectFAI20LFLen2, MovementImageToImage, rectFAI20LFRow, rectFAI20LFCol, rectFAI20LFRadian, rectFAI20LFLen1, rectFAI20LFLen2)</l>
@@ -480,7 +480,7 @@
 <c></c>
 <c></c>
 <c></c>
-<c></c>
+<l>dev_display (Image)</l>
 <c></c>
 <l>dev_set_color ('red')</l>
 <l>gen_cross_contour_xld (Cross4, crossesYIgnored, crossesXIgnored, crossSize, 0.785398)</l>
@@ -490,6 +490,8 @@
 <l>dev_set_line_width (2)</l>
 <l>gen_cross_contour_xld (Cross4, intersectYs, intersectXs, 200, 0)</l>
 <l>dev_set_color ('yellow')</l>
+<l>dev_display (lineRegions)</l>
+<l>dev_set_color ('magenta')</l>
 <l>dev_display (FindLineRects)</l>
 </body>
 <docu id="main">
