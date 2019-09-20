@@ -29,45 +29,45 @@
 <l>xCoeff := 0.0072</l>
 <l>yCoeff := 0.0072</l>
 <c></c>
-<l>FAI2_LEN_P1 := -4.583 * xCoeff</l>
-<l>FAI2_LEN_P2 := -9.583 * xCoeff</l>
-<l>FAI2_LEN_P3 := -14.583 * xCoeff</l>
+<l>FAI2_LEN_P1 := -4.583 / xCoeff</l>
+<l>FAI2_LEN_P2 := -9.583 / xCoeff</l>
+<l>FAI2_LEN_P3 := -14.583 / xCoeff</l>
 <c></c>
-<l>FAI3_LEN_P1 := -5.299 * xCoeff</l>
-<l>FAI3_LEN_P2 := -9.299 * xCoeff</l>
-<l>FAI3_LEN_P3 := -13.299 * xCoeff</l>
+<l>FAI3_LEN_P1 := -5.299 / xCoeff</l>
+<l>FAI3_LEN_P2 := -9.299 / xCoeff</l>
+<l>FAI3_LEN_P3 := -13.299 / xCoeff</l>
 <c></c>
-<l>FAI4_LEN_P1 := -5.299 * xCoeff</l>
-<l>FAI4_LEN_P2 := -9.299 * xCoeff</l>
-<l>FAI4_LEN_P3 := -13.299 * xCoeff</l>
+<l>FAI4_LEN_P1 := -5.299 / xCoeff</l>
+<l>FAI4_LEN_P2 := -9.299 / xCoeff</l>
+<l>FAI4_LEN_P3 := -13.299 / xCoeff</l>
 <c></c>
-<l>FAI5_LEN_P1 := -5.299 * xCoeff</l>
-<l>FAI5_LEN_P2 := -9.299 * xCoeff</l>
-<l>FAI5_LEN_P3 := -13.299 * xCoeff</l>
+<l>FAI5_LEN_P1 := -5.299 / xCoeff</l>
+<l>FAI5_LEN_P2 := -9.299 / xCoeff</l>
+<l>FAI5_LEN_P3 := -13.299 / xCoeff</l>
 <c></c>
-<l>FAI6_LEN_P1 := -22.024 * xCoeff</l>
-<l>FAI6_LEN_P2 := -24.024 * xCoeff</l>
-<l>FAI6_LEN_P3 := -26.024 * xCoeff</l>
+<l>FAI6_LEN_P1 := -22.024 / xCoeff</l>
+<l>FAI6_LEN_P2 := -24.024 / xCoeff</l>
+<l>FAI6_LEN_P3 := -26.024 / xCoeff</l>
 <c></c>
-<l>FAI9_LEN_P1 := -21.753 * xCoeff</l>
-<l>FAI9_LEN_P2 := -23.753 * xCoeff</l>
-<l>FAI9_LEN_P3 := -25.753 * xCoeff</l>
+<l>FAI9_LEN_P1 := -21.753 / xCoeff</l>
+<l>FAI9_LEN_P2 := -23.753 / xCoeff</l>
+<l>FAI9_LEN_P3 := -25.753 / xCoeff</l>
 <c></c>
 <c></c>
-<l>FAI12_LEN_P1 := 23.213 * yCoeff</l>
-<l>FAI12_LEN_P2 := 34.97 * yCoeff</l>
+<l>FAI12_LEN_P1 := -23.213 / yCoeff</l>
+<l>FAI12_LEN_P2 := -34.97 / yCoeff</l>
 <c></c>
-<l>FAI16_LEN_P1 := 13.071 * yCoeff</l>
-<l>FAI16_LEN_P2 := 20.213 * yCoeff</l>
+<l>FAI16_LEN_P1 := -13.071 / yCoeff</l>
+<l>FAI16_LEN_P2 := -20.213 / yCoeff</l>
 <c></c>
-<l>FAI17_LEN_P1 := 1.53 * yCoeff</l>
-<l>FAI17_LEN_P2 := 9.827 * yCoeff</l>
+<l>FAI17_LEN_P1 := -1.53 / yCoeff</l>
+<l>FAI17_LEN_P2 := -9.827 / yCoeff</l>
 <c></c>
-<l>FAI19_LEN_P1 := 2.157 * yCoeff</l>
-<l>FAI19_LEN_P2 := 13.791 * yCoeff</l>
+<l>FAI19_LEN_P1 := -2.157 / yCoeff</l>
+<l>FAI19_LEN_P2 := -13.791 / yCoeff</l>
 <c></c>
-<l>FAI20_LEN_X := -9.299 * xCoeff</l>
-<l>FAI20_LEN_Y := 7.886 * yCoeff</l>
+<l>FAI20_LEN_X := -9.299 / xCoeff</l>
+<l>FAI20_LEN_Y := -7.886 / yCoeff</l>
 <c></c>
 <c>* find model</c>
 <l>modelPath := 'E:/Projects/3d/Hdevs/Image_20190918091134087'</l>
@@ -133,9 +133,9 @@
 <c></c>
 <c>****************************************************FAI2***********************************</c>
 <c>* make vertical grids</c>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 4.583, mapToWorld, mapToImage, 'true', FAI2_P1_LineStartX, FAI2_P1_LineStartY, FAI2_P1_LineEndX, FAI2_P1_LineEndY)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 9.583, mapToWorld, mapToImage, 'true', FAI2_P2_LineStartX, FAI2_P2_LineStartY, FAI2_P2_LineEndX, FAI2_P2_LineEndY)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 14.583, mapToWorld, mapToImage, 'true', FAI2_P3_LineStartX, FAI2_P3_LineStartY, FAI2_P3_LineEndX, FAI2_P3_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, FAI2_LEN_P1, mapToWorld, mapToImage, 'true', FAI2_P1_LineStartX, FAI2_P1_LineStartY, FAI2_P1_LineEndX, FAI2_P1_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, FAI2_LEN_P2, mapToWorld, mapToImage, 'true', FAI2_P2_LineStartX, FAI2_P2_LineStartY, FAI2_P2_LineEndX, FAI2_P2_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, FAI2_LEN_P3, mapToWorld, mapToImage, 'true', FAI2_P3_LineStartX, FAI2_P3_LineStartY, FAI2_P3_LineEndX, FAI2_P3_LineEndY)</l>
 <c></c>
 <c>* make H line for FAI2</c>
 <l>rectFAI2Row :=2173.39000000 - rowModel</l>
@@ -188,9 +188,9 @@
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
 <c>* translate base right</c>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 5.299, mapToWorld, mapToImage, 'true', FAI3_P1_LineStartX, FAI3_P1_LineStartY, FAI3_P1_LineEndX, FAI3_P1_LineEndY)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 9.299, mapToWorld, mapToImage, 'true', FAI3_P2_LineStartX, FAI3_P2_LineStartY, FAI3_P2_LineEndX, FAI3_P2_LineEndY)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 13.299, mapToWorld, mapToImage, 'true', FAI3_P3_LineStartX, FAI3_P3_LineStartY, FAI3_P3_LineEndX, FAI3_P3_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, FAI3_LEN_P1, mapToWorld, mapToImage, 'true', FAI3_P1_LineStartX, FAI3_P1_LineStartY, FAI3_P1_LineEndX, FAI3_P1_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, FAI3_LEN_P2, mapToWorld, mapToImage, 'true', FAI3_P2_LineStartX, FAI3_P2_LineStartY, FAI3_P2_LineEndX, FAI3_P2_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, FAI3_LEN_P3, mapToWorld, mapToImage, 'true', FAI3_P3_LineStartX, FAI3_P3_LineStartY, FAI3_P3_LineEndX, FAI3_P3_LineEndY)</l>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI3, lineX1FAI3, lineY2FAI3, lineX2FAI3, FAI3_P1_LineStartY, FAI3_P1_LineStartX, FAI3_P1_LineEndY, FAI3_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
 <l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI3_P1)</l>
@@ -290,9 +290,9 @@
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
 <c>* translate base right</c>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 22.024, mapToWorld, mapToImage, 'true', FAI6_P1_LineStartX, FAI6_P1_LineStartY, FAI6_P1_LineEndX, FAI6_P1_LineEndY)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 24.024, mapToWorld, mapToImage, 'true', FAI6_P2_LineStartX, FAI6_P2_LineStartY, FAI6_P2_LineEndX, FAI6_P2_LineEndY)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 26.024, mapToWorld, mapToImage, 'true', FAI6_P3_LineStartX, FAI6_P3_LineStartY, FAI6_P3_LineEndX, FAI6_P3_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, FAI6_LEN_P1, mapToWorld, mapToImage, 'true', FAI6_P1_LineStartX, FAI6_P1_LineStartY, FAI6_P1_LineEndX, FAI6_P1_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, FAI6_LEN_P2, mapToWorld, mapToImage, 'true', FAI6_P2_LineStartX, FAI6_P2_LineStartY, FAI6_P2_LineEndX, FAI6_P2_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, FAI6_LEN_P3, mapToWorld, mapToImage, 'true', FAI6_P3_LineStartX, FAI6_P3_LineStartY, FAI6_P3_LineEndX, FAI6_P3_LineEndY)</l>
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI6, lineX1FAI6, lineY2FAI6, lineX2FAI6, FAI6_P1_LineStartY, FAI6_P1_LineStartX, FAI6_P1_LineEndY, FAI6_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
@@ -327,9 +327,9 @@
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
 <c>* translate base right</c>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 21.753, mapToWorld, mapToImage, 'true', FAI9_P1_LineStartX, FAI9_P1_LineStartY, FAI9_P1_LineEndX, FAI9_P1_LineEndY)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 23.753, mapToWorld, mapToImage, 'true', FAI9_P2_LineStartX, FAI9_P2_LineStartY, FAI9_P2_LineEndX, FAI9_P2_LineEndY)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 25.753, mapToWorld, mapToImage, 'true', FAI9_P3_LineStartX, FAI9_P3_LineStartY, FAI9_P3_LineEndX, FAI9_P3_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, FAI9_LEN_P1, mapToWorld, mapToImage, 'true', FAI9_P1_LineStartX, FAI9_P1_LineStartY, FAI9_P1_LineEndX, FAI9_P1_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, FAI9_LEN_P2, mapToWorld, mapToImage, 'true', FAI9_P2_LineStartX, FAI9_P2_LineStartY, FAI9_P2_LineEndX, FAI9_P2_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, FAI9_LEN_P3, mapToWorld, mapToImage, 'true', FAI9_P3_LineStartX, FAI9_P3_LineStartY, FAI9_P3_LineEndX, FAI9_P3_LineEndY)</l>
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI9, lineX1FAI9, lineY2FAI9, lineX2FAI9, FAI9_P1_LineStartY, FAI9_P1_LineStartX, FAI9_P1_LineEndY, FAI9_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
@@ -364,8 +364,8 @@
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
 <c>* translate TOP right</c>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -23.213, mapToWorld, mapToImage, 'true', FAI12_P1_LineStartX, FAI12_P1_LineStartY, FAI12_P1_LineEndX, FAI12_P1_LineEndY)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -34.97, mapToWorld, mapToImage, 'true', FAI12_P2_LineStartX, FAI12_P2_LineStartY, FAI12_P2_LineEndX, FAI12_P2_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI12_LEN_P1, mapToWorld, mapToImage, 'true', FAI12_P1_LineStartX, FAI12_P1_LineStartY, FAI12_P1_LineEndX, FAI12_P1_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI12_LEN_P2, mapToWorld, mapToImage, 'true', FAI12_P2_LineStartX, FAI12_P2_LineStartY, FAI12_P2_LineEndX, FAI12_P2_LineEndY)</l>
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI12, lineX1FAI12, lineY2FAI12, lineX2FAI12, FAI12_P1_LineStartY, FAI12_P1_LineStartX, FAI12_P1_LineEndY, FAI12_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
@@ -396,8 +396,8 @@
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
 <c>* translate base top</c>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -13.071, mapToWorld, mapToImage, 'true', FAI16_P1_LineStartX, FAI16_P1_LineStartY, FAI16_P1_LineEndX, FAI16_P1_LineEndY)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -20.213, mapToWorld, mapToImage, 'true', FAI16_P2_LineStartX, FAI16_P2_LineStartY, FAI16_P2_LineEndX, FAI16_P2_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI16_LEN_P1, mapToWorld, mapToImage, 'true', FAI16_P1_LineStartX, FAI16_P1_LineStartY, FAI16_P1_LineEndX, FAI16_P1_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI16_LEN_P2, mapToWorld, mapToImage, 'true', FAI16_P2_LineStartX, FAI16_P2_LineStartY, FAI16_P2_LineEndX, FAI16_P2_LineEndY)</l>
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI16, lineX1FAI16, lineY2FAI16, lineX2FAI16, FAI16_P1_LineStartY, FAI16_P1_LineStartX, FAI16_P1_LineEndY, FAI16_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
@@ -428,8 +428,8 @@
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
 <c>* translate top base</c>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -1.53, mapToWorld, mapToImage, 'true', FAI17_P1_LineStartX, FAI17_P1_LineStartY, FAI17_P1_LineEndX, FAI17_P1_LineEndY)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -9.827, mapToWorld, mapToImage, 'true', FAI17_P2_LineStartX, FAI17_P2_LineStartY, FAI17_P2_LineEndX, FAI17_P2_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI17_LEN_P1, mapToWorld, mapToImage, 'true', FAI17_P1_LineStartX, FAI17_P1_LineStartY, FAI17_P1_LineEndX, FAI17_P1_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI17_LEN_P2, mapToWorld, mapToImage, 'true', FAI17_P2_LineStartX, FAI17_P2_LineStartY, FAI17_P2_LineEndX, FAI17_P2_LineEndY)</l>
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI17, lineX1FAI17, lineY2FAI17, lineX2FAI17, FAI17_P1_LineStartY, FAI17_P1_LineStartX, FAI17_P1_LineEndY, FAI17_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
@@ -460,8 +460,8 @@
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
 <c>* translate top base</c>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -2.157, mapToWorld, mapToImage, 'true', FAI19_P1_LineStartX, FAI19_P1_LineStartY, FAI19_P1_LineEndX, FAI19_P1_LineEndY)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -13.791, mapToWorld, mapToImage, 'true', FAI19_P2_LineStartX, FAI19_P2_LineStartY, FAI19_P2_LineEndX, FAI19_P2_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI19_LEN_P1, mapToWorld, mapToImage, 'true', FAI19_P1_LineStartX, FAI19_P1_LineStartY, FAI19_P1_LineEndX, FAI19_P1_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI19_LEN_P2, mapToWorld, mapToImage, 'true', FAI19_P2_LineStartX, FAI19_P2_LineStartY, FAI19_P2_LineEndX, FAI19_P2_LineEndY)</l>
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI19, lineX1FAI19, lineY2FAI19, lineX2FAI19, FAI19_P1_LineStartY, FAI19_P1_LineStartX, FAI19_P1_LineEndY, FAI19_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
@@ -479,8 +479,8 @@
 <c></c>
 <c>*****************************FAI20********************************</c>
 <c>* 定圆心</c>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, -7.886, mapToWorld, mapToImage, 'true', FAI20_P2_LineStartX, FAI20_P2_LineStartY, FAI20_P2_LineEndX, FAI20_P2_LineEndY)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 9.299, mapToWorld, mapToImage, 'true', FAI20V_P1_LineStartX, FAI20V_P1_LineStartY, FAI20V_P1_LineEndX, FAI20V_P1_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI20_LEN_Y, mapToWorld, mapToImage, 'true', FAI20_P2_LineStartX, FAI20_P2_LineStartY, FAI20_P2_LineEndX, FAI20_P2_LineEndY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, FAI20_LEN_X, mapToWorld, mapToImage, 'true', FAI20V_P1_LineStartX, FAI20V_P1_LineStartY, FAI20V_P1_LineEndX, FAI20V_P1_LineEndY)</l>
 <l>intersection_lines (FAI20_P2_LineStartY, FAI20_P2_LineStartX, FAI20_P2_LineEndY, FAI20_P2_LineEndX, FAI20V_P1_LineStartY, FAI20V_P1_LineStartX, FAI20V_P1_LineEndY, FAI20V_P1_LineEndX, rowCenterTop, colCenterTop, IsOverlapping2)</l>
 <l>intersectXs := [intersectXs, colCenterTop]</l>
 <l>intersectYs := [intersectYs, rowCenterTop]</l>
@@ -1440,16 +1440,10 @@
 </oc>
 </interface>
 <body>
-<c>* convert image line to world line</c>
-<l>affine_trans_point_2d (mapToWorld, lineStartX, lineStartY, lineStartX_World, lineStartY_World)</l>
-<l>affine_trans_point_2d (mapToWorld, lineEndX, lineEndY, lineEndX_World, lineEndY_World)</l>
+<c></c>
 <c></c>
 <c>* translate world line</c>
-<l>MakeParallelLine (lineStartX_World, lineStartY_World, lineEndX_World, lineEndY_World, distance, isVertical, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
-<c></c>
-<c>* convert world line back to image line</c>
-<l>affine_trans_point_2d (mapToImage, outLineStartX, outLineStartY, outLineStartX, outLineStartY)</l>
-<l>affine_trans_point_2d (mapToImage, outLineEndX, outLineEndY, outLineEndX, outLineEndY)</l>
+<l>MakeParallelLine (lineStartX, lineStartY, lineEndX, lineEndY, distance, isVertical, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
 <c></c>
 <l>return ()</l>
 </body>
