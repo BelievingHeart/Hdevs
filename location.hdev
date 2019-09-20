@@ -43,7 +43,14 @@
 <c></c>
 <l>GetWorldImageMap (Image, './calibration/cameraParam.cal', './calibration/cameraPos.dat', mapToImage, mapToWorld, Pose, CameraParam)</l>
 <c></c>
+<l>set_system ('image_dir', 'E:/Projects/3d/I94/I94TopFace')</l>
+<l>open_framegrabber ('File', 1, 1, Width, Height, Row, Column, 'default', -1, 'default', -1, 'false', 'E:/Projects/3d/I94/I94TopFace/images.seq', '', 1, 2, AcqHandle)</l>
 <c></c>
+<l>grab_image (Image1, AcqHandle)</l>
+<c></c>
+<l>for Index := 1 to 41 by 1</l>
+<c>    </c>
+<c>    </c>
 <c>* find right base line</c>
 <l>baseRightRow := 3614.64000000 - rowModel</l>
 <l>baseRightColum := 4804.56000000 - colModel</l>
@@ -129,9 +136,8 @@
 <l>rectFAI3Radian := rad(90)</l>
 <l>rectFAI3Len1 := 175.88000000</l>
 <l>rectFAI3Len2 := 623.96700000</l>
-<l>dev_set_line_width (2)</l>
 <l>AffineTransRect2 (rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, MovementImageToImage, rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rectFAI3, lineRegion, 'positive', rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, numSubRects, 50, 'first', ignorePortion, 'false', 1, Width, Height, lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rectFAI3, lineRegion, 'positive', rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, numSubRects, 40, 'first', ignorePortion, 'false', 1, Width, Height, lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rectFAI3, FindLineRects)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <c></c>
@@ -475,13 +481,8 @@
 <l>DistancePLInWorld (lineX1FAI20LF, lineY1FAI20LF, lineX2FAI20LF, lineY2FAI20LF, colCenterTop, rowCenterTop, mapToWorld, distanceWorld_FAI20_2_2)</l>
 <l>distanceWorld_FAI20_2 := distanceWorld_FAI20_2_1 - distanceWorld_FAI20_2_2</l>
 <c></c>
-<c></c>
-<c></c>
-<c></c>
-<c></c>
-<c></c>
+<l>dev_resize_window_fit_image (Image, 0, 0, 800, 800)</l>
 <l>dev_display (Image)</l>
-<c></c>
 <l>dev_set_color ('red')</l>
 <l>gen_cross_contour_xld (Cross4, crossesYIgnored, crossesXIgnored, crossSize, 0.785398)</l>
 <l>dev_set_color ('green')</l>
@@ -493,6 +494,18 @@
 <l>dev_display (lineRegions)</l>
 <l>dev_set_color ('magenta')</l>
 <l>dev_display (FindLineRects)</l>
+<c>    </c>
+<c>    </c>
+<c>    </c>
+<c>    </c>
+<l>    stop ()</l>
+<c>    </c>
+<l>endfor</l>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
 </body>
 <docu id="main">
 <parameters/>
