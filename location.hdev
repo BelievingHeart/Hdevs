@@ -16,7 +16,7 @@
 <l>Biases := [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]</l>
 <c></c>
 <l>for Index := 1 to 41 by 1</l>
-<l>    I94TopFaceMeasurement (Image, lineRegions, FindLineRects, ModelID, 0.0072, 0.0072, Biases, outputs, crossesXUsed, crossesYUsed, crossesXIgnored, crossesYIgnored, intersectXs, intersectYs)</l>
+<l>    I94TopFaceMeasurement (Image, lineRegions, FindLineRects, ModelID, 0.0072, 0.0072, Biases, thresholds, outputs, crossesXUsed, crossesYUsed, crossesXIgnored, crossesYIgnored, intersectXs, intersectYs)</l>
 <c>    </c>
 <c>* find right base line</c>
 <c></c>
@@ -1078,6 +1078,7 @@
 </ic>
 <oc>
 <par name="distanceWorld" base_type="ctrl" dimension="0"/>
+<par name="distancePixel" base_type="ctrl" dimension="0"/>
 </oc>
 </interface>
 <body>
@@ -1087,11 +1088,14 @@
 <l>*affine_trans_point_2d (mapToWorld, lineEndX, lineEndY, lineEndX_World, lineEndY_World)</l>
 <c></c>
 <c>* cal world distance</c>
+<c></c>
+<l>distance_pl (lineStartY, lineStartX, lineEndY, lineEndX, ptY, ptX, distancePixel)</l>
 <l>distance_pl (lineStartY, lineStartX, lineEndY, lineEndX, ptY, ptX, distanceWorld)</l>
 <l>return ()</l>
 </body>
 <docu id="DistancePLInWorld">
 <parameters>
+<parameter id="distancePixel"/>
 <parameter id="distanceWorld"/>
 <parameter id="lineEndX"/>
 <parameter id="lineEndY"/>
@@ -1416,6 +1420,7 @@
 <par name="xCoeff" base_type="ctrl" dimension="0"/>
 <par name="yCoeff" base_type="ctrl" dimension="0"/>
 <par name="Biases" base_type="ctrl" dimension="0"/>
+<par name="thresholds" base_type="ctrl" dimension="0"/>
 </ic>
 <oc>
 <par name="outputs" base_type="ctrl" dimension="0"/>
@@ -1450,6 +1455,10 @@
 <c>* record line-line intersections</c>
 <l>intersectXs := []</l>
 <l>intersectYs := []</l>
+<c></c>
+<c>* outputs</c>
+<l>outputs := []</l>
+<l>outputsPixel := []</l>
 <c></c>
 <c>* set units and positions</c>
 <c></c>
@@ -1494,8 +1503,7 @@
 <l>FAI20_LEN_X := -9.299 / xCoeff</l>
 <l>FAI20_LEN_Y := -7.886 / yCoeff</l>
 <c></c>
-<c>* outputs</c>
-<l>outputs := []</l>
+<c></c>
 <c></c>
 <c>* find model</c>
 <l>modelPath := 'E:/Projects/3d/Hdevs/Image_20190918091134087'</l>
@@ -1571,25 +1579,27 @@
 <c></c>
 <c>* FAI2-P1</c>
 <l>intersection_lines (lineStartY_FAI2H, lineStartX_FAI2H, lineEndY_FAI2H, lineEndX_FAI2H, FAI2_P1_LineStartY, FAI2_P1_LineStartX, FAI2_P1_LineEndY, FAI2_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping1)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_P1)</l>
-<l>outputs := [outputs, distanceWorld_P1 + Biases[0]]</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_P1, distancePixel)</l>
+<l>outputs := [outputs, distanceWorld_P1 + Biases[0]] </l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <c></c>
 <c>* FAI2-P2</c>
 <l>intersection_lines (lineStartY_FAI2H, lineStartX_FAI2H, lineEndY_FAI2H, lineEndX_FAI2H, FAI2_P2_LineStartY, FAI2_P2_LineStartX, FAI2_P2_LineEndY, FAI2_P2_LineEndX, rowIntersect, colIntersect, IsOverlapping1)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_P2)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_P2, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_P2  + Biases[1] ]</l>
-<c></c>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>* FAI2-P3</c>
 <l>intersection_lines (lineStartY_FAI2H, lineStartX_FAI2H, lineEndY_FAI2H, lineEndX_FAI2H, FAI2_P3_LineStartY, FAI2_P3_LineStartX, FAI2_P3_LineEndY, FAI2_P3_LineEndX, rowIntersect, colIntersect, IsOverlapping1)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_P3)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_P3, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_P3  + Biases[2]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c></c>
 <c>**********************************************FAI3************************************</c>
@@ -1614,24 +1624,27 @@
 <l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, FAI3_LEN_P3, mapToWorld, mapToImage, 'true', FAI3_P3_LineStartX, FAI3_P3_LineStartY, FAI3_P3_LineEndX, FAI3_P3_LineEndY)</l>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI3, lineX1FAI3, lineY2FAI3, lineX2FAI3, FAI3_P1_LineStartY, FAI3_P1_LineStartX, FAI3_P1_LineEndY, FAI3_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI3_P1)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI3_P1, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI3_P1  + Biases[3]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>* P2</c>
 <l>intersection_lines (lineY1FAI3, lineX1FAI3, lineY2FAI3, lineX2FAI3, FAI3_P2_LineStartY, FAI3_P2_LineStartX, FAI3_P2_LineEndY, FAI3_P2_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI3_P2)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI3_P2, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI3_P2  + Biases[4]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>* P3</c>
 <l>intersection_lines (lineY1FAI3, lineX1FAI3, lineY2FAI3, lineX2FAI3, FAI3_P3_LineStartY, FAI3_P3_LineStartX, FAI3_P3_LineEndY, FAI3_P3_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI3_P3)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI3_P3, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI3_P3  + Biases[5]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>***********************************************FAI4*******************************</c>
 <l>rectFAI4Row := 4712.30000000 - rowModel</l>
@@ -1651,24 +1664,27 @@
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI4, lineX1FAI4, lineY2FAI4, lineX2FAI4, FAI3_P1_LineStartY, FAI3_P1_LineStartX, FAI3_P1_LineEndY, FAI3_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI4_P1)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI4_P1, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI4_P1  + Biases[6]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>* P2</c>
 <l>intersection_lines (lineY1FAI4, lineX1FAI4, lineY2FAI4, lineX2FAI4, FAI3_P2_LineStartY, FAI3_P2_LineStartX, FAI3_P2_LineEndY, FAI3_P2_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI4_P2)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI4_P2, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI4_P2  + Biases[7]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>* P3</c>
 <l>intersection_lines (lineY1FAI4, lineX1FAI4, lineY2FAI4, lineX2FAI4, FAI3_P3_LineStartY, FAI3_P3_LineStartX, FAI3_P3_LineEndY, FAI3_P3_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI4_P3)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI4_P3, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI4_P3  + Biases[8]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c></c>
 <c>*************************************FAI 5***************************************</c>
@@ -1689,24 +1705,27 @@
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI5, lineX1FAI5, lineY2FAI5, lineX2FAI5, FAI3_P1_LineStartY, FAI3_P1_LineStartX, FAI3_P1_LineEndY, FAI3_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI5_P1)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI5_P1, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI5_P1  + Biases[9]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>* P2</c>
 <l>intersection_lines (lineY1FAI5, lineX1FAI5, lineY2FAI5, lineX2FAI5, FAI3_P2_LineStartY, FAI3_P2_LineStartX, FAI3_P2_LineEndY, FAI3_P2_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI5_P2)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI5_P2, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI5_P2  + Biases[10]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>* P3</c>
 <l>intersection_lines (lineY1FAI5, lineX1FAI5, lineY2FAI5, lineX2FAI5, FAI3_P3_LineStartY, FAI3_P3_LineStartX, FAI3_P3_LineEndY, FAI3_P3_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI5_P3)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI5_P3, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI5_P3  + Biases[11]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c></c>
 <c></c>
@@ -1733,24 +1752,27 @@
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI6, lineX1FAI6, lineY2FAI6, lineX2FAI6, FAI6_P1_LineStartY, FAI6_P1_LineStartX, FAI6_P1_LineEndY, FAI6_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI6_P1)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI6_P1, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI6_P1  + Biases[12]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>* P2</c>
 <l>intersection_lines (lineY1FAI6, lineX1FAI6, lineY2FAI6, lineX2FAI6, FAI6_P2_LineStartY, FAI6_P2_LineStartX, FAI6_P2_LineEndY, FAI6_P2_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI6_P2)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI6_P2, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI6_P2  + Biases[13]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>* P3</c>
 <l>intersection_lines (lineY1FAI6, lineX1FAI6, lineY2FAI6, lineX2FAI6, FAI6_P3_LineStartY, FAI6_P3_LineStartX, FAI6_P3_LineEndY, FAI6_P3_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI6_P3)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI6_P3, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI6_P3  + Biases[14]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c></c>
 <c>*************************************FAI9********************************************</c>
@@ -1776,24 +1798,27 @@
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI9, lineX1FAI9, lineY2FAI9, lineX2FAI9, FAI9_P1_LineStartY, FAI9_P1_LineStartX, FAI9_P1_LineEndY, FAI9_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI9_P1)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI9_P1, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI9_P1 + Biases[15]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>* P2</c>
 <l>intersection_lines (lineY1FAI9, lineX1FAI9, lineY2FAI9, lineX2FAI9, FAI9_P2_LineStartY, FAI9_P2_LineStartX, FAI9_P2_LineEndY, FAI9_P2_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI9_P2)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI9_P2, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI9_P2  + Biases[16]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>* P3</c>
 <l>intersection_lines (lineY1FAI9, lineX1FAI9, lineY2FAI9, lineX2FAI9, FAI9_P3_LineStartY, FAI9_P3_LineStartX, FAI9_P3_LineEndY, FAI9_P3_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI9_P3)</l>
+<l>DistancePLInWorld (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI9_P3, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI9_P3  + Biases[17]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c></c>
 <c>******************************FAI12**************************</c>
@@ -1818,17 +1843,19 @@
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI12, lineX1FAI12, lineY2FAI12, lineX2FAI12, FAI12_P1_LineStartY, FAI12_P1_LineStartX, FAI12_P1_LineEndY, FAI12_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI12_P1)</l>
+<l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI12_P1, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI12_P1 + Biases[18]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>* P2</c>
 <l>intersection_lines (lineY1FAI12, lineX1FAI12, lineY2FAI12, lineX2FAI12, FAI12_P2_LineStartY, FAI12_P2_LineStartX, FAI12_P2_LineEndY, FAI12_P2_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI12_P2)</l>
+<l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI12_P2, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI12_P2  + Biases[19]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c></c>
 <c>*********************************FAI16*************************</c>
@@ -1853,17 +1880,19 @@
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI16, lineX1FAI16, lineY2FAI16, lineX2FAI16, FAI16_P1_LineStartY, FAI16_P1_LineStartX, FAI16_P1_LineEndY, FAI16_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI16_P1)</l>
+<l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI16_P1, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI16_P1  + Biases[20]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>* P2</c>
 <l>intersection_lines (lineY1FAI16, lineX1FAI16, lineY2FAI16, lineX2FAI16, FAI16_P2_LineStartY, FAI16_P2_LineStartX, FAI16_P2_LineEndY, FAI16_P2_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI16_P2)</l>
+<l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI16_P2, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI16_P2  + Biases[21]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c></c>
 <c>**************************FAI17*******************************</c>
@@ -1888,17 +1917,19 @@
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI17, lineX1FAI17, lineY2FAI17, lineX2FAI17, FAI17_P1_LineStartY, FAI17_P1_LineStartX, FAI17_P1_LineEndY, FAI17_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI17_P1)</l>
+<l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI17_P1, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI17_P1  + Biases[22]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>* P2</c>
 <l>intersection_lines (lineY1FAI17, lineX1FAI17, lineY2FAI17, lineX2FAI17, FAI17_P2_LineStartY, FAI17_P2_LineStartX, FAI17_P2_LineEndY, FAI17_P2_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI17_P2)</l>
+<l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI17_P2, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI17_P2  + Biases[23]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c></c>
 <c>********************************FAI19**************************</c>
@@ -1923,17 +1954,19 @@
 <c></c>
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI19, lineX1FAI19, lineY2FAI19, lineX2FAI19, FAI19_P1_LineStartY, FAI19_P1_LineStartX, FAI19_P1_LineEndY, FAI19_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI19_P1)</l>
+<l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI19_P1, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI19_P1  + Biases[24]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>* P2</c>
 <l>intersection_lines (lineY1FAI19, lineX1FAI19, lineY2FAI19, lineX2FAI19, FAI19_P2_LineStartY, FAI19_P2_LineStartX, FAI19_P2_LineEndY, FAI19_P2_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
-<l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI19_P2)</l>
+<l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI19_P2, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI19_P2  + Biases[25]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c></c>
 <c></c>
@@ -1977,16 +2010,20 @@
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
 <c>* FAI20-1</c>
-<l>DistancePLInWorld (lineX1FAI20TR, lineY1FAI20TR, lineX2FAI20TR, lineY2FAI20TR, lineX1FAI20LF, lineY1FAI20LF, mapToWorld, distanceWorld_FAI20_1)</l>
+<l>DistancePLInWorld (lineX1FAI20TR, lineY1FAI20TR, lineX2FAI20TR, lineY2FAI20TR, lineX1FAI20LF, lineY1FAI20LF, mapToWorld, distanceWorld_FAI20_1, distancePixel)</l>
 <l>outputs := [outputs, distanceWorld_FAI20_1  + Biases[26]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>* FAI20-2</c>
-<l>DistancePLInWorld (lineX1FAI20TR, lineY1FAI20TR, lineX2FAI20TR, lineY2FAI20TR, colCenterTop, rowCenterTop, mapToWorld, distanceWorld_FAI20_2_1)</l>
-<l>DistancePLInWorld (lineX1FAI20LF, lineY1FAI20LF, lineX2FAI20LF, lineY2FAI20LF, colCenterTop, rowCenterTop, mapToWorld, distanceWorld_FAI20_2_2)</l>
+<l>DistancePLInWorld (lineX1FAI20TR, lineY1FAI20TR, lineX2FAI20TR, lineY2FAI20TR, colCenterTop, rowCenterTop, mapToWorld, distanceWorld_FAI20_2_1, distancePixel_FAI20_2_1)</l>
+<l>DistancePLInWorld (lineX1FAI20LF, lineY1FAI20LF, lineX2FAI20LF, lineY2FAI20LF, colCenterTop, rowCenterTop, mapToWorld, distanceWorld_FAI20_2_2, distancePixel_FAI20_2_2)</l>
 <l>distanceWorld_FAI20_2 := distanceWorld_FAI20_2_1 - distanceWorld_FAI20_2_2</l>
+<l>distancePixel := distancePixel_FAI20_2_1 - distancePixel_FAI20_2_2</l>
 <l>outputs := [outputs, distanceWorld_FAI20_2  + Biases[27]]</l>
+<l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <l>numOutputs := |outputs|</l>
+<l>numOutputPixels := |outputsPixel|</l>
 <l>return ()</l>
 </body>
 <docu id="I94TopFaceMeasurement">
@@ -2003,6 +2040,7 @@
 <parameter id="intersectYs"/>
 <parameter id="lineRegions"/>
 <parameter id="outputs"/>
+<parameter id="thresholds"/>
 <parameter id="xCoeff"/>
 <parameter id="yCoeff"/>
 </parameters>
