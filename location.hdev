@@ -63,7 +63,7 @@
 <l>  endfor</l>
 <l>  fnew_line (FileHandle)</l>
 <c>  </c>
-<l>  stop ()</l>
+<l> * stop ()</l>
 <l>  endfor</l>
 <c></c>
 <l>close_file (FileHandle)</l>
@@ -793,7 +793,7 @@
 <c></c>
 <l>gen_rectangle2 (findLineRegion, lineCenterY, lineCenterX, newRadian, newWidth, newHeight/2)</l>
 <l>reduce_domain (inputImage, findLineRegion, ImageReduced)</l>
-<l>edges_sub_pix(ImageReduced, Edges, 'canny', 5, threshold-15, threshold+15)</l>
+<l>edges_sub_pix(ImageReduced, Edges, 'canny', 5, 30, 60)</l>
 <c></c>
 <l>fit_line_contour_xld (Edges, 'tukey', -1, 0, 5, 2, RowBegin, ColBegin, RowEnd, ColEnd, Nr, Nc, Dist)</l>
 <c></c>
@@ -1618,6 +1618,11 @@
 <l>crossesXIgnored := [crossesXIgnored, XsIgnored]</l>
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
+<c>************************</c>
+<l>*line_orientation (lineY1RightBase, lineX1RightBase, lineY2RightBase, lineX2RightBase, Phi)</l>
+<l>*outputsPixel := [outputsPixel, Phi]</l>
+<c>***********************</c>
+<c></c>
 <c>* find top base line</c>
 <l>baseTopRow := 162.42300000 - rowModel</l>
 <l>baseTopColumn := 3614.30000000 - colModel</l>
@@ -1635,7 +1640,10 @@
 <l>crossesXIgnored := [crossesXIgnored, XsIgnored]</l>
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
-<c></c>
+<c>************************</c>
+<l>*line_orientation (lineY1TopBase, lineX1TopBase, lineY2TopBase, lineX2TopBase, Phi)</l>
+<l>*outputsPixel := [outputsPixel, Phi]</l>
+<c>***********************</c>
 <c></c>
 <c>* make origin</c>
 <l>intersection_lines (lineY1RightBase, lineX1RightBase, lineY2RightBase, lineX2RightBase, lineY1TopBase, lineX1TopBase, lineY2TopBase, lineX2TopBase, rowOrigin, colOrigin, IsOverlapping)</l>
@@ -1985,7 +1993,7 @@
 <c></c>
 <c></c>
 <c>**************************FAI17*******************************</c>
-<l>rectFAI17Row := 909.27300000 - rowModel</l>
+<l>rectFAI17Row := 1109.27300000 - rowModel</l>
 <l>rectFAI17Col := 2644.21000000 - colModel</l>
 <l>rectFAI17Radian := rad(0.5)</l>
 <l>rectFAI17Len1 := 191.07100000</l>
@@ -2017,8 +2025,24 @@
 <l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI17_P2, distancePixel)</l>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
+<c></c>
 <l>outputs := [outputs, distanceWorld_FAI17_P2  + Biases[23]]</l>
 <l>outputsPixel := [outputsPixel, distancePixel]</l>
+<c></c>
+<c>************************</c>
+<l>*outputsPixel := [outputsPixel, colIntersect]</l>
+<l>*outputsPixel := [outputsPixel, rowIntersect]</l>
+<c></c>
+<l>get_perpendicular_line_that_passes (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, lineXPerpendicular, lineYPerpendicular)</l>
+<l>intersection_lines (rowIntersect, colIntersect, rowIntersect, lineXPerpendicular, lineY1RightBase, lineX1RightBase, lineY2RightBase, lineX2RightBase, colIntersect, rowIntersect, IsOverlapping3)</l>
+<l>intersectXs := [intersectXs, colIntersect]</l>
+<l>intersectYs := [intersectYs, rowIntersect]</l>
+<l>outputsPixel := [outputsPixel, colIntersect]</l>
+<l>outputsPixel := [outputsPixel, rowIntersect]</l>
+<c></c>
+<c></c>
+<c>********************</c>
+<c></c>
 <c></c>
 <c></c>
 <c>********************************FAI19**************************</c>
