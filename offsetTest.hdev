@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="18.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<l>read_image (Image, 'printer_chip/printer_chip_01')</l>
+<c></c>
+<l>x1 :=351.85700000</l>
+<l>y1 := 590.45900000</l>
+<l>x2 :=1201.49000000</l>
+<l>y2 := 271.55500000</l>
+<c></c>
+<c>* + blue</c>
+<c>* - green</c>
+<c></c>
+<l>dev_set_color ('red')</l>
+<l>gen_region_line (ROI_0, y1, x1, y2, x2)</l>
+<c></c>
+<c></c>
+<l>OffsetLineUpDown (RegionLine, y1, x1, y2, x2, 100, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<l>OffsetLineUpDown (RegionLine1, y1, x1, y2, x2, -100, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<c></c>
+<c>* m &lt; 0, horizontal</c>
+<l>x1 :=330.02100000</l>
+<l>y1 := 266.62300000</l>
+<l>x2 :=1306.70000000</l>
+<l>y2 := 623.33600000</l>
+<c></c>
+<l>dev_set_color ('red')</l>
+<l>gen_region_line (ROI_0, y1, x1, y2, x2)</l>
+<l>OffsetLineUpDown (RegionLine, y1, x1, y2, x2, 100, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<l>OffsetLineUpDown (RegionLine1, y1, x1, y2, x2, -100, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<c></c>
+<l>x1 :=351.85700000</l>
+<l>y1 := 590.45900000</l>
+<l>x2 :=1201.49000000</l>
+<l>y2 := 271.55500000</l>
+<l>OffsetLineUpDown (RegionLine, y2, x2, y1, x1, 50, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<l>OffsetLineUpDown (RegionLine, y2, x2, y1, x1, -50, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<c></c>
+<c></c>
+<c>* m &lt; 0, horizontal</c>
+<l>x1 :=330.02100000</l>
+<l>y1 := 266.62300000</l>
+<l>x2 :=1306.70000000</l>
+<l>y2 := 623.33600000</l>
+<l>OffsetLineUpDown (RegionLine, y2, x2, y1, x1, 50, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<l>OffsetLineUpDown (RegionLine, y2, x2, y1, x1, -50, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<c></c>
+<c></c>
+<l>dev_set_color ('red')</l>
+<l>x1 :=657.56500000</l>
+<l>y1 := 721.96600000</l>
+<l>x2 :=852.10500000</l>
+<l>y2 := 1155.94000000</l>
+<c></c>
+<l>gen_region_line (ROI_0, y1, x1, y2, x2)</l>
+<l>OffsetLineUpDown (RegionLine, x1, y1, x2, y2, 100, outLineStartY, outLineStartX, outLineEndY, outLineEndX)</l>
+<l>OffsetLineUpDown (RegionLine, x1, y1, x2, y2, -100, outLineStartY, outLineStartX, outLineEndY, outLineEndX)</l>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+<procedure name="OffsetLineUpDown">
+<interface>
+<oo>
+<par name="RegionLine" base_type="iconic" dimension="0"/>
+</oo>
+<ic>
+<par name="lineStartY" base_type="ctrl" dimension="0"/>
+<par name="lineStartX" base_type="ctrl" dimension="0"/>
+<par name="lineEndY" base_type="ctrl" dimension="0"/>
+<par name="lineEndX" base_type="ctrl" dimension="0"/>
+<par name="offset" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="outLineStartX" base_type="ctrl" dimension="0"/>
+<par name="outLineStartY" base_type="ctrl" dimension="0"/>
+<par name="outLineEndX" base_type="ctrl" dimension="0"/>
+<par name="outLineEndY" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>if(offset&gt;0)</l>
+<l>    dev_set_color ('blue')</l>
+<l>else</l>
+<l>    dev_set_color ('green')</l>
+<l>endif</l>
+<c></c>
+<l>xDiff := lineEndX - lineStartX</l>
+<l>yDiff := lineEndY - lineStartY</l>
+<c></c>
+<l>m := yDiff / xDiff</l>
+<l>b := lineEndY - lineEndX * m</l>
+<c></c>
+<l>alpha := atan(m)</l>
+<c></c>
+<l>bIncre := offset / cos(alpha)</l>
+<l>newB := b + bIncre</l>
+<c></c>
+<c>* sample output points</c>
+<l>outLineStartX := lineStartX</l>
+<l>outLineStartY := m * outLineStartX + newB</l>
+<l>outLineEndX := lineEndX</l>
+<l>outLineEndY := m * outLineEndX + newB</l>
+<c></c>
+<l>gen_region_line (RegionLine, outLineStartY, outLineStartX, outLineEndY, outLineEndX)</l>
+<l>return ()</l>
+<c></c>
+</body>
+<docu id="OffsetLineUpDown">
+<parameters>
+<parameter id="RegionLine"/>
+<parameter id="lineEndX"/>
+<parameter id="lineEndY"/>
+<parameter id="lineStartX"/>
+<parameter id="lineStartY"/>
+<parameter id="offset"/>
+<parameter id="outLineEndX"/>
+<parameter id="outLineEndY"/>
+<parameter id="outLineStartX"/>
+<parameter id="outLineStartY"/>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>

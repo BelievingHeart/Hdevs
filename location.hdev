@@ -1097,18 +1097,15 @@
 </oc>
 </interface>
 <body>
-<l>xDiff := lineEndX - lineStartX</l>
-<l>yDiff := lineEndY - lineStartY</l>
+<l>line_orientation (lineStartY, lineStartX, lineEndY, lineEndX, Phi)</l>
 <c></c>
-<l>m := yDiff / xDiff</l>
-<l>b := lineStartY - yDiff / xDiff * lineStartX</l>
 <c></c>
-<l>alpha := atan(m)</l>
+<l>absPhi := abs(Phi)</l>
+<l>bIncre := offset / cos(absPhi)</l>
+<l>m := atan(Phi)</l>
 <c></c>
-<l>bIncre := offset / cos(alpha)</l>
-<c></c>
+<l>b := lineStartY - m*lineStartX</l>
 <l>newB := b + bIncre</l>
-<c></c>
 <c></c>
 <c>* sample output points</c>
 <l>outLineStartX := lineStartX</l>
