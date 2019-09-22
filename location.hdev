@@ -52,12 +52,25 @@
 <c></c>
 <c></c>
 <c>* Find left base line</c>
-<l>row1LeftBase := 2668.53000000</l>
-<l>col1LeftBase := 1378.41000000</l>
-<l>radianLeftBase := rad(0)</l>
-<l>len1LeftBase := 215.68300000</l>
-<l>len2LeftBase := 319.99800000</l>
-<l>VisionProStyleFindLineOneStep (Image, findLineRegionLeft, lineRegionLeft, 'positive', row1LeftBase, col1LeftBase, radianLeftBase, len1LeftBase, len2LeftBase, 10, Threshold, 'first', 0.4, 'true', 1, 5120, 5120, 5, LineX1LeftBase, lineYLeftBase, lineX2LeftBase, lineY2LeftBase, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>row1LeftBaseUpper := 2668.53000000</l>
+<l>col1LeftBaseUpper := 1378.41000000</l>
+<l>radianLeftBaseUpper := rad(0)</l>
+<l>len1LeftBaseUpper := 215.68300000</l>
+<l>len2LeftBaseUpper := 319.99800000</l>
+<c></c>
+<l>row1LeftBaseLower := 4205.05000000</l>
+<l>col1LeftBaseLower := 1379.89000000</l>
+<l>radianLeftBaseLower := rad(0)</l>
+<l>len1LeftBaseLower := 140.49600000</l>
+<l>len2LeftBaseLower := 316.45100000</l>
+<c></c>
+<l>row1LeftBase := [row1LeftBaseUpper, row1LeftBaseLower]</l>
+<l>col1LeftBase := [col1LeftBaseUpper, col1LeftBaseLower]</l>
+<l>radianLeftBase := [radianLeftBaseUpper, radianLeftBaseLower]</l>
+<l>len1LeftBase := [len1LeftBaseUpper, len1LeftBaseLower]</l>
+<l>len2LeftBase := [len2LeftBaseUpper, len2LeftBaseLower]</l>
+<c></c>
+<l>VisionProStyleFindLineOneStep (Image, findLineRegionLeft, lineRegionLeft, 'positive', row1LeftBase, col1LeftBase, radianLeftBase, len1LeftBase, len2LeftBase, 10, [Threshold, Threshold-5], 'first', 0.2, 'true', 1, 5120, 5120, 5, LineX1LeftBase, lineYLeftBase, lineX2LeftBase, lineY2LeftBase, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (findLineRegionTop, findLineRegionLeft, FindLineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, XsUsed]</l>
 <l>PointsYUsed := [PointsYUsed, YsUsed]</l>
@@ -765,16 +778,39 @@
 </oc>
 </interface>
 <body>
-<l>VisionProStyleFindLine (inputImage, findLineRegion, transition, row, col, radian, len1, len2, numSubRects, threshold, sigma, firstOrLast, 'false', 'first', 0, 100, Xs, Ys)</l>
 <c></c>
-<c></c>
-<l>if(isVertical == 'true')</l>
-<l>    FitLine2D (Ys, Xs, ignoreFraction, lineY1, lineX1, lineY2, lineX2, YsUsed, XsUsed, YsIgnored, XsIgnored)</l>
-<l>else</l>
-<l>        FitLine2D (Xs, Ys, ignoreFraction, lineX1, lineY1, lineX2, lineY2, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>MultipleLines := 'false'</l>
+<l>if (|row| &gt; 1)</l>
+<l>    MultipleLines := 'true'</l>
 <l>endif</l>
 <c></c>
-<l>_pinPointFindLine (inputImage, findLineRegion, lineX1, lineX2, lineY1, lineY2, radian, newWidth, RowBegin, ColBegin, RowEnd, ColEnd)</l>
+<l>EdgesX := []</l>
+<l>EdgesY := []</l>
+<l>gen_empty_obj (EmptyObject)</l>
+<c></c>
+<l>for i:= 0 to |row|-1 by 1</l>
+<l>    VisionProStyleFindLine (inputImage, findLineRegion, transition, row[i], col[i], radian[i], len1[i], len2[i], numSubRects, threshold[i], sigma, firstOrLast, 'false', 'first', 0, 100, Xs, Ys)</l>
+<c></c>
+<l>    if(isVertical == 'true')</l>
+<l>        FitLine2D (Ys, Xs, ignoreFraction, lineY1, lineX1, lineY2, lineX2, YsUsed, XsUsed, YsIgnored, XsIgnored)</l>
+<l>    else</l>
+<l>        FitLine2D (Xs, Ys, ignoreFraction, lineX1, lineY1, lineX2, lineY2, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>    endif</l>
+<c></c>
+<l>    _pinPointFindLine (inputImage, findLineRegion, lineX1, lineX2, lineY1, lineY2, radian, newWidth, MultipleLines, RowBegin, ColBegin, RowEnd, ColEnd, EdgesXStep, EdgesYStep)</l>
+<c></c>
+<l>    if(MultipleLines == 'true')</l>
+<l>        EdgesX := [EdgesX, EdgesXStep]</l>
+<l>        EdgesY := [EdgesY, EdgesYStep]</l>
+<l>        concat_obj (EmptyObject, findLineRegion, EmptyObject)</l>
+<l>    endif</l>
+<c>    </c>
+<l>endfor</l>
+<c></c>
+<l>if(MultipleLines == 'true')</l>
+<l>    FitLine2D (EdgesX, EdgesY, 0, ColBegin, RowBegin, ColEnd, RowEnd, _, _, _, _)</l>
+<l>    findLineRegion := EmptyObject</l>
+<l>endif</l>
 <c></c>
 <c></c>
 <l>GenLineRegion (lineRegion, ColBegin, RowBegin, ColEnd, RowEnd, imageWidth, imageHeight)</l>
@@ -2254,12 +2290,15 @@
 <par name="lineY2" base_type="ctrl" dimension="0"/>
 <par name="radian" base_type="ctrl" dimension="0"/>
 <par name="newWidth" base_type="ctrl" dimension="0"/>
+<par name="EdgesOnly" base_type="ctrl" dimension="0"/>
 </ic>
 <oc>
 <par name="RowBegin" base_type="ctrl" dimension="0"/>
 <par name="ColBegin" base_type="ctrl" dimension="0"/>
 <par name="RowEnd" base_type="ctrl" dimension="0"/>
 <par name="ColEnd" base_type="ctrl" dimension="0"/>
+<par name="EdgesX" base_type="ctrl" dimension="0"/>
+<par name="EdgesY" base_type="ctrl" dimension="0"/>
 </oc>
 </interface>
 <body>
@@ -2285,6 +2324,11 @@
 <l>reduce_domain (inputImage, findLineRegion, ImageReduced)</l>
 <l>edges_sub_pix(ImageReduced, Edges, 'canny', 5, 30, 60)</l>
 <c></c>
+<l>if(EdgesOnly == 'true')</l>
+<l>    get_contour_xld (Edges, EdgesY, EdgesX)</l>
+<l>    return ()</l>
+<l>endif</l>
+<c></c>
 <l>fit_line_contour_xld (Edges, 'tukey', -1, 0, 5, 2, RowBegin, ColBegin, RowEnd, ColEnd, Nr, Nc, Dist)</l>
 <c></c>
 <l>if(|Dist| &gt; 1)</l>
@@ -2300,6 +2344,13 @@
 <parameters>
 <parameter id="ColBegin"/>
 <parameter id="ColEnd"/>
+<parameter id="EdgesOnly">
+<default_value>'false'</default_value>
+<description lang="zh_CN">If true return edges only instead of end points</description>
+<sem_type>string</sem_type>
+</parameter>
+<parameter id="EdgesX"/>
+<parameter id="EdgesY"/>
 <parameter id="RowBegin"/>
 <parameter id="RowEnd"/>
 <parameter id="findLineRegion"/>
