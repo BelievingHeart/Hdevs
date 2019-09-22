@@ -31,7 +31,7 @@
 <c>    </c>
 <c>* find right base line</c>
 <c></c>
-<c></c>
+<c>`</c>
 <c></c>
 <l>dev_display (Image)</l>
 <l>dev_set_color ('red')</l>
@@ -63,7 +63,7 @@
 <l>  endfor</l>
 <l>  fnew_line (FileHandle)</l>
 <c>  </c>
-<l> * stop ()</l>
+<l> stop ()</l>
 <l>  endfor</l>
 <c></c>
 <l>close_file (FileHandle)</l>
@@ -2030,15 +2030,15 @@
 <l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
 <c>************************</c>
-<l>*outputsPixel := [outputsPixel, colIntersect]</l>
-<l>*outputsPixel := [outputsPixel, rowIntersect]</l>
-<c></c>
-<l>get_perpendicular_line_that_passes (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, lineXPerpendicular, lineYPerpendicular)</l>
-<l>intersection_lines (rowIntersect, colIntersect, rowIntersect, lineXPerpendicular, lineY1RightBase, lineX1RightBase, lineY2RightBase, lineX2RightBase, colIntersect, rowIntersect, IsOverlapping3)</l>
-<l>intersectXs := [intersectXs, colIntersect]</l>
-<l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputsPixel := [outputsPixel, colIntersect]</l>
 <l>outputsPixel := [outputsPixel, rowIntersect]</l>
+<c></c>
+<l>*get_perpendicular_line_that_passes (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, lineXPerpendicular, lineYPerpendicular)</l>
+<l>*intersection_lines (rowIntersect, colIntersect, rowIntersect, lineXPerpendicular, lineY1RightBase, lineX1RightBase, lineY2RightBase, lineX2RightBase, rowIntersect, colIntersect, IsOverlapping3)</l>
+<l>*intersectXs := [intersectXs, colIntersect]</l>
+<l>*intersectYs := [intersectYs, rowIntersect]</l>
+<l>*outputsPixel := [outputsPixel, colIntersect]</l>
+<l>*outputsPixel := [outputsPixel, rowIntersect]</l>
 <c></c>
 <c></c>
 <c>********************</c>
