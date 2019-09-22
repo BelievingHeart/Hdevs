@@ -63,7 +63,7 @@
 <l>  endfor</l>
 <l>  fnew_line (FileHandle)</l>
 <c>  </c>
-<l> stop ()</l>
+<l>* stop ()</l>
 <l>  endfor</l>
 <c></c>
 <l>close_file (FileHandle)</l>
@@ -1156,8 +1156,9 @@
 <c></c>
 <c>* cal world distance</c>
 <c></c>
-<l>distance_pl (lineStartY, lineStartX, lineEndY, lineEndX, ptY, ptX, distancePixel)</l>
-<l>distance_pl (lineStartY, lineStartX, lineEndY, lineEndX, ptY, ptX, distanceWorld)</l>
+<l>distance_pl (ptY, ptX, lineStartY, lineStartX, lineEndY, lineEndX, distancePixel)</l>
+<c></c>
+<l>distance_pl (ptY, ptX, lineStartY, lineStartX, lineEndY, lineEndX, distanceWorld)</l>
 <l>return ()</l>
 </body>
 <docu id="DistancePLInWorld">
@@ -1618,10 +1619,7 @@
 <l>crossesXIgnored := [crossesXIgnored, XsIgnored]</l>
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
-<c>************************</c>
-<l>*line_orientation (lineY1RightBase, lineX1RightBase, lineY2RightBase, lineX2RightBase, Phi)</l>
-<l>*outputsPixel := [outputsPixel, Phi]</l>
-<c>***********************</c>
+<c></c>
 <c></c>
 <c>* find top base line</c>
 <l>baseTopRow := 162.42300000 - rowModel</l>
@@ -1633,23 +1631,33 @@
 <l>AffineTransRect2 (baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, MovementImageToImage, baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2)</l>
 <l>VisionProStyleFindLineOneStep (Image, rectBaseTop, lineRegionTopBase, 'positive', baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, numSubRects, RightThreshold, 'first', ignorePortion, 'false', 1, Width, Height, newWidth, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (rectBaseRight, rectBaseTop, FindLineRects)</l>
-<l>concat_obj (lineRegionRightBase, lineRegionTopBase, lineRegions)</l>
+<l>*concat_obj (lineRegionRightBase, lineRegionTopBase, lineRegions)</l>
 <c></c>
 <l>crossesXused := [crossesXused, XsUsed]</l>
 <l>crossesYused := [crossesYused, YsUsed]</l>
 <l>crossesXIgnored := [crossesXIgnored, XsIgnored]</l>
 <l>crossesYIgnored := [crossesYIgnored, YsIgnored]</l>
 <c></c>
-<c>************************</c>
-<l>*line_orientation (lineY1TopBase, lineX1TopBase, lineY2TopBase, lineX2TopBase, Phi)</l>
-<l>*outputsPixel := [outputsPixel, Phi]</l>
-<c>***********************</c>
+<c></c>
 <c></c>
 <c>* make origin</c>
 <l>intersection_lines (lineY1RightBase, lineX1RightBase, lineY2RightBase, lineX2RightBase, lineY1TopBase, lineX1TopBase, lineY2TopBase, lineX2TopBase, rowOrigin, colOrigin, IsOverlapping)</l>
 <l>intersectXs := [intersectXs, colOrigin]</l>
 <l>intersectYs := [intersectYs, rowOrigin]</l>
 <c></c>
+<c>*rectify bases</c>
+<l>get_perpendicular_line_that_passes (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, colOrigin, rowOrigin, ptXOnPerpenducularDir, ptYOnPerpenducularDir)</l>
+<l>lineX1RightBase := colOrigin</l>
+<l>lineY1RightBase := rowOrigin</l>
+<l>lineX2RightBase := ptXOnPerpenducularDir</l>
+<l>lineY2RightBase := ptYOnPerpenducularDir</l>
+<c></c>
+<c>************</c>
+<l>angle_ll (lineY1RightBase, lineX1RightBase, lineY2RightBase, lineX2RightBase, lineY1TopBase, lineX1TopBase, lineY2TopBase, lineX2TopBase, Angle)</l>
+<l>GenLineRegion (lineRegionRightBase, lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 5120, 5120)</l>
+<l>concat_obj (lineRegionRightBase, lineRegionTopBase, lineRegions)</l>
+<c></c>
+<c>**************</c>
 <c>****************************************************FAI2***********************************</c>
 <c>* make vertical grids</c>
 <l>TranslateLineInWorldCoordinateAndConvertBack (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, FAI2_LEN_P1, mapToWorld, mapToImage, 'true', FAI2_P1_LineStartX, FAI2_P1_LineStartY, FAI2_P1_LineEndX, FAI2_P1_LineEndY)</l>
@@ -1941,6 +1949,10 @@
 <c>* P1</c>
 <l>intersection_lines (lineY1FAI12, lineX1FAI12, lineY2FAI12, lineX2FAI12, FAI12_P1_LineStartY, FAI12_P1_LineStartX, FAI12_P1_LineEndY, FAI12_P1_LineEndX, rowIntersect, colIntersect, IsOverlapping2)</l>
 <l>DistancePLInWorld (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, mapToWorld, distanceWorld_FAI12_P1, distancePixel)</l>
+<c>****************</c>
+<l>GenLineRegion (lineRegion1, lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 5120, 5120)</l>
+<l>gen_cross_contour_xld (Cross, rowIntersect, colIntersect, 300, Angle)</l>
+<c>***************</c>
 <l>intersectXs := [intersectXs, colIntersect]</l>
 <l>intersectYs := [intersectYs, rowIntersect]</l>
 <l>outputs := [outputs, distanceWorld_FAI12_P1 + Biases[18]]</l>
@@ -2029,9 +2041,6 @@
 <l>outputs := [outputs, distanceWorld_FAI17_P2  + Biases[23]]</l>
 <l>outputsPixel := [outputsPixel, distancePixel]</l>
 <c></c>
-<c>************************</c>
-<l>outputsPixel := [outputsPixel, colIntersect]</l>
-<l>outputsPixel := [outputsPixel, rowIntersect]</l>
 <c></c>
 <l>*get_perpendicular_line_that_passes (lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, colIntersect, rowIntersect, lineXPerpendicular, lineYPerpendicular)</l>
 <l>*intersection_lines (rowIntersect, colIntersect, rowIntersect, lineXPerpendicular, lineY1RightBase, lineX1RightBase, lineY2RightBase, lineX2RightBase, rowIntersect, colIntersect, IsOverlapping3)</l>
