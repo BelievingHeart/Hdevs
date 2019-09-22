@@ -1,0 +1,67 @@
+read_shape_model ('E:/Projects/3d/Hdevs/Image_20190918091134087', ModelID)
+
+set_system ('image_dir', 'E:/Projects/i940918/动态/J1 - 副本 (3)/MV-CH250-20TM-F-NF (00D46076741)')
+Width := 5120
+Height := 5120
+
+open_file ('C:/Users/25001858/Desktop/data.txt', 'output', FileHandle)
+header := '2_1,2_2,2_3,3_1,3_2,3_3,4_1,4_2,4_3,5_1,5_2,5_3,6_1,6_2,6_3,9_1,9_2,9_3,12_1,12_2,16_1,16_2,17_1,17_2,19_1,19_2,20_1,20_2'
+                fwrite_string (FileHandle, header)
+                fnew_line (FileHandle)
+
+
+open_framegrabber ('File', 1, 1, Width, Height, 0, 0, 'default', -1, 'default', -1, 'false', 'E:/Projects/i940918/动态/J1 - 副本 (3)/MV-CH250-20TM-F-NF (00D46076741)/images.seq', '', 1, 2, AcqHandle)
+
+
+Biases := [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+Thresholds := [128, 40 , 40, 40,40,40,40,30,40,60,60,40,40,40,60]
+
+* dev_resize_window_fit_image (Image, 0, 0, 800, 800)
+dev_open_window(0, 0, 800, 800, 'black', WindowHandle)
+for Index := 1 to 33 by 1
+    
+    grab_image (Image, AcqHandle)
+
+    I94TopFaceMeasurement (Image, lineRegions, FindLineRects, ModelID, 0.0072, 0.0072, Biases, Thresholds, outputs, crossesXUsed, crossesYUsed, crossesXIgnored, crossesYIgnored, intersectXs, intersectYs, outputsPixel)
+    
+* find right base line
+
+`
+
+dev_display (Image)
+dev_set_color ('red')
+crossSize:=100
+gen_cross_contour_xld (Cross4, crossesYIgnored, crossesXIgnored, crossSize, 0.785398)
+dev_set_color ('green')
+gen_cross_contour_xld (Cross4, crossesYUsed, crossesXUsed, crossSize, 0.785398)
+dev_set_color ('blue')
+dev_set_line_width (2)
+gen_cross_contour_xld (Cross4, intersectYs, intersectXs, 200, 0)
+dev_set_color ('yellow')
+dev_display (lineRegions)
+dev_set_color ('magenta')
+dev_display (FindLineRects)
+
+
+
+
+                          mod := Index % 2
+
+  for Index1 := 0 to |outputsPixel|-1 by 1
+
+      if (Index1 == |outputsPixel|-1)
+
+                fwrite_string (FileHandle, outputsPixel[Index1] + ',' + mod)
+      else
+                fwrite_string (FileHandle, outputsPixel[Index1] + ',')
+      endif
+  endfor
+  fnew_line (FileHandle)
+  
+* stop ()
+  endfor
+
+close_file (FileHandle)
+clear_shape_model (ModelID)
+
+

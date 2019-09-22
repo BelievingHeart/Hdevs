@@ -55,9 +55,25 @@
 <l>y2 := 1155.94000000</l>
 <c></c>
 <l>gen_region_line (ROI_0, y1, x1, y2, x2)</l>
-<l>OffsetLineUpDown (RegionLine, x1, y1, x2, y2, 100, outLineStartY, outLineStartX, outLineEndY, outLineEndX)</l>
-<l>OffsetLineUpDown (RegionLine, x1, y1, x2, y2, -100, outLineStartY, outLineStartX, outLineEndY, outLineEndX)</l>
+<l>OffsetLineLeftRight (RegionLine, x1, y1, x2, y2, 50, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<l>OffsetLineLeftRight (RegionLine, x1, y1, x2, y2, -50, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<l>distance_pl (outLineEndY, outLineEndX, y1, x1, y2, x2, Distance)</l>
 <c></c>
+<l>OffsetLineLeftRight (RegionLine, x2, y2, x1, y1, 100, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<l>OffsetLineLeftRight (RegionLine, x2, y2, x1, y1, -100, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<c></c>
+<c></c>
+<l>dev_set_color ('red')</l>
+<l>x1 :=540.44300000</l>
+<l>y1 := 1065.53000000</l>
+<l>x2 :=945.40600000</l>
+<l>y2 := 677.58200000</l>
+<l>gen_region_line (ROI_0, y1, x1, y2, x2)</l>
+<l>OffsetLineLeftRight (RegionLine, x1, y1, x2, y2, 50, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<l>OffsetLineLeftRight (RegionLine, x1, y1, x2, y2, -50, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<c></c>
+<l>OffsetLineLeftRight (RegionLine, x2, y2, x1, y1, 100, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<l>OffsetLineLeftRight (RegionLine, x2, y2, x1, y1, -100, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
 </body>
 <docu id="main">
 <parameters/>
@@ -122,6 +138,70 @@
 <parameter id="outLineEndY"/>
 <parameter id="outLineStartX"/>
 <parameter id="outLineStartY"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="OffsetLineLeftRight">
+<interface>
+<oo>
+<par name="outLineRegion" base_type="iconic" dimension="0"/>
+</oo>
+<ic>
+<par name="x1" base_type="ctrl" dimension="0"/>
+<par name="y1" base_type="ctrl" dimension="0"/>
+<par name="x2" base_type="ctrl" dimension="0"/>
+<par name="y2" base_type="ctrl" dimension="0"/>
+<par name="offset" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="outX1" base_type="ctrl" dimension="0"/>
+<par name="outY1" base_type="ctrl" dimension="0"/>
+<par name="outX2" base_type="ctrl" dimension="0"/>
+<par name="outY2" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>if(offset&gt;0)</l>
+<l>    dev_set_color ('blue')</l>
+<l>else</l>
+<l>    dev_set_color ('green')</l>
+<l>endif</l>
+<c></c>
+<l>xDiff := x2 - x1</l>
+<l>yDiff := y2 - y1</l>
+<c></c>
+<l>m := xDiff / yDiff</l>
+<c></c>
+<l>b := x1 - m*y1</l>
+<c></c>
+<l>alpha := atan(m)</l>
+<c></c>
+<l>bIncre := offset / cos(alpha)</l>
+<c></c>
+<l>newB := b + bIncre</l>
+<c></c>
+<c>* outX = m * outY + newB</c>
+<l>outY1 := y1</l>
+<l>outY2 := y2</l>
+<l>outX1 := m* outY1 + newB</l>
+<l>outX2 := m* outY2 + newB</l>
+<c></c>
+<l>gen_region_line (outLineRegion, outY1, outX1, outY2, outX2)</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="OffsetLineLeftRight">
+<parameters>
+<parameter id="offset"/>
+<parameter id="outLineRegion"/>
+<parameter id="outX1"/>
+<parameter id="outX2"/>
+<parameter id="outY1"/>
+<parameter id="outY2"/>
+<parameter id="x1"/>
+<parameter id="x2"/>
+<parameter id="y1"/>
+<parameter id="y2"/>
 </parameters>
 </docu>
 </procedure>
