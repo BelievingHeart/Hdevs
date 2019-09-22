@@ -774,37 +774,7 @@
 <l>        FitLine2D (Xs, Ys, ignoreFraction, lineX1, lineY1, lineX2, lineY2, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>endif</l>
 <c></c>
-<l>lineCenterX := (lineX1 + lineX2) / 2.0</l>
-<l>lineCenterY := (lineY1 + lineY2) / 2.0</l>
-<l>line_orientation (lineY1, lineX1, lineY2, lineX2, Phi)</l>
-<l>xDirOld := cos(radian)</l>
-<l>yDirOld := sin(radian)</l>
-<c></c>
-<l>xDirNew := cos(Phi + rad(90))</l>
-<l>yDirNew := sin(Phi + rad(90))</l>
-<c></c>
-<l>if((xDirOld * xDirNew + yDirOld * yDirNew)&lt;0)</l>
-<l>    yDirNew := -yDirNew</l>
-<l>    xDirNew := -xDirNew</l>
-<l>endif</l>
-<c></c>
-<l>newRadian := atan2(yDirNew, xDirNew)</l>
-<c></c>
-<l>distance_pp (lineY1, lineX1, lineY2, lineX2, newHeight)</l>
-<c></c>
-<l>gen_rectangle2 (findLineRegion, lineCenterY, lineCenterX, newRadian, newWidth, newHeight/2)</l>
-<l>reduce_domain (inputImage, findLineRegion, ImageReduced)</l>
-<l>edges_sub_pix(ImageReduced, Edges, 'canny', 5, 30, 60)</l>
-<c></c>
-<l>fit_line_contour_xld (Edges, 'tukey', -1, 0, 5, 2, RowBegin, ColBegin, RowEnd, ColEnd, Nr, Nc, Dist)</l>
-<c></c>
-<l>if(|Dist| &gt; 1)</l>
-<l>    tuple_sort_index (Dist, Indices)</l>
-<l>    RowBegin := RowBegin[1]</l>
-<l>    ColBegin := ColBegin[1]</l>
-<l>    RowEnd := RowEnd[1]</l>
-<l>    ColEnd := ColEnd[1]</l>
-<l>endif</l>
+<l>_pinPointFindLine (inputImage, findLineRegion, lineX1, lineX2, lineY1, lineY2, radian, newWidth, RowBegin, ColBegin, RowEnd, ColEnd)</l>
 <c></c>
 <c></c>
 <l>GenLineRegion (lineRegion, ColBegin, RowBegin, ColEnd, RowEnd, imageWidth, imageHeight)</l>
@@ -2266,6 +2236,80 @@
 <parameter id="x2"/>
 <parameter id="y1"/>
 <parameter id="y2"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="_pinPointFindLine">
+<interface>
+<io>
+<par name="inputImage" base_type="iconic" dimension="0"/>
+</io>
+<oo>
+<par name="findLineRegion" base_type="iconic" dimension="0"/>
+</oo>
+<ic>
+<par name="lineX1" base_type="ctrl" dimension="0"/>
+<par name="lineX2" base_type="ctrl" dimension="0"/>
+<par name="lineY1" base_type="ctrl" dimension="0"/>
+<par name="lineY2" base_type="ctrl" dimension="0"/>
+<par name="radian" base_type="ctrl" dimension="0"/>
+<par name="newWidth" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="RowBegin" base_type="ctrl" dimension="0"/>
+<par name="ColBegin" base_type="ctrl" dimension="0"/>
+<par name="RowEnd" base_type="ctrl" dimension="0"/>
+<par name="ColEnd" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>lineCenterX := (lineX1 + lineX2) / 2.0</l>
+<l>lineCenterY := (lineY1 + lineY2) / 2.0</l>
+<l>line_orientation (lineY1, lineX1, lineY2, lineX2, Phi)</l>
+<l>xDirOld := cos(radian)</l>
+<l>yDirOld := sin(radian)</l>
+<c></c>
+<l>xDirNew := cos(Phi + rad(90))</l>
+<l>yDirNew := sin(Phi + rad(90))</l>
+<c></c>
+<l>if((xDirOld * xDirNew + yDirOld * yDirNew)&lt;0)</l>
+<l>    yDirNew := -yDirNew</l>
+<l>    xDirNew := -xDirNew</l>
+<l>endif</l>
+<c></c>
+<l>newRadian := atan2(yDirNew, xDirNew)</l>
+<c></c>
+<l>distance_pp (lineY1, lineX1, lineY2, lineX2, newHeight)</l>
+<c></c>
+<l>gen_rectangle2 (findLineRegion, lineCenterY, lineCenterX, newRadian, newWidth, newHeight/2)</l>
+<l>reduce_domain (inputImage, findLineRegion, ImageReduced)</l>
+<l>edges_sub_pix(ImageReduced, Edges, 'canny', 5, 30, 60)</l>
+<c></c>
+<l>fit_line_contour_xld (Edges, 'tukey', -1, 0, 5, 2, RowBegin, ColBegin, RowEnd, ColEnd, Nr, Nc, Dist)</l>
+<c></c>
+<l>if(|Dist| &gt; 1)</l>
+<l>    tuple_sort_index (Dist, Indices)</l>
+<l>    RowBegin := RowBegin[1]</l>
+<l>    ColBegin := ColBegin[1]</l>
+<l>    RowEnd := RowEnd[1]</l>
+<l>    ColEnd := ColEnd[1]</l>
+<l>endif</l>
+<l>return ()</l>
+</body>
+<docu id="_pinPointFindLine">
+<parameters>
+<parameter id="ColBegin"/>
+<parameter id="ColEnd"/>
+<parameter id="RowBegin"/>
+<parameter id="RowEnd"/>
+<parameter id="findLineRegion"/>
+<parameter id="inputImage"/>
+<parameter id="lineX1"/>
+<parameter id="lineX2"/>
+<parameter id="lineY1"/>
+<parameter id="lineY2"/>
+<parameter id="newWidth"/>
+<parameter id="radian"/>
 </parameters>
 </docu>
 </procedure>
