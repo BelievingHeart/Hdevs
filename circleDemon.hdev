@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="18.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<l>set_system('init_new_image', 'true')</l>
+<l>dev_open_window(0, 0, 512, 512, 'black', WindowHandle)</l>
+<l>read_image (Image, 'E:/Projects/I94下相机_0920/10/MV-CH250-20TM-M58S-NF (00D27021190)/Image_20190921012445965.bmp')</l>
+<l>gen_circle (ROI_0, 1152.08, 2255.75, 753.321)</l>
+<l>reduce_domain(Image, ROI_0, ImageReduced)</l>
+<l>edges_sub_pix(ImageReduced, Edges, 'canny', 3, 20, 40)</l>
+<l>segment_contours_xld (Edges, ContoursSplit, 'lines_circles', 5, 2, 2)</l>
+<l>dev_display(Image)</l>
+<l>dev_display(ContoursSplit)</l>
+<l>select_contours_xld (ContoursSplit, SelectedContours, 'contour_length', 500, 99999, -0.5, 0.5)</l>
+<l>union_cocircular_contours_xld (SelectedContours, UnionContours, rad(180), rad(1), rad(180), 1000, 50, 10, 'false', 3)</l>
+<l>fit_circle_contour_xld(UnionContours, 'algebraic', -1, 0, 0, 3, 2, Row, Column, Radius, StartPhi, EndPhi, PointOrder)</l>
+<l>gen_circle_contour_xld (ContCircle, Row, Column, Radius, StartPhi, StartPhi + rad(360), 'positive', 1)</l>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>
