@@ -2094,22 +2094,15 @@
 <l>m := yDiff/xDiff</l>
 <l>b := lineYStart - m* lineXStart</l>
 <c></c>
-<l>xStart := 0</l>
-<l>xEnd := imageWidth</l>
+<l>_search_boundary ('null', m, b, imageWidth, imageHeight, result, xStart, yStart)</l>
+<l>allBoundaries := ['left','right','up','down']</l>
+<l>for Index := 0 to |allBoundaries|-1 by 1</l>
+<l>    if(allBoundaries[Index] == result)</l>
+<l>        tuple_remove (allBoundaries, Index, boundariesLeft)</l>
+<l>    endif</l>
+<l>endfor</l>
+<l>_search_boundary (boundariesLeft, m, b, imageWidth, imageHeight, result, xEnd, yEnd)</l>
 <c></c>
-<l>yStart := m* xStart +b</l>
-<l>if(yStart&gt; imageHeight or yStart &lt; 0)</l>
-<l>    yStart := 0</l>
-<l>    xStart := (yStart - b)/m</l>
-<l>endif</l>
-<c></c>
-<l>yEnd := m* xEnd +b</l>
-<l>if(yEnd&gt; imageHeight or yEnd &lt; 0)</l>
-<l>    yEnd := imageHeight</l>
-<l>    xEnd := (yEnd - b)/m</l>
-<l>endif</l>
-<c></c>
-<l>* gen_region_line (lineRegion, yStart, xStart, yEnd, xEnd)</l>
 <l>gen_contour_polygon_xld(lineRegion,[yStart,yEnd],[xStart,xEnd])</l>
 <l>return ()</l>
 </body>
@@ -3056,6 +3049,161 @@
 <parameter id="radian"/>
 <parameter id="x1"/>
 <parameter id="y1"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="_getUnmarkedBoundary">
+<interface>
+<ic>
+<par name="boundarySearched" base_type="ctrl" dimension="0"/>
+<par name="m" base_type="ctrl" dimension="0"/>
+<par name="b" base_type="ctrl" dimension="0"/>
+<par name="imageWidth" base_type="ctrl" dimension="0"/>
+<par name="imageHeight" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="x" base_type="ctrl" dimension="0"/>
+<par name="y" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<c></c>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="_getUnmarkedBoundary">
+<parameters>
+<parameter id="b"/>
+<parameter id="boundarySearched"/>
+<parameter id="imageHeight"/>
+<parameter id="imageWidth"/>
+<parameter id="m"/>
+<parameter id="x"/>
+<parameter id="y"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="_search_boundary">
+<interface>
+<ic>
+<par name="boundariesToSearch" base_type="ctrl" dimension="0"/>
+<par name="m" base_type="ctrl" dimension="0"/>
+<par name="b" base_type="ctrl" dimension="0"/>
+<par name="imageWidth" base_type="ctrl" dimension="0"/>
+<par name="imageHeight" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="result" base_type="ctrl" dimension="0"/>
+<par name="x" base_type="ctrl" dimension="0"/>
+<par name="y" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<c>* down</c>
+<l>StringTupleContains(boundariesToSearch, 'down', hasElement)</l>
+<l>StringTupleContains(boundariesToSearch, 'null', hasNull)</l>
+<c></c>
+<l>if(hasElement == 'true' or hasNull == 'true')</l>
+<l>    y := imageHeight -1</l>
+<l>    x := (y - b) / m</l>
+<c></c>
+<l>if(x&gt;=0 and x&lt; imageWidth)</l>
+<l>    result := 'down'</l>
+<l>    return ()</l>
+<l>endif</l>
+<l>endif</l>
+<c></c>
+<c>* up</c>
+<l>StringTupleContains(boundariesToSearch, 'up', hasElement)</l>
+<l>StringTupleContains(boundariesToSearch, 'null', hasNull)</l>
+<c></c>
+<l>if(hasElement == 'true' or hasNull == 'true')</l>
+<l>    y := 0</l>
+<l>    x := (y - b) / m</l>
+<c></c>
+<l>if(x&gt;=0 and x&lt; imageWidth)</l>
+<l>    result := 'up'</l>
+<l>    return ()</l>
+<l>endif</l>
+<l>endif</l>
+<c></c>
+<c>* left</c>
+<l>StringTupleContains(boundariesToSearch, 'left', hasElement)</l>
+<l>StringTupleContains(boundariesToSearch, 'null', hasNull)</l>
+<c></c>
+<l>if(hasElement == 'true' or hasNull == 'true')</l>
+<l>    x := 0</l>
+<l>    y := m*x + b</l>
+<c></c>
+<l>if(y&gt;=0 and y&lt; imageHeight)</l>
+<l>    result := 'left'</l>
+<l>    return ()</l>
+<l>endif</l>
+<l>endif</l>
+<c></c>
+<c></c>
+<c>* right</c>
+<l>StringTupleContains(boundariesToSearch, 'right', hasElement)</l>
+<l>StringTupleContains(boundariesToSearch, 'null', hasNull)</l>
+<c></c>
+<l>if(hasElement == 'true' or hasNull == 'true')</l>
+<l>    x := imageWidth - 1</l>
+<l>    y := m*x + b</l>
+<c></c>
+<l>if(y&gt;=0 and y&lt; imageHeight)</l>
+<l>    result := 'right'</l>
+<l>    return ()</l>
+<l>endif</l>
+<l>endif</l>
+<c></c>
+<l>result := 'null'</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="_search_boundary">
+<parameters>
+<parameter id="b"/>
+<parameter id="boundariesToSearch"/>
+<parameter id="imageHeight"/>
+<parameter id="imageWidth"/>
+<parameter id="m"/>
+<parameter id="result"/>
+<parameter id="x"/>
+<parameter id="y"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="StringTupleContains">
+<interface>
+<ic>
+<par name="listOfString" base_type="ctrl" dimension="0"/>
+<par name="targetString" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="hasElement" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>for i := 0 to |listOfString|-1 by 1</l>
+<l>    if(listOfString[i] == targetString)</l>
+<l>        hasElement := 'true'</l>
+<l>        return ()</l>
+<l>    endif</l>
+<l>endfor</l>
+<c></c>
+<l>hasElement := 'false'</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="StringTupleContains">
+<parameters>
+<parameter id="hasElement">
+<sem_type>string</sem_type>
+</parameter>
+<parameter id="listOfString"/>
+<parameter id="targetString">
+<sem_type>string</sem_type>
+</parameter>
 </parameters>
 </docu>
 </procedure>
