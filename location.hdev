@@ -60,6 +60,8 @@
 <l>FAI31_CENTER_Y := 25.362 / YCoeff </l>
 <l>FAI31_CENTER_X := 9.299 / XCoeff</l>
 <c></c>
+<l>FAI33_LEFT_LEN := 3.74 / XCoeff</l>
+<l>FAI33_RIGHT_LEN := 14.85 / XCoeff</l>
 <c></c>
 <c></c>
 <c></c>
@@ -877,6 +879,59 @@
 <l>Outputs := [Outputs, diffPixel_mn * XCoeff]</l>
 <c></c>
 <c></c>
+<c>*******************FAI33******************</c>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1LeftBase, lineY1LeftBase, lineX2LeftBase, lineY2LeftBase, FAI33_LEFT_LEN, MapToWorld, MapToImage, 'true', X1_FAI33_LEFT, Y1_FAI33_LEFT, X2_FAI33_LEFT, Y2_FAI33_LEFT)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1LeftBase, lineY1LeftBase, lineX2LeftBase, lineY2LeftBase, FAI33_RIGHT_LEN, MapToWorld, MapToImage, 'true', X1_FAI33_RIGHT, Y1_FAI33_RIGHT, X2_FAI33_RIGHT, Y2_FAI33_RIGHT)</l>
+<c></c>
+<c>* top left point</c>
+<l>gen_rectangle1 (ROI_FAI33_TL, 821.9, 610.7, 1135.5, 1122.7)</l>
+<l>reduce_domain (ImageSearch, ROI_FAI33_TL, ImageReduced)</l>
+<l>edges_sub_pix (ImageReduced, Edges1, 'canny', 1, 30, 60)</l>
+<l>intersection_line_contour_xld (Edges1, Y1_FAI33_LEFT, X1_FAI33_LEFT, Y2_FAI33_LEFT, X2_FAI33_LEFT, rowTL, colTL, IsOverlapping3)</l>
+<l>IntersectsX := [IntersectsX, colTL]</l>
+<l>IntersectsY := [IntersectsY, rowTL]</l>
+<l>gen_cross_contour_xld (Cross1, rowTL, colTL, 100, radLeftBase)</l>
+<c></c>
+<c>* bottom left point</c>
+<l>gen_rectangle1 (ROI_FAI33_BL, 1164, 660, 1427, 1034)</l>
+<l>reduce_domain (ImageSearch, ROI_FAI33_BL, ImageReduced)</l>
+<l>edges_sub_pix (ImageReduced, Edges1, 'canny', 1, 30, 60)</l>
+<l>intersection_line_contour_xld (Edges1, Y1_FAI33_LEFT, X1_FAI33_LEFT, Y2_FAI33_LEFT, X2_FAI33_LEFT, rowBL, colBL, IsOverlapping3)</l>
+<l>IntersectsX := [IntersectsX, colBL]</l>
+<l>IntersectsY := [IntersectsY, rowBL]</l>
+<l>gen_cross_contour_xld (Cross2, rowBL, colBL, 100, radLeftBase)</l>
+<c></c>
+<c>* top RIGHT point</c>
+<l>gen_rectangle1 (ROI_FAI33_TR, 821.9, 2036, 1106, 2461)</l>
+<l>reduce_domain (ImageSearch, ROI_FAI33_TR, ImageReduced)</l>
+<l>edges_sub_pix (ImageReduced, Edges1, 'canny', 1, 30, 60)</l>
+<l>intersection_line_contour_xld (Edges1, Y1_FAI33_RIGHT, X1_FAI33_RIGHT, Y2_FAI33_RIGHT, X2_FAI33_RIGHT, rowTR, colTR, IsOverlapping3)</l>
+<l>IntersectsX := [IntersectsX, colTR]</l>
+<l>IntersectsY := [IntersectsY, rowTR]</l>
+<l>gen_cross_contour_xld (Cross3, rowTR, colTR, 100, radLeftBase)</l>
+<c></c>
+<c>* bottom RIGHT point</c>
+<l>gen_rectangle1 (ROI_FAI33_BR, 1182, 2039, 1467, 2465)</l>
+<l>reduce_domain (ImageSearch, ROI_FAI33_BR, ImageReduced)</l>
+<l>edges_sub_pix (ImageReduced, Edges1, 'canny', 1, 30, 60)</l>
+<l>intersection_line_contour_xld (Edges1, Y1_FAI33_RIGHT, X1_FAI33_RIGHT, Y2_FAI33_RIGHT, X2_FAI33_RIGHT, rowBR, colBR, IsOverlapping3)</l>
+<l>IntersectsX := [IntersectsX, colBR]</l>
+<l>IntersectsY := [IntersectsY, rowBR]</l>
+<c></c>
+<l>L6_ROW1 := (rowTL + rowTR) / 2.0</l>
+<l>L6_COL1 := (colTL + colTR) / 2.0</l>
+<l>L6_ROW2 := (rowBL + rowBR) / 2.0</l>
+<l>L6_COL2 := (colBL + colBR) / 2.0</l>
+<c></c>
+<c></c>
+<l>L5_ROW1 := (rowTL + rowBL) / 2.0</l>
+<l>L5_COL1 := (colTL + colBL) / 2.0</l>
+<l>L5_ROW2 := (rowTR + rowBR) / 2.0</l>
+<l>L5_COL2 := (colTR + colBR) / 2.0</l>
+<c></c>
+<l>intersection_lines (L6_ROW1, L6_COL1, L6_ROW2, L6_COL2, L5_ROW1, L5_COL1, L5_ROW2, L5_COL2, intersectY, intersectX, IsOverlapping4)</l>
+<l>IntersectsX := [IntersectsX, intersectX]</l>
+<l>IntersectsY := [IntersectsY, intersectY]</l>
 <c></c>
 <c></c>
 <l>dev_display (Image)</l>
@@ -1641,7 +1696,6 @@
 <l>lineY1 := RowBegin</l>
 <l>lineX2 := ColEnd</l>
 <l>lineY2 := RowEnd</l>
-<l>* gen_contour_polygon_xld(lineRegion,[lineY1,lineY2],[lineX1,lineX2])</l>
 <l>return ()</l>
 </body>
 <docu id="VisionProStyleFindLineOneStep">
