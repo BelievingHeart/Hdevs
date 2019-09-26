@@ -11,18 +11,18 @@ FAI_WEIGHTS := [XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,X
 fwrite_string (FileHandle, header)
 fnew_line (FileHandle)
                 
-imageDir := 'D:/Images/0925/动态/2/MV-CH250-20TM-F-NF (00D46076741)/'
+imageDir := 'D:/Images/0925/动态/11/MV-CH250-20TM-F-NF (00D46076741)/'
 set_system ('image_dir', imageDir)
 
 open_framegrabber ('File', 1, 1, Width, Height, 0, 0, 'default', -1, 'default', -1, 'false', imageDir + 'images.seq', '', 1, 2, AcqHandle)
 
 
 Biases := [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-Thresholds := [128, 20 , 20, 20,30,20,20,20,20,30,30,20,20,20,30]
+Thresholds := [128, 20 , 20, 3,30,20,20,20,20,30,30,20,20,20,30]
 
 * dev_resize_window_fit_image (Image, 0, 0, 800, 800)
 dev_open_window(0, 0, 800, 800, 'black', WindowHandle)
-for Index := 1 to 33 by 1
+for Index := 1 to 32 by 1
     
     grab_image (Image, AcqHandle)
 
@@ -61,7 +61,7 @@ dev_display (FindLineRects)
   endfor
   fnew_line (FileHandle)
   
- *stop ()
+*stop ()
   endfor
 
 close_file (FileHandle)
