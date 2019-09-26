@@ -1221,6 +1221,8 @@
 <par name="maxEdge" base_type="ctrl" dimension="0"/>
 <par name="imageWidth" base_type="ctrl" dimension="0"/>
 <par name="imageHeight" base_type="ctrl" dimension="0"/>
+<par name="cannyHigh" base_type="ctrl" dimension="0"/>
+<par name="cannyLow" base_type="ctrl" dimension="0"/>
 </ic>
 <oc>
 <par name="XsUsed" base_type="ctrl" dimension="0"/>
@@ -1296,6 +1298,8 @@
 <parameter id="XsUsed"/>
 <parameter id="YsIgnored"/>
 <parameter id="YsUsed"/>
+<parameter id="cannyHigh"/>
+<parameter id="cannyLow"/>
 <parameter id="col">
 <default_type>integer</default_type>
 <type_list>
@@ -1778,8 +1782,10 @@
 <l>rectFAI3Radian := rad(90)</l>
 <l>rectFAI3Len1 := 175.88000000</l>
 <l>rectFAI3Len2 := 623.96700000</l>
+<c></c>
 <l>AffineTransRect2 (rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, MovementImageToImage, rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rectFAI3, lineRegion, 'positive', rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, numSubRects, FAI3Threshold, 'first', ignorePortion, 'false', 1, Width, Height, newWidth, 60, 30, lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<c></c>
+<l>VisionProStyleFindLineOneStep_Pairs (Image, rectFAI3, lineRegion, rectFAI2Row, rectFAI2Col, rectFAI2Radian, rectFAI2Len1, rectFAI2Len2, 'positive', 10, [FAI3Threshold,FAI3Threshold], 1, 'last', 'false', 0.2, 'first', 25, 60, 5120, 5120, 60, 30, XsUsed, YsUsed, XsIgnored, YsIgnored, lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3)</l>
 <l>concat_obj (FindLineRects, rectFAI3, FindLineRects)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <c></c>
@@ -3691,7 +3697,7 @@
 <l>rectLen1 := [rect1Len1, rect2Len1]</l>
 <l>rectLen2 := [rect1Len2, rect2Len2]</l>
 <c></c>
-<l>* VisionProStyleFindLineOneStep_Pairs (Image, findLineRegion, lineRegion, rect1Y1, rect1X1, rect1Radian, rect1Len1, rect1Len2, 'positive', 10, 5, 1, 'first', 'false', 0.2, 'first', 1, 10, 5120, 5120, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored, lineX1, lineY1, lineX2, lineY2)</l>
+<l>* VisionProStyleFindLineOneStep_Pairs (Image, findLineRegion, lineRegion, rect1Y1, rect1X1, rect1Radian, rect1Len1, rect1Len2, 'positive', 10, 5, 1, 'first', 'false', 0.2, 'first', 1, 10, 5120, 5120, cannyHigh16, cannyLow16, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored, lineX1, lineY1, lineX2, lineY2)</l>
 <l>return ()</l>
 </body>
 <docu id="I94BottomViewMeasure">
