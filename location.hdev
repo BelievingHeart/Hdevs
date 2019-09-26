@@ -16,7 +16,7 @@
 <l>fwrite_string (FileHandle, header)</l>
 <l>fnew_line (FileHandle)</l>
 <c>                </c>
-<l>imageDir := 'D:/Images/0925/动态/1/MV-CH250-20TM-F-NF (00D46076741)/'</l>
+<l>imageDir := 'D:/Images/0925/动态/10/MV-CH250-20TM-F-NF (00D46076741)/'</l>
 <l>set_system ('image_dir', imageDir)</l>
 <c></c>
 <l>open_framegrabber ('File', 1, 1, Width, Height, 0, 0, 'default', -1, 'default', -1, 'false', imageDir + 'images.seq', '', 1, 2, AcqHandle)</l>
@@ -31,7 +31,7 @@
 <c>    </c>
 <l>    grab_image (Image, AcqHandle)</l>
 <c></c>
-<l>    I94TopFaceMeasurement (Image, lineRegions, FindLineRects, ModelID, 0.0072, 0.0072, Biases, Thresholds, FAI_NAMES, FAI_WEIGHTS, outputs, crossesXUsed, crossesYUsed, crossesXIgnored, crossesYIgnored, intersectXs, intersectYs, outputsPixel)</l>
+<l>    I94TopFaceMeasurement (Image, lineRegions, FindLineRects, ModelID, 0.0076, 0.0076, Biases, Thresholds, FAI_NAMES, FAI_WEIGHTS, outputs, crossesXUsed, crossesYUsed, crossesXIgnored, crossesYIgnored, intersectXs, intersectYs, outputsPixel)</l>
 <c>    </c>
 <c>* find right base line</c>
 <c></c>
@@ -754,6 +754,8 @@
 <par name="imageWidth" base_type="ctrl" dimension="0"/>
 <par name="imageHeight" base_type="ctrl" dimension="0"/>
 <par name="newWidth" base_type="ctrl" dimension="0"/>
+<par name="cannyHigh" base_type="ctrl" dimension="0"/>
+<par name="cannyLow" base_type="ctrl" dimension="0"/>
 </ic>
 <oc>
 <par name="lineX1" base_type="ctrl" dimension="0"/>
@@ -792,7 +794,7 @@
 <l>        FitLine2D (Xs, Ys, ignoreFraction, lineX1, lineY1, lineX2, lineY2, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>    endif</l>
 <c></c>
-<l>    _pinPointFindLine (inputImage, findLineRegion1, lineX1, lineX2, lineY1, lineY2, radian, newWidth, MultipleLines, RowBegin, ColBegin, RowEnd, ColEnd, EdgesXStep, EdgesYStep)</l>
+<l>    _pinPointFindLine (inputImage, findLineRegion1, lineX1, lineX2, lineY1, lineY2, radian, newWidth, MultipleLines, cannyHigh, cannyLow, RowBegin, ColBegin, RowEnd, ColEnd, EdgesXStep, EdgesYStep)</l>
 <c></c>
 <l>    if(MultipleLines == 'true')</l>
 <l>        EdgesX := [EdgesX, EdgesXStep]</l>
@@ -829,6 +831,13 @@
 <parameter id="XsUsed"/>
 <parameter id="YsIgnored"/>
 <parameter id="YsUsed"/>
+<parameter id="cannyHigh">
+<default_value>60</default_value>
+<sem_type>real</sem_type>
+</parameter>
+<parameter id="cannyLow">
+<default_value>30</default_value>
+</parameter>
 <parameter id="col"/>
 <parameter id="findLineRegion">
 <description lang="zh_CN">The region where the line was searched</description>
@@ -1250,7 +1259,7 @@
 <l>        FitLine2D (XsUsed, YsUsed, ignoreFraction, lineX1, lineY1, lineX2, lineY2, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>    endif</l>
 <c></c>
-<l>    _pinPointFindLine (inputImage, findLineRegion1, lineX1, lineX2, lineY1, lineY2, radian, 5, MultipleLines, RowBegin, ColBegin, RowEnd, ColEnd, EdgesXStep, EdgesYStep)</l>
+<l>    _pinPointFindLine (inputImage, findLineRegion1, lineX1, lineX2, lineY1, lineY2, radian, 5, MultipleLines, cannyHigh, cannyLow, RowBegin, ColBegin, RowEnd, ColEnd, EdgesXStep, EdgesYStep)</l>
 <c></c>
 <l>    if(MultipleLines == 'true')</l>
 <l>        EdgesX := [EdgesX, EdgesXStep]</l>
@@ -1386,7 +1395,7 @@
 </parameters>
 </docu>
 </procedure>
-<procedure name="AffineTransRect2">
+<procedure name="_affineTransRect2Single">
 <interface>
 <ic>
 <par name="row" base_type="ctrl" dimension="0"/>
@@ -1405,6 +1414,7 @@
 </oc>
 </interface>
 <body>
+<c></c>
 <l>affine_trans_point_2d (map, row, col, rowOut, colOut)</l>
 <l>len1Out := len1</l>
 <l>len2Out := len2</l>
@@ -1441,7 +1451,7 @@
 <c></c>
 <l>return ()</l>
 </body>
-<docu id="AffineTransRect2">
+<docu id="_affineTransRect2Single">
 <parameters>
 <parameter id="col"/>
 <parameter id="colOut"/>
@@ -1660,7 +1670,7 @@
 <c></c>
 <c></c>
 <l>AffineTransRect2 (baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2, MovementImageToImage, baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rectBaseRight, lineRegionRightBase, 'positive', baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2, numSubRects, TopThreshold, 'first', ignorePortion, 'true', 1, Width, Height, newWidth, lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rectBaseRight, lineRegionRightBase, 'positive', baseRightRow, baseRightColum, baseRightRadian, baseRightLen1, baseRightLen2, numSubRects, TopThreshold, 'first', ignorePortion, 'true', 1, Width, Height, newWidth, 60, 30, lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>crossesXused := [crossesXused, XsUsed]</l>
 <l>crossesYused := [crossesYused, YsUsed]</l>
 <l>crossesXIgnored := [crossesXIgnored, XsIgnored]</l>
@@ -1676,7 +1686,7 @@
 <l>baseTopLen2 := 627.82500000</l>
 <c></c>
 <l>AffineTransRect2 (baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, MovementImageToImage, baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rectBaseTop, lineRegionTopBase, 'positive', baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, numSubRects, RightThreshold, 'first', ignorePortion, 'false', 1, Width, Height, newWidth, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rectBaseTop, lineRegionTopBase, 'positive', baseTopRow, baseTopColumn, baseTopRadian, baseTopLen1, baseTopLen2, numSubRects, RightThreshold, 'first', ignorePortion, 'false', 1, Width, Height, newWidth, 60, 30, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (rectBaseRight, rectBaseTop, FindLineRects)</l>
 <l>concat_obj (lineRegionRightBase, lineRegionTopBase, lineRegions)</l>
 <c></c>
@@ -1717,11 +1727,16 @@
 <l>rectFAI2Radian := rad(-91)</l>
 <l>rectFAI2Len1 :=200.89500000</l>
 <l>rectFAI2Len2 := 200.18000000</l>
-<l>AffineTransRect2 (rectFAI2Row, rectFAI2Col, rectFAI2Radian, rectFAI2Len1, rectFAI2Len2, MovementImageToImage, rectFAI2Row, rectFAI2Col, rectFAI2Radian, rectFAI2Len1, rectFAI2Len2)</l>
-<l>gen_rectangle2 (Rectangle1, rectFAI2Row, rectFAI2Col, rectFAI2Radian, rectFAI2Len1, rectFAI2Len2)</l>
 <c></c>
-<l>gen_rectangle2 (Rectangle, rectFAI2Row, rectFAI2Col, rectFAI2Radian, rectFAI2Len1, rectFAI2Len2)</l>
-<l>VisionProStyleFindLineOneStep (Image, findLineRegionFAI2, lineRegion, 'positive', rectFAI2Row, rectFAI2Col, rectFAI2Radian, rectFAI2Len1, rectFAI2Len2, numSubRects, FAI2Threshold, 'first', 0.4, 'false', 1, Width, Height, newWidth, lineStartX_FAI2H, lineStartY_FAI2H, lineEndX_FAI2H, lineEndY_FAI2H, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>rectFAI2Row_RIGHT :=2173.39000000 - rowModel</l>
+<l>rectFAI2Col_RIGHT :=4168.38000000 - colModel</l>
+<l>rectFAI2Radian_RIGHT := rad(-91)</l>
+<l>rectFAI2Len1_RIGHT :=200.89500000</l>
+<l>rectFAI2Len2_RIGHT := 200.18000000</l>
+<c></c>
+<l>AffineTransRect2 ([rectFAI2Row, rectFAI2Row_RIGHT], [rectFAI2Col,rectFAI2Col_RIGHT], [rectFAI2Radian, rectFAI2Radian_RIGHT], [rectFAI2Len1, rectFAI2Len1_RIGHT], [rectFAI2Len2, rectFAI2Len2_RIGHT], MovementImageToImage, rectFAI2Row, rectFAI2Col, rectFAI2Radian, rectFAI2Len1, rectFAI2Len2)</l>
+<c></c>
+<l>VisionProStyleFindLineOneStep (Image, findLineRegionFAI2, lineRegion, 'positive', rectFAI2Row, rectFAI2Col, rectFAI2Radian, rectFAI2Len1, rectFAI2Len2, numSubRects, [FAI2Threshold, FAI2Threshold], 'first', 0.4, 'false', 1, Width, Height, newWidth, 60, 30, lineStartX_FAI2H, lineStartY_FAI2H, lineEndX_FAI2H, lineEndY_FAI2H, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <l>concat_obj (FindLineRects, findLineRegionFAI2, FindLineRects)</l>
 <l>crossesXused := [crossesXused, XsUsed]</l>
@@ -1764,7 +1779,7 @@
 <l>rectFAI3Len1 := 175.88000000</l>
 <l>rectFAI3Len2 := 623.96700000</l>
 <l>AffineTransRect2 (rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, MovementImageToImage, rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rectFAI3, lineRegion, 'positive', rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, numSubRects, FAI3Threshold, 'first', ignorePortion, 'false', 1, Width, Height, newWidth, lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rectFAI3, lineRegion, 'positive', rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, numSubRects, FAI3Threshold, 'first', ignorePortion, 'false', 1, Width, Height, newWidth, 60, 30, lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rectFAI3, FindLineRects)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <c></c>
@@ -1811,7 +1826,7 @@
 <l>rectFAI4Len1 := 107.89900000</l>
 <l>rectFAI4Len2 := 559.30000000</l>
 <l>AffineTransRect2 (rectFAI4Row, rectFAI4Col, rectFAI4Radian, rectFAI4Len1, rectFAI4Len2, MovementImageToImage, rectFAI4Row, rectFAI4Col, rectFAI4Radian, rectFAI4Len1, rectFAI4Len2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rectFAI4, lineRegion, 'negative', rectFAI4Row, rectFAI4Col, rectFAI4Radian, rectFAI4Len1, rectFAI4Len2, numSubRects, FAI4Threshold, 'first', ignorePortion, 'false', 1, Width, Height, newWidth, lineX1FAI4, lineY1FAI4, lineX2FAI4, lineY2FAI4, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rectFAI4, lineRegion, 'negative', rectFAI4Row, rectFAI4Col, rectFAI4Radian, rectFAI4Len1, rectFAI4Len2, numSubRects, FAI4Threshold, 'first', ignorePortion, 'false', 1, Width, Height, newWidth, 60, 30, lineX1FAI4, lineY1FAI4, lineX2FAI4, lineY2FAI4, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rectFAI4, FindLineRects)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <c></c>
@@ -1855,7 +1870,7 @@
 <l>rectFAI5Len1 := 156.70400000</l>
 <l>rectFAI5Len2 := 970.77200000</l>
 <l>AffineTransRect2 (rectFAI5Row, rectFAI5Col, rectFAI5Radian, rectFAI5Len1, rectFAI5Len2, MovementImageToImage, rectFAI5Row, rectFAI5Col, rectFAI5Radian, rectFAI5Len1, rectFAI5Len2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'positive', rectFAI5Row, rectFAI5Col, rectFAI5Radian, rectFAI5Len1, rectFAI5Len2, numSubRects, FAI5Threshold, 'first', ignorePortion, 'false', 1, Width, Height, newWidth, lineX1FAI5, lineY1FAI5, lineX2FAI5, lineY2FAI5, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'positive', rectFAI5Row, rectFAI5Col, rectFAI5Radian, rectFAI5Len1, rectFAI5Len2, numSubRects, FAI5Threshold, 'first', ignorePortion, 'false', 1, Width, Height, newWidth, 60, 30, lineX1FAI5, lineY1FAI5, lineX2FAI5, lineY2FAI5, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rect, FindLineRects)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <c></c>
@@ -1900,7 +1915,7 @@
 <l>rectFAI6Len1 := 101.93600000</l>
 <l>rectFAI6Len2 := 370.58900000</l>
 <l>AffineTransRect2 (rectFAI6Row, rectFAI6Col, rectFAI6Radian, rectFAI6Len1, rectFAI6Len2, MovementImageToImage, rectFAI6Row, rectFAI6Col, rectFAI6Radian, rectFAI6Len1, rectFAI6Len2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'positive', rectFAI6Row, rectFAI6Col, rectFAI6Radian, rectFAI6Len1, rectFAI6Len2, numSubRects, FAI6Threshold, 'first', ignorePortion, 'false', 1, Width, Height, newWidth, lineX1FAI6, lineY1FAI6, lineX2FAI6, lineY2FAI6, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'positive', rectFAI6Row, rectFAI6Col, rectFAI6Radian, rectFAI6Len1, rectFAI6Len2, numSubRects, FAI6Threshold, 'first', ignorePortion, 'false', 1, Width, Height, newWidth, 60, 30, lineX1FAI6, lineY1FAI6, lineX2FAI6, lineY2FAI6, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rect, FindLineRects)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <c></c>
@@ -1949,7 +1964,7 @@
 <l>rectFAI9Len1 := 97.95910000</l>
 <l>rectFAI9Len2 := 275.13700000</l>
 <l>AffineTransRect2 (rectFAI9Row, rectFAI9Col, rectFAI9Radian, rectFAI9Len1, rectFAI9Len2, MovementImageToImage, rectFAI9Row, rectFAI9Col, rectFAI9Radian, rectFAI9Len1, rectFAI9Len2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'positive', rectFAI9Row, rectFAI9Col, rectFAI9Radian, rectFAI9Len1, rectFAI9Len2, numSubRects, FAI9Threshold, 'first', ignorePortion, 'false', 1, Width, Height, newWidth, lineX1FAI9, lineY1FAI9, lineX2FAI9, lineY2FAI9, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'positive', rectFAI9Row, rectFAI9Col, rectFAI9Radian, rectFAI9Len1, rectFAI9Len2, numSubRects, FAI9Threshold, 'first', ignorePortion, 'false', 1, Width, Height, newWidth, 60, 30, lineX1FAI9, lineY1FAI9, lineX2FAI9, lineY2FAI9, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rect, FindLineRects)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <c></c>
@@ -2000,7 +2015,7 @@
 <l>rectFAI12Len1 := 209.09700000</l>
 <l>rectFAI12Len2 := 477.84200000</l>
 <l>AffineTransRect2 (rectFAI12Row, rectFAI12Col, rectFAI12Radian, rectFAI12Len1, rectFAI12Len2, MovementImageToImage, rectFAI12Row, rectFAI12Col, rectFAI12Radian, rectFAI12Len1, rectFAI12Len2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'positive', rectFAI12Row, rectFAI12Col, rectFAI12Radian, rectFAI12Len1, rectFAI12Len2, numSubRects, FAI12Threshold, 'first', ignorePortion, 'true', 1, Width, Height, newWidth, lineX1FAI12, lineY1FAI12, lineX2FAI12, lineY2FAI12, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'positive', rectFAI12Row, rectFAI12Col, rectFAI12Radian, rectFAI12Len1, rectFAI12Len2, numSubRects, FAI12Threshold, 'first', ignorePortion, 'true', 1, Width, Height, newWidth, 60, 30, lineX1FAI12, lineY1FAI12, lineX2FAI12, lineY2FAI12, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rect, FindLineRects)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <c></c>
@@ -2045,7 +2060,7 @@
 <l>rectFAI16Len1 := 175.95600000</l>
 <l>rectFAI16Len2 := 391.84500000</l>
 <l>AffineTransRect2 (rectFAI16Row, rectFAI16Col, rectFAI16Radian, rectFAI16Len1, rectFAI16Len2, MovementImageToImage, rectFAI16Row, rectFAI16Col, rectFAI16Radian, rectFAI16Len1, rectFAI16Len2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'positive', rectFAI16Row, rectFAI16Col, rectFAI16Radian, rectFAI16Len1, rectFAI16Len2, numSubRects, FAI16Threshold, 'first', ignorePortion, 'true', 1, Width, Height, newWidth, lineX1FAI16, lineY1FAI16, lineX2FAI16, lineY2FAI16, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'positive', rectFAI16Row, rectFAI16Col, rectFAI16Radian, rectFAI16Len1, rectFAI16Len2, numSubRects, FAI16Threshold, 'first', ignorePortion, 'true', 1, Width, Height, newWidth, 60, 30, lineX1FAI16, lineY1FAI16, lineX2FAI16, lineY2FAI16, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rect, FindLineRects)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <c></c>
@@ -2086,7 +2101,7 @@
 <l>rectFAI17Len1 := 191.07100000</l>
 <l>rectFAI17Len2 := 356.53500000</l>
 <l>AffineTransRect2 (rectFAI17Row, rectFAI17Col, rectFAI17Radian, rectFAI17Len1, rectFAI17Len2, MovementImageToImage, rectFAI17Row, rectFAI17Col, rectFAI17Radian, rectFAI17Len1, rectFAI17Len2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'positive', rectFAI17Row, rectFAI17Col, rectFAI17Radian, rectFAI17Len1, rectFAI17Len2, numSubRects, FAI17Threshold, 'first', ignorePortion, 'true', 1, Width, Height, newWidth, lineX1FAI17, lineY1FAI17, lineX2FAI17, lineY2FAI17, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'positive', rectFAI17Row, rectFAI17Col, rectFAI17Radian, rectFAI17Len1, rectFAI17Len2, numSubRects, FAI17Threshold, 'first', ignorePortion, 'true', 1, Width, Height, newWidth, 60, 30, lineX1FAI17, lineY1FAI17, lineX2FAI17, lineY2FAI17, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rect, FindLineRects)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <c></c>
@@ -2131,7 +2146,7 @@
 <l>rectFAI19Len1 := 172.44100000</l>
 <l>rectFAI19Len2 := 573.70700000</l>
 <l>AffineTransRect2 (rectFAI19Row, rectFAI19Col, rectFAI19Radian, rectFAI19Len1, rectFAI19Len2, MovementImageToImage, rectFAI19Row, rectFAI19Col, rectFAI19Radian, rectFAI19Len1, rectFAI19Len2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'positive', rectFAI19Row, rectFAI19Col, rectFAI19Radian, rectFAI19Len1, rectFAI19Len2, numSubRects, FAI19Threshold, 'first', 0.3, 'true', 1, Width, Height, newWidth, lineX1FAI19, lineY1FAI19, lineX2FAI19, lineY2FAI19, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'positive', rectFAI19Row, rectFAI19Col, rectFAI19Radian, rectFAI19Len1, rectFAI19Len2, numSubRects, FAI19Threshold, 'first', 0.3, 'true', 1, Width, Height, newWidth, 60, 30, lineX1FAI19, lineY1FAI19, lineX2FAI19, lineY2FAI19, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rect, FindLineRects)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <c></c>
@@ -2181,7 +2196,7 @@
 <l>rectFAI20TRLen1 := 84.64630000</l>
 <l>rectFAI20TRLen2 := 65.46210000</l>
 <l>AffineTransRect2 (rectFAI20TRRow, rectFAI20TRCol, rectFAI20TRRadian, rectFAI20TRLen1, rectFAI20TRLen2, MovementImageToImage, rectFAI20TRRow, rectFAI20TRCol, rectFAI20TRRadian, rectFAI20TRLen1, rectFAI20TRLen2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'negative', rectFAI20TRRow, rectFAI20TRCol, rectFAI20TRRadian, rectFAI20TRLen1, rectFAI20TRLen2, 10, FAI20Threshold_up, 'first', 0, 'false', 3, Width, Height, newWidth, lineX1FAI20TR, lineY1FAI20TR, lineX2FAI20TR, lineY2FAI20TR, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'negative', rectFAI20TRRow, rectFAI20TRCol, rectFAI20TRRadian, rectFAI20TRLen1, rectFAI20TRLen2, 10, FAI20Threshold_up, 'first', 0, 'false', 3, Width, Height, newWidth, 40, 20, lineX1FAI20TR, lineY1FAI20TR, lineX2FAI20TR, lineY2FAI20TR, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rect, FindLineRects)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <c></c>
@@ -2196,7 +2211,7 @@
 <l>rectFAI20LFLen1 := 80.07090000</l>
 <l>rectFAI20LFLen2 := 65.95030000</l>
 <l>AffineTransRect2 (rectFAI20LFRow, rectFAI20LFCol, rectFAI20LFRadian, rectFAI20LFLen1, rectFAI20LFLen2, MovementImageToImage, rectFAI20LFRow, rectFAI20LFCol, rectFAI20LFRadian, rectFAI20LFLen1, rectFAI20LFLen2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'negative', rectFAI20LFRow, rectFAI20LFCol, rectFAI20LFRadian, rectFAI20LFLen1, rectFAI20LFLen2, 10, FAI20Threshold_down, 'first', 0, 'false', 1, Width, Height, newWidth, lineX1FAI20LF, lineY1FAI20LF, lineX2FAI20LF, lineY2FAI20LF, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'negative', rectFAI20LFRow, rectFAI20LFCol, rectFAI20LFRadian, rectFAI20LFLen1, rectFAI20LFLen2, 10, FAI20Threshold_down, 'first', 0, 'false', 1, Width, Height, newWidth, 60, 30, lineX1FAI20LF, lineY1FAI20LF, lineX2FAI20LF, lineY2FAI20LF, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rect, FindLineRects)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <c></c>
@@ -2365,6 +2380,8 @@
 <par name="radian" base_type="ctrl" dimension="0"/>
 <par name="newWidth" base_type="ctrl" dimension="0"/>
 <par name="EdgesOnly" base_type="ctrl" dimension="0"/>
+<par name="cannyHigh" base_type="ctrl" dimension="0"/>
+<par name="cannyLow" base_type="ctrl" dimension="0"/>
 </ic>
 <oc>
 <par name="RowBegin" base_type="ctrl" dimension="0"/>
@@ -2396,7 +2413,7 @@
 <c></c>
 <l>gen_rectangle2 (findLineRegion, lineCenterY, lineCenterX, newRadian, newWidth, newHeight/2)</l>
 <l>reduce_domain (inputImage, findLineRegion, ImageReduced)</l>
-<l>edges_sub_pix(ImageReduced, Edges, 'canny', 5, 30, 60)</l>
+<l>edges_sub_pix(ImageReduced, Edges, 'canny', 5, cannyLow, cannyHigh)</l>
 <c></c>
 <l>maxLength := 0</l>
 <l>selectedIndex := 0</l>
@@ -2444,6 +2461,16 @@
 <parameter id="EdgesY"/>
 <parameter id="RowBegin"/>
 <parameter id="RowEnd"/>
+<parameter id="cannyHigh">
+<sem_type>number</sem_type>
+<values>
+<item>60</item>
+</values>
+</parameter>
+<parameter id="cannyLow">
+<default_value>30</default_value>
+<sem_type>real</sem_type>
+</parameter>
 <parameter id="findLineRegion"/>
 <parameter id="inputImage"/>
 <parameter id="lineX1"/>
@@ -2784,7 +2811,7 @@
 <l>len1TopBase := 187</l>
 <l>len2TopBase := 107</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep (Image, findLineRegionTop, lineRegionTop, 'positive', row1TopBase, col1TopBase, radianTopBase, len1TopBase, len2TopBase, 10, Threshold-10, 'first', 0.3, 'false', 1, 5120, 5120, 5, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, findLineRegionTop, lineRegionTop, 'positive', row1TopBase, col1TopBase, radianTopBase, len1TopBase, len2TopBase, 10, Threshold-10, 'first', 0.3, 'false', 1, 5120, 5120, 5, cannyHigh, cannyLow, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
 <l>PointsYUsed := [PointsYUsed, PointsYUsed]</l>
 <l>PointsXIgnored := [PointsXIgnored, PointsXIgnored]</l>
@@ -2798,7 +2825,7 @@
 <l>len1LeftBase := 332</l>
 <l>len2LeftBase := 294</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep (Image, findLineRegionLeft, lineRegionLeft, 'negative', row1LeftBase, col1LeftBase, radianLeftBase, len1LeftBase, len2LeftBase, 10, [Threshold, Threshold-5], 'first', 0.2, 'true', 1, 5120, 5120, 5, lineX1LeftBase, lineY1LeftBase, lineX2LeftBase, lineY2LeftBase, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, findLineRegionLeft, lineRegionLeft, 'negative', row1LeftBase, col1LeftBase, radianLeftBase, len1LeftBase, len2LeftBase, 10, [Threshold, Threshold-5], 'first', 0.2, 'true', 1, 5120, 5120, 5, cannyHigh1, cannyLow1, lineX1LeftBase, lineY1LeftBase, lineX2LeftBase, lineY2LeftBase, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (findLineRegionTop, findLineRegionLeft, FindLineRegions)</l>
 <l>concat_obj (lineRegionTop, lineRegionLeft, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -2826,7 +2853,7 @@
 <l>len1FAI2Left := [len1FAI2LeftUpper, len1FAI2LeftLower]</l>
 <l>len2FAI2Left := [len2FAI2LeftUpper, len2FAI2LeftLower]</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', row1FAI2Left, col1FAI2Left, radianFAI2Left, len1FAI2Left, len2FAI2Left, 10, [Threshold, Threshold], 'first', 0.2, 'true', 1, 5120, 5120, 5, lineX1_FAI21_LEFT, lineY1_FAI21_LEFT, lineX2_FAI21_LEFT, lineY2_FAI21_LEFT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', row1FAI2Left, col1FAI2Left, radianFAI2Left, len1FAI2Left, len2FAI2Left, 10, [Threshold, Threshold], 'first', 0.2, 'true', 1, 5120, 5120, 5, cannyHigh2, cannyLow2, lineX1_FAI21_LEFT, lineY1_FAI21_LEFT, lineX2_FAI21_LEFT, lineY2_FAI21_LEFT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -2853,7 +2880,7 @@
 <l>len1FAI2Right := [len1FAI2RightUpper, len1FAI2RightLower]</l>
 <l>len2FAI2Right := [len2FAI2RightUpper, len2FAI2RightLower]</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', row1FAI2Right, col1FAI2Right, radianFAI2Right, len1FAI2Right, len2FAI2Right, 10, [Threshold, Threshold], 'first', 0.2, 'true', 1, 5120, 5120, 5, lineX1_FAI21_Right, lineY1_FAI21_Right, lineX2_FAI21_Right, lineY2_FAI21_Right, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', row1FAI2Right, col1FAI2Right, radianFAI2Right, len1FAI2Right, len2FAI2Right, 10, [Threshold, Threshold], 'first', 0.2, 'true', 1, 5120, 5120, 5, cannyHigh3, cannyLow3, lineX1_FAI21_Right, lineY1_FAI21_Right, lineX2_FAI21_Right, lineY2_FAI21_Right, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -2934,7 +2961,7 @@
 <l>rectRadian := rad(90)</l>
 <l>rectLen1 :=268</l>
 <l>rectLen2 :=537</l>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold + 10, 'first', 0.2, 'false', 1, 5120, 5120, 5, lineX1_FAI23_TOP, lineY1_FAI23_TOP, lineX2_FAI23_TOP, lineY2_FAI23_TOP, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold + 10, 'first', 0.2, 'false', 1, 5120, 5120, 5, cannyHigh4, cannyLow4, lineX1_FAI23_TOP, lineY1_FAI23_TOP, lineX2_FAI23_TOP, lineY2_FAI23_TOP, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -2967,7 +2994,7 @@
 <l>rectLen1 :=[rect1Len1, rect2Len1, rect3Len1]</l>
 <l>rectLen2 :=[rect1Len2, rect2Len2, rect3Len2]</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, [Threshold,Threshold,Threshold], 'first', 0.2, 'false', 1, 5120, 5120, 5, lineX1_FAI23_BOTTOM, lineY1_FAI23_BOTTOM, lineX2_FAI23_BOTTOM, lineY2_FAI23_BOTTOM, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, [Threshold,Threshold,Threshold], 'first', 0.2, 'false', 1, 5120, 5120, 5, cannyHigh5, cannyLow5, lineX1_FAI23_BOTTOM, lineY1_FAI23_BOTTOM, lineX2_FAI23_BOTTOM, lineY2_FAI23_BOTTOM, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -3045,7 +3072,7 @@
 <l>rectRadian := rad(-180)</l>
 <l>rectLen1 :=147</l>
 <l>rectLen2 :=140</l>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'true', 1, 5120, 5120, 5, lineX1_FAI24_LEFT, lineY1_FAI24_LEFT, lineX2_FAI24_LEFT, lineY2_FAI24_LEFT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'true', 1, 5120, 5120, 5, cannyHigh6, cannyLow6, lineX1_FAI24_LEFT, lineY1_FAI24_LEFT, lineX2_FAI24_LEFT, lineY2_FAI24_LEFT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -3058,7 +3085,7 @@
 <l>rectRadian := rad(0)</l>
 <l>rectLen1 :=147</l>
 <l>rectLen2 :=140</l>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'true', 1, 5120, 5120, 5, lineX1_FAI24_RIGHT, lineY1_FAI24_RIGHT, lineX2_FAI24_RIGHT, lineY2_FAI24_RIGHT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'true', 1, 5120, 5120, 5, cannyHigh7, cannyLow7, lineX1_FAI24_RIGHT, lineY1_FAI24_RIGHT, lineX2_FAI24_RIGHT, lineY2_FAI24_RIGHT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -3201,7 +3228,7 @@
 <l>rectRadian := rad(90)</l>
 <l>rectLen1 :=108</l>
 <l>rectLen2 :=134</l>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'false', 1, 5120, 5120, 5, lineX1_FAI27_TOP, lineY1_FAI27_TOP, lineX2_FAI27_TOP, lineY2_FAI27_TOP, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'false', 1, 5120, 5120, 5, cannyHigh8, cannyLow8, lineX1_FAI27_TOP, lineY1_FAI27_TOP, lineX2_FAI27_TOP, lineY2_FAI27_TOP, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -3217,7 +3244,7 @@
 <l>rectLen1 :=121</l>
 <l>rectLen2 :=166</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'false', 1, 5120, 5120, 5, lineX1_FAI27_BOTTOM, lineY1_FAI27_BOTTOM, lineX2_FAI27_BOTTOM, lineY2_FAI27_BOTTOM, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'false', 1, 5120, 5120, 5, cannyHigh9, cannyLow9, lineX1_FAI27_BOTTOM, lineY1_FAI27_BOTTOM, lineX2_FAI27_BOTTOM, lineY2_FAI27_BOTTOM, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -3331,7 +3358,7 @@
 <l>rectRadian := rad(180)</l>
 <l>rectLen1 :=236</l>
 <l>rectLen2 :=122</l>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'true', 1, 5120, 5120, 5, lineX1_FAI29_LEFT, lineY1_FAI29_LEFT, lineX2_FAI29_LEFT, lineY2_FAI29_LEFT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'true', 1, 5120, 5120, 5, cannyHigh10, cannyLow10, lineX1_FAI29_LEFT, lineY1_FAI29_LEFT, lineX2_FAI29_LEFT, lineY2_FAI29_LEFT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -3344,7 +3371,7 @@
 <l>rectRadian := rad(0)</l>
 <l>rectLen1 :=236</l>
 <l>rectLen2 :=122</l>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'true', 1, 5120, 5120, 5, lineX1_FAI29_RIGHT, lineY1_FAI29_RIGHT, lineX2_FAI29_RIGHT, lineY2_FAI29_RIGHT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'true', 1, 5120, 5120, 5, cannyHigh11, cannyLow11, lineX1_FAI29_RIGHT, lineY1_FAI29_RIGHT, lineX2_FAI29_RIGHT, lineY2_FAI29_RIGHT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -3408,7 +3435,7 @@
 <l>rectRadian := rad(-136)</l>
 <l>rectLen1 :=270</l>
 <l>rectLen2 :=200</l>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'true', 1, 5120, 5120, 5, lineX1_FAI31_BOTTOMLEFT, lineY1_FAI31_BOTTOMLEFT, lineX2_FAI31_BOTTOMLEFT, lineY2_FAI31_BOTTOMLEFT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'true', 1, 5120, 5120, 5, cannyHigh12, cannyLow12, lineX1_FAI31_BOTTOMLEFT, lineY1_FAI31_BOTTOMLEFT, lineX2_FAI31_BOTTOMLEFT, lineY2_FAI31_BOTTOMLEFT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -3421,7 +3448,7 @@
 <l>rectRadian := rad(45)</l>
 <l>rectLen1 :=310</l>
 <l>rectLen2 :=190</l>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold-10, 'first', 0.2, 'true', 1, 5120, 5120, 5, lineX1_FAI31_TOPRIGHT, lineY1_FAI31_TOPRIGHT, lineX2_FAI31_TOPRIGHT, lineY2_FAI31_TOPRIGHT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold-10, 'first', 0.2, 'true', 1, 5120, 5120, 5, cannyHigh13, cannyLow13, lineX1_FAI31_TOPRIGHT, lineY1_FAI31_TOPRIGHT, lineX2_FAI31_TOPRIGHT, lineY2_FAI31_TOPRIGHT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -3532,7 +3559,7 @@
 <l>rectRadian := rad(133)</l>
 <l>rectLen1 :=235</l>
 <l>rectLen2 :=222</l>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'true', 1, 5120, 5120, 5, lineX1_FAI32_TOPLEFT, lineY1_FAI32_TOPLEFT, lineX2_FAI32_TOPLEFT, lineY2_FAI32_TOPLEFT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'true', 1, 5120, 5120, 5, cannyHigh14, cannyLow14, lineX1_FAI32_TOPLEFT, lineY1_FAI32_TOPLEFT, lineX2_FAI32_TOPLEFT, lineY2_FAI32_TOPLEFT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -3545,7 +3572,7 @@
 <l>rectRadian := rad(-45)</l>
 <l>rectLen1 :=235</l>
 <l>rectLen2 :=222</l>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold-10, 'first', 0.2, 'true', 1, 5120, 5120, 5, lineX1_FAI32_BOTTOMRIGHT, lineY1_FAI32_BOTTOMRIGHT, lineX2_FAI32_BOTTOMRIGHT, lineY2_FAI32_BOTTOMRIGHT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold-10, 'first', 0.2, 'true', 1, 5120, 5120, 5, cannyHigh15, cannyLow15, lineX1_FAI32_BOTTOMRIGHT, lineY1_FAI32_BOTTOMRIGHT, lineX2_FAI32_BOTTOMRIGHT, lineY2_FAI32_BOTTOMRIGHT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -3679,6 +3706,56 @@
 <parameter id="PointsXUsed"/>
 <parameter id="PointsYIgnored"/>
 <parameter id="PointsYUsed"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="AffineTransRect2">
+<interface>
+<ic>
+<par name="row" base_type="ctrl" dimension="0"/>
+<par name="col" base_type="ctrl" dimension="0"/>
+<par name="radian" base_type="ctrl" dimension="0"/>
+<par name="len1" base_type="ctrl" dimension="0"/>
+<par name="len2" base_type="ctrl" dimension="0"/>
+<par name="map" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="rowOut" base_type="ctrl" dimension="0"/>
+<par name="colOut" base_type="ctrl" dimension="0"/>
+<par name="radianOut" base_type="ctrl" dimension="0"/>
+<par name="len1Out" base_type="ctrl" dimension="0"/>
+<par name="len2Out" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>rowOut :=[]</l>
+<l>colOut :=[]</l>
+<l>radianOut :=[]</l>
+<l>len1Out :=[]</l>
+<l>len2Out :=[]</l>
+<c></c>
+<l>for i := 0 to |row|-1 by 1</l>
+<l>    _affineTransRect2Single (row[i], col[i], radian[i], len1[i], len2[i], map, rowO, colO, radianO, len1O, len2O)</l>
+<l>    rowOut :=[rowOut, rowO]</l>
+<l>colOut :=[colOut, colO]</l>
+<l>radianOut :=[radianOut, radianO]</l>
+<l>len1Out :=[len1Out, len1O]</l>
+<l>len2Out :=[len2Out, len2O]</l>
+<l>endfor</l>
+</body>
+<docu id="AffineTransRect2">
+<parameters>
+<parameter id="col"/>
+<parameter id="colOut"/>
+<parameter id="len1"/>
+<parameter id="len1Out"/>
+<parameter id="len2"/>
+<parameter id="len2Out"/>
+<parameter id="map"/>
+<parameter id="radian"/>
+<parameter id="radianOut"/>
+<parameter id="row"/>
+<parameter id="rowOut"/>
 </parameters>
 </docu>
 </procedure>
