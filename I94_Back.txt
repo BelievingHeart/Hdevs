@@ -2,7 +2,7 @@ read_shape_model ('E:/Projects/3d/Hdevs/model_bottom_low_contrast', ModelID)
 
 Width := 5120
 Height := 5120
-read_shape_model ('E:/Projects/3d/Hdevs/ModelTopViewI94', ModelID)
+read_shape_model ('E:/Projects/3d/Hdevs/backViewModelTest', ModelID)
 imageDir := 'D:/Images/0925/动态/1/XIA/MV-CH250-20TM-M58S-NF (00D27021190)/'
 
 open_file ('C:/Users/25001858/Desktop/data.txt', 'output', FileHandle)
