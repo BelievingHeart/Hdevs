@@ -4,14 +4,25 @@
 <interface/>
 <body>
 <l>read_shape_model ('E:/Projects/3d/Hdevs/model_bottom_low_contrast', ModelID)</l>
-<l>read_image (Image, 'E:/Projects/3d/I94/bottom_model_low_contrast.bmp')</l>
-<l>get_image_size (Image, Width, Height)</l>
+<c></c>
+<l>Width := 5120</l>
+<l>Height := 5120</l>
+<l>read_shape_model ('E:/Projects/3d/Hdevs/ModelTopViewI94', ModelID)</l>
+<l>imageDir := 'D:/Images/0925/动态/1/XIA/MV-CH250-20TM-M58S-NF (00D27021190)/'</l>
+<c></c>
+<l>open_file ('C:/Users/25001858/Desktop/data.txt', 'output', FileHandle)</l>
+<l>header := '21_1,21_2,23_1,23_2,24_1,25_1,25_2,26_1,26_2,27_1,27_2,28_1,28_2,29_1,29_2,31_1,32_1,33_1'</l>
+<l>fwrite_string (FileHandle, header)</l>
+<l>fnew_line (FileHandle)</l>
+<c>                </c>
+<l>set_system ('image_dir', imageDir)</l>
+<c></c>
+<l>open_framegrabber ('File', 1, 1, Width, Height, 0, 0, 'default', -1, 'default', -1, 'false', imageDir + 'images.seq', '', 1, 2, AcqHandle)</l>
 <c></c>
 <c></c>
 <l>dev_set_draw ('margin')</l>
 <l>dev_close_window ()</l>
 <l>dev_open_window (0, 0, 800, 800, 'black', WindowHandle)</l>
-<l>dev_display (Image)</l>
 <c></c>
 <c></c>
 <l>XCoeff := 0.0076</l>
@@ -21,7 +32,9 @@
 <l>FAIWeights := []</l>
 <c></c>
 <c></c>
-<c></c>
+<l>for Index := 1 to 32 by 1</l>
+<c>    </c>
+<l>    grab_image (Image, AcqHandle)</l>
 <c>* Find model</c>
 <l>I94BottomViewMeasure (Image, FindLineRegions, LineRegions, ModelID, XCoeff, YCoeff, FAINames, FAIWeights, FAIBiases, IntersectsX, IntersectsY, Outputs, OutputsPixel, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <c></c>
@@ -41,6 +54,17 @@
 <l>dev_set_color ('magenta')</l>
 <l>dev_display (FindLineRegions)</l>
 <l>dev_set_line_width (1)</l>
+<c></c>
+<l>for Index1 := 0 to |OutputsPixel|-1 by 1</l>
+<l>                fwrite_string (FileHandle, OutputsPixel[Index1] + ',')</l>
+<l>  endfor</l>
+<l>  fnew_line (FileHandle)</l>
+<c>  </c>
+<l>stop ()</l>
+<l>  endfor</l>
+<c></c>
+<l>close_file (FileHandle)</l>
+<l>clear_shape_model (ModelID)</l>
 <c></c>
 <c></c>
 </body>
@@ -2764,12 +2788,6 @@
 <body>
 <c>* TODO: make top axis as auxillary axis</c>
 <c></c>
-<l>*gen_circle (ROI_0, 1192.97, 1552.77, 758.536)</l>
-<l>*gen_rectangle2 (ROI_1, 1165.82, 1566.35, rad(-0.309704), 837.294, 236.398)</l>
-<l>*union2 (ROI_0, ROI_1, RegionUnion)</l>
-<l>*reduce_domain (ImageSearch, RegionUnion, ImageReduced2)</l>
-<l>*edges_sub_pix (ImageReduced2, Edges3, 'canny', 1, 30, 60)</l>
-<l>*area_center_xld (Edges3, Area, Row2, Column2, PointOrder2)</l>
 <l>modelRow := 1167.21</l>
 <l>modelCol := 2206.24</l>
 <c></c>
@@ -2781,7 +2799,7 @@
 <l>edges_sub_pix (ImageReduced1, Edges, 'canny', 1, 15, 30)</l>
 <l>select_contours_xld (Edges, SelectedContours, 'contour_length', 400, 99999, -0.5, 0.5)</l>
 <l>union_adjacent_contours_xld (SelectedContours, UnionContours, 10, 1, 'attr_keep')</l>
-<l>find_shape_model (ImageReduced1, ModelID, -0.39, 0.79, 0.5, 1, 0.5, 'least_squares', 0, 0.9, Row, Column, Angle, Score)</l>
+<l>find_shape_model (ImageReduced1, ModelID, -0.39, 0.79, 0.2, 1, 0.5, 'least_squares', 0, 0.9, Row, Column, Angle, Score)</l>
 <l>vector_angle_to_rigid (0, 0, 0, Row, Column, Angle, MovementOfItem)</l>
 <l>dev_display (Image)</l>
 <c></c>
