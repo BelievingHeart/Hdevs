@@ -1,4 +1,4 @@
-read_image (Image, 'E:/Projects/3d/I94/model_image_bottom.bmp')
+read_image (Image, 'E:/Projects/3d/I94/backface/动态/Image_20190925172304404.bmp')
 get_image_size (Image, Width, Height)
 
 dev_set_draw ('margin')
@@ -7,10 +7,19 @@ dev_open_window (0, 0, 800, 800, 'black', WindowHandle)
 
 
 read_shape_model ('E:/Projects/3d/Hdevs/model_bottom', ModelID)
+XCoeff := 0.0076
+YCoeff := 0.0076
+FAINames := []
+FAIBiases := []
+FAIWeights := []
+
+
 
 * Find model
-I94BottomViewMeasure (Image, FindLineRegions, LineRegions, ModelID, IntersectsX, IntersectsY, Outputs, OutputsPixel, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)
+I94BottomViewMeasure (Image, FindLineRegions, LineRegions, ModelID, XCoeff, YCoeff, FAINames, FAIWeights, FAIBiases, IntersectsX, IntersectsY, Outputs, OutputsPixel, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)
 
+numOutputs := |Outputs|
+numOutputsPixel := |OutputsPixel|
 
 dev_display (Image)
 dev_set_color ('yellow')

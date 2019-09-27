@@ -3,42 +3,75 @@
 <procedure name="main">
 <interface/>
 <body>
-<l>read_image (Image, 'E:/Projects/3d/I94/backface/动态/Image_20190925172304404.bmp')</l>
-<l>get_image_size (Image, Width, Height)</l>
+<l>read_shape_model ('E:/Projects/3d/Hdevs/ModelTopViewI94', ModelID)</l>
 <c></c>
-<l>dev_set_draw ('margin')</l>
-<l>dev_close_window ()</l>
-<l>dev_open_window (0, 0, 800, 800, 'black', WindowHandle)</l>
+<l>Width := 5120</l>
+<l>Height := 5120</l>
 <c></c>
-<c></c>
-<l>read_shape_model ('E:/Projects/3d/Hdevs/model_bottom', ModelID)</l>
+<l>open_file ('C:/Users/25001858/Desktop/data.txt', 'output', FileHandle)</l>
+<l>header := '2_1,2_2,2_3,3_1,3_2,3_3,4_1,4_2,4_3,5_1,5_2,5_3,6_1,6_2,6_3,9_1,9_2,9_3,12_1,12_2,16_1,16_2,17_1,17_2,19_1,19_2,20_1,20_2'</l>
+<l>FAI_NAMES := ['FAI2-P1', 'FAI2-P2', 'FAI2-P3','FAI3-P1', 'FAI3-P2', 'FAI3-P3', 'FAI4-P1', 'FAI4-P2', 'FAI4-P3', 'FAI5-P1', 'FAI5-P2', 'FAI5-P3', 'FAI6-P1', 'FAI6-P2', 'FAI6-P3', 'FAI9-P1', 'FAI9-P2', 'FAI9-P3', 'FAI12-P1', 'FAI12-P2', 'FAI16-P1', 'FAI16-P2', 'FAI17-P1', 'FAI17-P2', 'FAI19-P1', 'FAI19-P2', 'FAI20-P1', 'FAI20-P2']</l>
 <l>XCoeff := 0.0076</l>
-<l>YCoeff := 0.0076</l>
-<l>FAINames := []</l>
-<l>FAIBiases := []</l>
-<l>FAIWeights := []</l>
+<l>FAI_WEIGHTS := [XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff,XCoeff]</l>
+<l>fwrite_string (FileHandle, header)</l>
+<l>fnew_line (FileHandle)</l>
+<c>                </c>
+<l>imageDir := 'D:/Images/0925/动态/18/MV-CH250-20TM-F-NF (00D46076741)/'</l>
+<l>set_system ('image_dir', imageDir)</l>
+<c></c>
+<l>open_framegrabber ('File', 1, 1, Width, Height, 0, 0, 'default', -1, 'default', -1, 'false', imageDir + 'images.seq', '', 1, 2, AcqHandle)</l>
 <c></c>
 <c></c>
+<l>Biases := [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]</l>
+<l>Thresholds := [128, 20 , 20, 3,20,20,20,20,20,20,20,20,20,20,30]</l>
 <c></c>
-<c>* Find model</c>
-<l>I94BottomViewMeasure (Image, FindLineRegions, LineRegions, ModelID, XCoeff, YCoeff, FAINames, FAIWeights, FAIBiases, IntersectsX, IntersectsY, Outputs, OutputsPixel, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>* dev_resize_window_fit_image (Image, 0, 0, 800, 800)</l>
+<l>dev_open_window(0, 0, 800, 800, 'black', WindowHandle)</l>
+<l>for Index := 1 to 32 by 1</l>
+<c>    </c>
+<l>    grab_image (Image, AcqHandle)</l>
 <c></c>
-<l>numOutputs := |Outputs|</l>
-<l>numOutputsPixel := |OutputsPixel|</l>
+<l>    I94TopFaceMeasurement (Image, lineRegions, FindLineRects, ModelID, 0.0076, 0.0076, Biases, Thresholds, FAI_NAMES, FAI_WEIGHTS, outputs, crossesXUsed, crossesYUsed, crossesXIgnored, crossesYIgnored, intersectXs, intersectYs, outputsPixel)</l>
+<c>    </c>
+<c>* find right base line</c>
+<c></c>
 <c></c>
 <l>dev_display (Image)</l>
-<l>dev_set_color ('yellow')</l>
-<l>dev_display (LineRegions)</l>
-<l>dev_set_color ('green')</l>
-<l>gen_cross_contour_xld (Cross, PointsYUsed, PointsXUsed, 100, 0.785398)</l>
 <l>dev_set_color ('red')</l>
-<l>gen_cross_contour_xld (Cross, PointsYIgnored, PointsXIgnored, 100, 0.785398)</l>
-<l>dev_set_line_width (3)</l>
+<l>crossSize:=100</l>
+<l>gen_cross_contour_xld (Cross4, crossesYIgnored, crossesXIgnored, crossSize, 0.785398)</l>
+<l>dev_set_color ('green')</l>
+<l>gen_cross_contour_xld (Cross4, crossesYUsed, crossesXUsed, crossSize, 0.785398)</l>
 <l>dev_set_color ('blue')</l>
-<l>gen_cross_contour_xld (Cross, IntersectsY, IntersectsX, 200, 0.785398)</l>
+<l>dev_set_line_width (2)</l>
+<l>gen_cross_contour_xld (Cross4, intersectYs, intersectXs, 200, 0)</l>
+<l>dev_set_color ('yellow')</l>
+<l>dev_display (lineRegions)</l>
 <l>dev_set_color ('magenta')</l>
-<l>dev_display (FindLineRegions)</l>
-<l>dev_set_line_width (1)</l>
+<l>dev_display (FindLineRects)</l>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<l>                          mod := Index % 2</l>
+<c></c>
+<l>  for Index1 := 0 to |outputsPixel|-1 by 1</l>
+<c></c>
+<l>      if (Index1 == |outputsPixel|-1)</l>
+<c></c>
+<l>                fwrite_string (FileHandle, outputsPixel[Index1] + ',' + mod)</l>
+<l>      else</l>
+<l>                fwrite_string (FileHandle, outputsPixel[Index1] + ',')</l>
+<l>      endif</l>
+<l>  endfor</l>
+<l>  fnew_line (FileHandle)</l>
+<c>  </c>
+<l>stop ()</l>
+<l>  endfor</l>
+<c></c>
+<l>close_file (FileHandle)</l>
+<l>clear_shape_model (ModelID)</l>
+<c></c>
 <c></c>
 <c></c>
 </body>
@@ -761,7 +794,7 @@
 <l>        FitLine2D (Xs, Ys, ignoreFraction, lineX1, lineY1, lineX2, lineY2, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>    endif</l>
 <c></c>
-<l>    _pinPointFindLine (inputImage, findLineRegion1, lineX1, lineX2, lineY1, lineY2, radian, newWidth, MultipleLines, cannyHigh, cannyLow, RowBegin, ColBegin, RowEnd, ColEnd, EdgesXStep, EdgesYStep)</l>
+<l>    _pinPointFindLine (inputImage, findLineRegion, lineX1, lineX2, lineY1, lineY2, radian, newWidth, MultipleLines, cannyHigh, cannyLow, RowBegin, ColBegin, RowEnd, ColEnd, EdgesXStep, EdgesYStep)</l>
 <c></c>
 <l>    if(MultipleLines == 'true')</l>
 <l>        EdgesX := [EdgesX, EdgesXStep]</l>
@@ -1550,7 +1583,7 @@
 <c></c>
 <l>crossSize := 100</l>
 <l>numSubRects := 10</l>
-<l>ignorePortion := 0.2</l>
+<l>ignorePortion := 0.3</l>
 <c></c>
 <c>* init thresholds</c>
 <l>ModelThreshold := thresholds[0]</l>
@@ -1818,7 +1851,7 @@
 <l>rectFAI4Len1 := 107.89900000</l>
 <l>rectFAI4Len2 := 559.30000000</l>
 <l>AffineTransRect2 (rectFAI4Row, rectFAI4Col, rectFAI4Radian, rectFAI4Len1, rectFAI4Len2, MovementImageToImage, rectFAI4Row, rectFAI4Col, rectFAI4Radian, rectFAI4Len1, rectFAI4Len2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rectFAI4, lineRegion, 'negative', rectFAI4Row, rectFAI4Col, rectFAI4Radian, rectFAI4Len1, rectFAI4Len2, numSubRects, FAI4Threshold, 'first', ignorePortion, 'false', 1, Width, Height, newWidth, 60, 30, lineX1FAI4, lineY1FAI4, lineX2FAI4, lineY2FAI4, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rectFAI4, lineRegion, 'negative', rectFAI4Row, rectFAI4Col, rectFAI4Radian, rectFAI4Len1, rectFAI4Len2, numSubRects, FAI4Threshold, 'first', ignorePortion, 'false', 1, Width, Height, newWidth, 40, 20, lineX1FAI4, lineY1FAI4, lineX2FAI4, lineY2FAI4, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rectFAI4, FindLineRects)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <c></c>
@@ -2411,6 +2444,7 @@
 <l>gen_rectangle2 (findLineRegion, lineCenterY, lineCenterX, newRadian, newWidth, newHeight/2)</l>
 <l>reduce_domain (inputImage, findLineRegion, ImageReduced)</l>
 <l>edges_sub_pix(ImageReduced, Edges, 'canny', 5, cannyLow, cannyHigh)</l>
+<c></c>
 <c></c>
 <l>maxLength := 0</l>
 <l>selectedIndex := 0</l>
