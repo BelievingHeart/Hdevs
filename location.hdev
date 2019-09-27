@@ -2930,70 +2930,32 @@
 <l>PointsYIgnored := [PointsYIgnored, PointsYIgnored]</l>
 <c></c>
 <c>* Mid</c>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1LeftBase, lineY1LeftBase, lineX2LeftBase, lineY2LeftBase, FAI21_MID_LEN, MapToWorld, MapToImage, 'true', X1_FAI21_LINE_V, Y1_FAI21_LINE_V, X2_FAI21_LINE_V, Y2_FAI21_LINE_V)</l>
-<l>GenLineRegion (lineRegion, X1_FAI21_LINE_V, Y1_FAI21_LINE_V, X2_FAI21_LINE_V, Y2_FAI21_LINE_V, 5120, 5120)</l>
-<l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <c></c>
 <l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI21_P1_LEN, MapToWorld, MapToImage, 'false', X1_FAI21_LINE_H_P1, Y1_FAI21_LINE_H_P1, X2_FAI21_LINE_H_P1, Y2_FAI21_LINE_H_P1)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI21_P2_LEN, MapToWorld, MapToImage, 'false', X1_FAI21_LINE_H_P2, Y1_FAI21_LINE_H_P2, X2_FAI21_LINE_H_P2, Y2_FAI21_LINE_H_P2)</l>
 <l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI21_P3_LEN, MapToWorld, MapToImage, 'false', X1_FAI21_LINE_H_P3, Y1_FAI21_LINE_H_P3, X2_FAI21_LINE_H_P3, Y2_FAI21_LINE_H_P3)</l>
 <c></c>
 <c>* Left intersections and distances</c>
-<l>intersection_lines (lineY1_FAI21_LEFT, lineX1_FAI21_LEFT, lineY2_FAI21_LEFT, lineX2_FAI21_LEFT, Y1_FAI21_LINE_H_P1, X1_FAI21_LINE_H_P1, Y2_FAI21_LINE_H_P1, X2_FAI21_LINE_H_P1, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI21_LINE_V, X1_FAI21_LINE_V, Y2_FAI21_LINE_V, X2_FAI21_LINE_V, DistanceM)</l>
-<l>Outputs := [Outputs, DistanceM*XCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceM]</l>
+<l>intersection_lines (lineY1_FAI21_LEFT, lineX1_FAI21_LEFT, lineY2_FAI21_LEFT, lineX2_FAI21_LEFT, Y1_FAI21_LINE_H_P1, X1_FAI21_LINE_H_P1, Y2_FAI21_LINE_H_P1, X2_FAI21_LINE_H_P1, intersectY_LEFT, intersectX_LEFT, IsOverlapping)</l>
+<l>intersection_lines (lineY1_FAI21_Right, lineX1_FAI21_Right, lineY2_FAI21_Right, lineX2_FAI21_Right, Y1_FAI21_LINE_H_P1, X1_FAI21_LINE_H_P1, Y2_FAI21_LINE_H_P1, X2_FAI21_LINE_H_P1, intersectY_RIGHT, intersectX_RIGHT, IsOverlapping)</l>
+<l>distance_pp (intersectY_LEFT, intersectX_LEFT, intersectY_RIGHT, intersectX_RIGHT, Distance)</l>
+<l>IntersectsX := [IntersectsX, intersectX_LEFT]</l>
+<l>IntersectsY := [IntersectsY, intersectY_LEFT]</l>
+<l>IntersectsX := [IntersectsX, intersectX_RIGHT]</l>
+<l>IntersectsY := [IntersectsY, intersectY_RIGHT]</l>
+<l>Outputs := [Outputs, Distance*XCoeff]</l>
+<l>OutputsPixel := [OutputsPixel, Distance]</l>
 <c></c>
-<l>intersection_lines (lineY1_FAI21_LEFT, lineX1_FAI21_LEFT, lineY2_FAI21_LEFT, lineX2_FAI21_LEFT, Y1_FAI21_LINE_H_P2, X1_FAI21_LINE_H_P2, Y2_FAI21_LINE_H_P2, X2_FAI21_LINE_H_P2, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI21_LINE_V, X1_FAI21_LINE_V, Y2_FAI21_LINE_V, X2_FAI21_LINE_V, DistanceO)</l>
-<l>Outputs := [Outputs, DistanceO*XCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceO]</l>
 <c></c>
-<l>intersection_lines (lineY1_FAI21_LEFT, lineX1_FAI21_LEFT, lineY2_FAI21_LEFT, lineX2_FAI21_LEFT, Y1_FAI21_LINE_H_P3, X1_FAI21_LINE_H_P3, Y2_FAI21_LINE_H_P3, X2_FAI21_LINE_H_P3, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI21_LINE_V, X1_FAI21_LINE_V, Y2_FAI21_LINE_V, X2_FAI21_LINE_V, DistanceQ)</l>
-<l>Outputs := [Outputs, DistanceQ*XCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceQ]</l>
+<l>intersection_lines (lineY1_FAI21_LEFT, lineX1_FAI21_LEFT, lineY2_FAI21_LEFT, lineX2_FAI21_LEFT, Y1_FAI21_LINE_H_P3, X1_FAI21_LINE_H_P3, Y2_FAI21_LINE_H_P3, X2_FAI21_LINE_H_P3, intersectY_LEFT, intersectX_LEFT, IsOverlapping)</l>
+<l>intersection_lines (lineY1_FAI21_Right, lineX1_FAI21_Right, lineY2_FAI21_Right, lineX2_FAI21_Right, Y1_FAI21_LINE_H_P3, X1_FAI21_LINE_H_P3, Y2_FAI21_LINE_H_P3, X2_FAI21_LINE_H_P3, intersectY_RIGHT, intersectX_RIGHT, IsOverlapping)</l>
+<l>distance_pp (intersectY_LEFT, intersectX_LEFT, intersectY_RIGHT, intersectX_RIGHT, Distance)</l>
+<l>IntersectsX := [IntersectsX, intersectX_LEFT]</l>
+<l>IntersectsY := [IntersectsY, intersectY_LEFT]</l>
+<l>IntersectsX := [IntersectsX, intersectX_RIGHT]</l>
+<l>IntersectsY := [IntersectsY, intersectY_RIGHT]</l>
+<l>Outputs := [Outputs, Distance*XCoeff]</l>
+<l>OutputsPixel := [OutputsPixel, Distance]</l>
 <c></c>
-<c>* Right intersections and distances</c>
-<l>intersection_lines (lineY1_FAI21_Right, lineX1_FAI21_Right, lineY2_FAI21_Right, lineX2_FAI21_Right, Y1_FAI21_LINE_H_P1, X1_FAI21_LINE_H_P1, Y2_FAI21_LINE_H_P1, X2_FAI21_LINE_H_P1, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI21_LINE_V, X1_FAI21_LINE_V, Y2_FAI21_LINE_V, X2_FAI21_LINE_V, DistanceN)</l>
-<l>Outputs := [Outputs, DistanceN*XCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceN]</l>
-<c></c>
-<l>intersection_lines (lineY1_FAI21_Right, lineX1_FAI21_Right, lineY2_FAI21_Right, lineX2_FAI21_Right, Y1_FAI21_LINE_H_P2, X1_FAI21_LINE_H_P2, Y2_FAI21_LINE_H_P2, X2_FAI21_LINE_H_P2, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI21_LINE_V, X1_FAI21_LINE_V, Y2_FAI21_LINE_V, X2_FAI21_LINE_V, DistanceP)</l>
-<l>Outputs := [Outputs, DistanceP*XCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceP]</l>
-<c></c>
-<l>intersection_lines (lineY1_FAI21_Right, lineX1_FAI21_Right, lineY2_FAI21_Right, lineX2_FAI21_Right, Y1_FAI21_LINE_H_P3, X1_FAI21_LINE_H_P3, Y2_FAI21_LINE_H_P3, X2_FAI21_LINE_H_P3, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI21_LINE_V, X1_FAI21_LINE_V, Y2_FAI21_LINE_V, X2_FAI21_LINE_V, DistanceR)</l>
-<l>Outputs := [Outputs, DistanceR*XCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceR]</l>
-<c></c>
-<c>* FAI21 Sums</c>
-<l>DistanceMN := DistanceM + DistanceN</l>
-<l>OutputsPixel := [OutputsPixel, DistanceMN]</l>
-<l>Outputs := [Outputs, DistanceMN * XCoeff]</l>
-<c></c>
-<l>DistanceOP := DistanceO + DistanceP</l>
-<l>OutputsPixel := [OutputsPixel, DistanceOP]</l>
-<l>Outputs := [Outputs, DistanceOP * XCoeff]</l>
-<c></c>
-<l>DistanceQR := DistanceQ + DistanceR</l>
-<l>OutputsPixel := [OutputsPixel, DistanceQR]</l>
-<l>Outputs := [Outputs, DistanceQR * XCoeff]</l>
 <c></c>
 <c>*************************FAI23****************************</c>
 <c>* Top line</c>
@@ -3080,14 +3042,14 @@
 <l>OutputsPixel := [OutputsPixel, Distance]</l>
 <c></c>
 <c>******************************FAI24************************</c>
-<l>rectX1 := 770 - modelCol</l>
-<l>rectY1 := 1154 - modelRow</l>
-<l>rectRadian := rad(-180)</l>
-<l>rectLen1 :=147</l>
+<l>rectX1 := 1429 - modelCol</l>
+<l>rectY1 := 1148 - modelRow</l>
+<l>rectRadian := rad(-1)</l>
+<l>rectLen1 :=153</l>
 <l>rectLen2 :=140</l>
 <l>AffineTransRect2 (rectY1, rectX1, rectRadian, rectLen1, rectLen2, MovementOfItem, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'true', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1_FAI24_LEFT, lineY1_FAI24_LEFT, lineX2_FAI24_LEFT, lineY2_FAI24_LEFT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'true', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1_FAI24_LEFT, lineY1_FAI24_LEFT, lineX2_FAI24_LEFT, lineY2_FAI24_LEFT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -3095,14 +3057,14 @@
 <l>PointsXIgnored := [PointsXIgnored, PointsXIgnored]</l>
 <l>PointsYIgnored := [PointsYIgnored, PointsYIgnored]</l>
 <c></c>
-<l>rectX1 := 2345 - modelCol</l>
-<l>rectY1 := 1193 - modelRow</l>
-<l>rectRadian := rad(0)</l>
+<l>rectX1 := 2991 - modelCol</l>
+<l>rectY1 := 1186 - modelRow</l>
+<l>rectRadian := rad(179)</l>
 <l>rectLen1 :=147</l>
 <l>rectLen2 :=140</l>
 <l>AffineTransRect2 (rectY1, rectX1, rectRadian, rectLen1, rectLen2, MovementOfItem, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'true', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1_FAI24_RIGHT, lineY1_FAI24_RIGHT, lineX2_FAI24_RIGHT, lineY2_FAI24_RIGHT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold, 'first', 0.2, 'true', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1_FAI24_RIGHT, lineY1_FAI24_RIGHT, lineX2_FAI24_RIGHT, lineY2_FAI24_RIGHT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -3110,69 +3072,35 @@
 <l>PointsXIgnored := [PointsXIgnored, PointsXIgnored]</l>
 <l>PointsYIgnored := [PointsYIgnored, PointsYIgnored]</l>
 <c></c>
-<c></c>
-<c></c>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI24_P1_LEN, MapToWorld, MapToImage, 'false', X1_FAI24_LINE_H_P1, Y1_FAI24_LINE_H_P1, X2_FAI24_LINE_H_P1, Y2_FAI24_LINE_H_P1)</l>
 <l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI24_P2_LEN, MapToWorld, MapToImage, 'false', X1_FAI24_LINE_H_P2, Y1_FAI24_LINE_H_P2, X2_FAI24_LINE_H_P2, Y2_FAI24_LINE_H_P2)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI24_P3_LEN, MapToWorld, MapToImage, 'false', X1_FAI24_LINE_H_P3, Y1_FAI24_LINE_H_P3, X2_FAI24_LINE_H_P3, Y2_FAI24_LINE_H_P3)</l>
 <c></c>
-<c>* Left intersections and distances</c>
-<l>intersection_lines (lineY1_FAI24_LEFT, lineX1_FAI24_LEFT, lineY2_FAI24_LEFT, lineX2_FAI24_LEFT, Y1_FAI24_LINE_H_P1, X1_FAI24_LINE_H_P1, Y2_FAI24_LINE_H_P1, X2_FAI24_LINE_H_P1, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI21_LINE_V, X1_FAI21_LINE_V, Y2_FAI21_LINE_V, X2_FAI21_LINE_V, DistanceAJ)</l>
-<l>Outputs := [Outputs, DistanceAJ*XCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceAJ]</l>
 <c></c>
-<l>intersection_lines (lineY1_FAI24_LEFT, lineX1_FAI24_LEFT, lineY2_FAI24_LEFT, lineX2_FAI24_LEFT, Y1_FAI24_LINE_H_P2, X1_FAI24_LINE_H_P2, Y2_FAI24_LINE_H_P2, X2_FAI24_LINE_H_P2, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI21_LINE_V, X1_FAI21_LINE_V, Y2_FAI21_LINE_V, X2_FAI21_LINE_V, DistanceAF)</l>
-<l>Outputs := [Outputs, DistanceAF*XCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceAF]</l>
-<c></c>
-<l>intersection_lines (lineY1_FAI24_LEFT, lineX1_FAI24_LEFT, lineY2_FAI24_LEFT, lineX2_FAI24_LEFT, Y1_FAI24_LINE_H_P3, X1_FAI24_LINE_H_P3, Y2_FAI24_LINE_H_P3, X2_FAI24_LINE_H_P3, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI21_LINE_V, X1_FAI21_LINE_V, Y2_FAI21_LINE_V, X2_FAI21_LINE_V, DistanceAH)</l>
-<l>Outputs := [Outputs, DistanceAH*XCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceAH]</l>
-<c></c>
-<c>* RIGHT intersections and distances</c>
-<l>intersection_lines (lineY1_FAI24_RIGHT, lineX1_FAI24_RIGHT, lineY2_FAI24_RIGHT, lineX2_FAI24_RIGHT, Y1_FAI24_LINE_H_P1, X1_FAI24_LINE_H_P1, Y2_FAI24_LINE_H_P1, X2_FAI24_LINE_H_P1, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI21_LINE_V, X1_FAI21_LINE_V, Y2_FAI21_LINE_V, X2_FAI21_LINE_V, DistanceAI)</l>
-<l>Outputs := [Outputs, DistanceAI*XCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceAI]</l>
-<c></c>
-<l>intersection_lines (lineY1_FAI24_RIGHT, lineX1_FAI24_RIGHT, lineY2_FAI24_RIGHT, lineX2_FAI24_RIGHT, Y1_FAI24_LINE_H_P2, X1_FAI24_LINE_H_P2, Y2_FAI24_LINE_H_P2, X2_FAI24_LINE_H_P2, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI21_LINE_V, X1_FAI21_LINE_V, Y2_FAI21_LINE_V, X2_FAI21_LINE_V, DistanceAE)</l>
-<l>Outputs := [Outputs, DistanceAE*XCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceAE]</l>
-<c></c>
-<l>intersection_lines (lineY1_FAI24_RIGHT, lineX1_FAI24_RIGHT, lineY2_FAI24_RIGHT, lineX2_FAI24_RIGHT, Y1_FAI24_LINE_H_P3, X1_FAI24_LINE_H_P3, Y2_FAI24_LINE_H_P3, X2_FAI24_LINE_H_P3, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI21_LINE_V, X1_FAI21_LINE_V, Y2_FAI21_LINE_V, X2_FAI21_LINE_V, DistanceAG)</l>
-<l>Outputs := [Outputs, DistanceAG*XCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceAG]</l>
+<l>intersection_lines (lineY1_FAI24_LEFT, lineX1_FAI24_LEFT, lineY2_FAI24_LEFT, lineX2_FAI24_LEFT, Y1_FAI24_LINE_H_P2, X1_FAI24_LINE_H_P2, Y2_FAI24_LINE_H_P2, X2_FAI24_LINE_H_P2, intersectY_LEFT, intersectX_LEFT, IsOverlapping)</l>
+<l>intersection_lines (lineY1_FAI24_RIGHT, lineX1_FAI24_RIGHT, lineY2_FAI24_RIGHT, lineX2_FAI24_RIGHT, Y1_FAI24_LINE_H_P2, X1_FAI24_LINE_H_P2, Y2_FAI24_LINE_H_P2, X2_FAI24_LINE_H_P2, intersectY_RIGHT, intersectX_RIGHT, IsOverlapping)</l>
+<l>distance_pp (intersectY_LEFT, intersectX_LEFT, intersectY_RIGHT, intersectX_RIGHT, Distance)</l>
+<l>IntersectsX := [IntersectsX, intersectX_LEFT]</l>
+<l>IntersectsY := [IntersectsY, intersectY_LEFT]</l>
+<l>IntersectsX := [IntersectsX, intersectX_RIGHT]</l>
+<l>IntersectsY := [IntersectsY, intersectY_RIGHT]</l>
+<l>Outputs := [Outputs, Distance*XCoeff]</l>
+<l>OutputsPixel := [OutputsPixel, Distance]</l>
 <c></c>
 <c></c>
 <c></c>
 <c>****************************FAI25************************</c>
-<l>rectX1 := 1557.9 - modelCol</l>
-<l>rectY1 := 1180.3 - modelRow</l>
-<l>rectRadian := rad(88.6)</l>
-<l>rectLen1 :=800</l>
-<l>rectLen2 :=608</l>
+<l>rectX1 := 2195 - modelCol</l>
+<l>rectY1 := 1202 - modelRow</l>
+<l>rectRadian := rad(-90)</l>
+<l>rectLen1 :=900</l>
+<l>rectLen2 :=600</l>
 <l>AffineTransRect2 (rectY1, rectX1, rectRadian, rectLen1, rectLen2, MovementOfItem, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
 <c></c>
 <l>gen_rectangle2 (ROI_0, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
-<l>reduce_domain (ImageSearch, ROI_0, ImageReduced1)</l>
-<l>edges_sub_pix (ImageReduced1, Edges2, 'canny', 3, 30, 45)</l>
+<l>reduce_domain (Image, ROI_0, ImageReduced1)</l>
+<l>mean_image (ImageReduced1, ImageMean1, 9, 9)</l>
+<l>threshold (ImageMean1, mask, 70, 255)</l>
+<l>reduce_domain (Image, mask, ImageReduced2)</l>
+<l>edges_sub_pix (ImageReduced2, Edges2, 'canny', 3, 15, 30)</l>
 <l>select_contours_xld (Edges2, SelectedContours, 'contour_length', 500, 999999, -0.5, 0.5)</l>
 <l>union_cocircular_contours_xld (SelectedContours, UnionContours, rad(180), rad(5), rad(180), 2000, 10, 50, 'true', 3)</l>
 <l>fit_circle_contour_xld (UnionContours, 'algebraic', -1, 0, 0, 3, 2, Row, Column, Radius, StartPhi, EndPhi, PointOrder)</l>
@@ -3200,62 +3128,66 @@
 <l>GenLineRegion (lineRegion1, X1_FAI26_LEFT, Y1_FAI26_LEFT, X2_FAI26_LEFT, Y2_FAI26_LEFT, 5120, 5120)</l>
 <c></c>
 <c>* top left point</c>
-<l>rectX1 := 860 - modelCol</l>
-<l>rectY1 := 969 - modelRow</l>
+<l>rectX1 := 1500 - modelCol</l>
+<l>rectY1 := 941 - modelRow</l>
 <l>rectRadian := rad(0)</l>
 <l>rectLen1 :=256</l>
 <l>rectLen2 :=160</l>
 <l>AffineTransRect2 (rectY1, rectX1, rectRadian, rectLen1, rectLen2, MovementOfItem, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
 <l>gen_rectangle2 (ROI_FAI26_TL, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
-<l>reduce_domain (ImageSearch, ROI_FAI26_TL, ImageReduced)</l>
-<l>edges_sub_pix (ImageReduced, Edges1, 'canny', 1, 30, 60)</l>
+<l>reduce_domain (Image, ROI_FAI26_TL, ImageReduced)</l>
+<l>edges_sub_pix (ImageReduced, Edges1, 'canny', 1, 20, 40)</l>
+<l>LongestXLD (Edges1, Edges1)</l>
 <l>intersection_line_contour_xld (Edges1, Y1_FAI26_LEFT, X1_FAI26_LEFT, Y2_FAI26_LEFT, X2_FAI26_LEFT, rowTL_FAI26, colTL_FAI26, IsOverlapping3)</l>
 <l>IntersectsX := [IntersectsX, colTL_FAI26]</l>
 <l>IntersectsY := [IntersectsY, rowTL_FAI26]</l>
 <l>gen_cross_contour_xld (Cross1, rowTL_FAI26, colTL_FAI26, 100, 0)</l>
 <c></c>
 <c>* bottom left point</c>
-<l>rectX1 := 867 - modelCol</l>
-<l>rectY1 := 1334 - modelRow</l>
+<l>rectX1 := 1467 - modelCol</l>
+<l>rectY1 := 1372 - modelRow</l>
 <l>rectRadian := rad(0)</l>
-<l>rectLen1 :=217</l>
-<l>rectLen2 :=134</l>
+<l>rectLen1 :=135</l>
+<l>rectLen2 :=80</l>
 <l>AffineTransRect2 (rectY1, rectX1, rectRadian, rectLen1, rectLen2, MovementOfItem, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
 <l>gen_rectangle2 (ROI_FAI26_BL, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
 <c></c>
-<l>reduce_domain (ImageSearch, ROI_FAI26_BL, ImageReduced)</l>
-<l>edges_sub_pix (ImageReduced, Edges1, 'canny', 1, 30, 60)</l>
+<l>reduce_domain (Image, ROI_FAI26_BL, ImageReduced)</l>
+<l>edges_sub_pix (ImageReduced, Edges1, 'canny', 1, 20, 40)</l>
+<l>LongestXLD (Edges1, Edges1)</l>
 <l>intersection_line_contour_xld (Edges1, Y1_FAI26_LEFT, X1_FAI26_LEFT, Y2_FAI26_LEFT, X2_FAI26_LEFT, rowBL_FAI26, colBL_FAI26, IsOverlapping3)</l>
 <l>IntersectsX := [IntersectsX, colBL_FAI26]</l>
 <l>IntersectsY := [IntersectsY, rowBL_FAI26]</l>
 <l>gen_cross_contour_xld (Cross2, rowBL_FAI26, colBL_FAI26, 100, 100)</l>
 <c></c>
 <c>* top RIGHT point</c>
-<l>rectX1 := 2224 - modelCol</l>
-<l>rectY1 := 944 - modelRow</l>
+<l>rectX1 := 2918 - modelCol</l>
+<l>rectY1 := 965 - modelRow</l>
 <l>rectRadian := rad(0)</l>
 <l>rectLen1 :=217</l>
 <l>rectLen2 :=134</l>
 <l>AffineTransRect2 (rectY1, rectX1, rectRadian, rectLen1, rectLen2, MovementOfItem, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
 <l>gen_rectangle2 (ROI_FAI26_TR, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
 <c></c>
-<l>reduce_domain (ImageSearch, ROI_FAI26_TR, ImageReduced)</l>
-<l>edges_sub_pix (ImageReduced, Edges1, 'canny', 1, 30, 60)</l>
+<l>reduce_domain (Image, ROI_FAI26_TR, ImageReduced)</l>
+<l>edges_sub_pix (ImageReduced, Edges1, 'canny', 1, 20, 40)</l>
+<l>LongestXLD (Edges1, Edges1)</l>
 <l>intersection_line_contour_xld (Edges1, Y1_FAI26_RIGHT, X1_FAI26_RIGHT, Y2_FAI26_RIGHT, X2_FAI26_RIGHT, rowTR_FAI26, colTR_FAI26, IsOverlapping3)</l>
 <l>IntersectsX := [IntersectsX, colTR_FAI26]</l>
 <l>IntersectsY := [IntersectsY, rowTR_FAI26]</l>
 <l>gen_cross_contour_xld (Cross3, rowTR_FAI26, colTR_FAI26, 100, 0)</l>
 <c></c>
 <c>* bottom RIGHT point</c>
-<l>rectX1 := 2262 - modelCol</l>
-<l>rectY1 := 1392 - modelRow</l>
+<l>rectX1 := 2888 - modelCol</l>
+<l>rectY1 := 1416 - modelRow</l>
 <l>rectRadian := rad(0)</l>
 <l>rectLen1 :=217</l>
 <l>rectLen2 :=134</l>
 <l>AffineTransRect2 (rectY1, rectX1, rectRadian, rectLen1, rectLen2, MovementOfItem, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
 <l>gen_rectangle2 (ROI_FAI26_BR, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
-<l>reduce_domain (ImageSearch, ROI_FAI26_BR, ImageReduced)</l>
-<l>edges_sub_pix (ImageReduced, Edges1, 'canny', 1, 30, 60)</l>
+<l>reduce_domain (Image, ROI_FAI26_BR, ImageReduced)</l>
+<l>edges_sub_pix (ImageReduced, Edges1, 'canny', 1, 20, 40)</l>
+<l>LongestXLD (Edges1, Edges1)</l>
 <l>intersection_line_contour_xld (Edges1, Y1_FAI26_RIGHT, X1_FAI26_RIGHT, Y2_FAI26_RIGHT, X2_FAI26_RIGHT, rowBR_FAI26, colBR_FAI26, IsOverlapping3)</l>
 <l>IntersectsX := [IntersectsX, colBR_FAI26]</l>
 <l>IntersectsY := [IntersectsY, rowBR_FAI26]</l>
@@ -3949,6 +3881,43 @@
 <parameter id="pivotX"/>
 <parameter id="pivotY"/>
 <parameter id="radian"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="LongestXLD">
+<interface>
+<io>
+<par name="inputContour" base_type="iconic" dimension="0"/>
+</io>
+<oo>
+<par name="outputContour" base_type="iconic" dimension="0"/>
+</oo>
+</interface>
+<body>
+<l>union_adjacent_contours_xld (inputContour, outputContour, 10, 1, 'attr_keep')</l>
+<l>count_obj (outputContour, Number)</l>
+<c></c>
+<c></c>
+<l>if(Number&gt;1)</l>
+<l>    gen_empty_obj (selectedContour)</l>
+<l>    selectedIndex := 0</l>
+<l>    selectedLen := 0</l>
+<l>    for Index := 1 to Number by 1</l>
+<l>        select_obj (outputContour, ObjectSelected, Index)</l>
+<l>        length_xld (ObjectSelected, Length)</l>
+<l>        if(Length &gt; selectedLen)</l>
+<l>            selectedLen := Length</l>
+<l>            selectedContour := ObjectSelected</l>
+<l>        endif</l>
+<l>    endfor</l>
+<l>    outputContour := selectedContour</l>
+<l>endif</l>
+<l>return ()</l>
+</body>
+<docu id="LongestXLD">
+<parameters>
+<parameter id="inputContour"/>
+<parameter id="outputContour"/>
 </parameters>
 </docu>
 </procedure>
