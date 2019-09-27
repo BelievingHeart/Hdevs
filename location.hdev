@@ -3,16 +3,17 @@
 <procedure name="main">
 <interface/>
 <body>
-<c></c>
-<l>read_image (Image, 'E:/Projects/3d/I94/backface/动态/Image_20190925172304404.bmp')</l>
+<l>read_shape_model ('E:/Projects/3d/Hdevs/model_bottom_low_contrast', ModelID)</l>
+<l>read_image (Image, 'E:/Projects/3d/I94/bottom_model_low_contrast.bmp')</l>
 <l>get_image_size (Image, Width, Height)</l>
+<c></c>
 <c></c>
 <l>dev_set_draw ('margin')</l>
 <l>dev_close_window ()</l>
 <l>dev_open_window (0, 0, 800, 800, 'black', WindowHandle)</l>
+<l>dev_display (Image)</l>
 <c></c>
 <c></c>
-<l>read_shape_model ('E:/Projects/3d/Hdevs/model_bottom', ModelID)</l>
 <l>XCoeff := 0.0076</l>
 <l>YCoeff := 0.0076</l>
 <l>FAINames := []</l>
@@ -766,7 +767,7 @@
 <l>        FitLine2D (Xs, Ys, ignoreFraction, lineX1, lineY1, lineX2, lineY2, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>    endif</l>
 <c></c>
-<l>    _pinPointFindLine (inputImage, findLineRegion, lineX1, lineX2, lineY1, lineY2, radian, newWidth, MultipleLines, cannyHigh, cannyLow, sigma2, RowBegin, ColBegin, RowEnd, ColEnd, EdgesXStep, EdgesYStep)</l>
+<l>    _pinPointFindLine (inputImage, findLineRegion1, lineX1, lineX2, lineY1, lineY2, radian, newWidth, MultipleLines, cannyHigh, cannyLow, sigma2, RowBegin, ColBegin, RowEnd, ColEnd, EdgesXStep, EdgesYStep)</l>
 <c></c>
 <l>    if(MultipleLines == 'true')</l>
 <l>        EdgesX := [EdgesX, EdgesXStep]</l>
@@ -2761,8 +2762,7 @@
 </oc>
 </interface>
 <body>
-<l>threshold(Image, Region, 253, 255)</l>
-<l>paint_region(Region, Image, ImageSearch, 0, 'fill')</l>
+<c>* TODO: make top axis as auxillary axis</c>
 <c></c>
 <l>*gen_circle (ROI_0, 1192.97, 1552.77, 758.536)</l>
 <l>*gen_rectangle2 (ROI_1, 1165.82, 1566.35, rad(-0.309704), 837.294, 236.398)</l>
@@ -2770,11 +2770,19 @@
 <l>*reduce_domain (ImageSearch, RegionUnion, ImageReduced2)</l>
 <l>*edges_sub_pix (ImageReduced2, Edges3, 'canny', 1, 30, 60)</l>
 <l>*area_center_xld (Edges3, Area, Row2, Column2, PointOrder2)</l>
-<l>modelRow := 1161.93</l>
-<l>modelCol := 1554.16</l>
+<l>modelRow := 1167.21</l>
+<l>modelCol := 2206.24</l>
 <c></c>
-<l>find_shape_model (ImageSearch, ModelID, -0.39, 0.79, 0.5, 1, 0.5, 'least_squares', 0, 0.9, Row1, Column1, Angle, Score)</l>
-<l>vector_angle_to_rigid (0, 0, 0, Row1, Column1, Angle, MovementOfItem)</l>
+<l>gen_rectangle1 (ROI_0, 15.5, 277.9, 2671.5, 4559.5)</l>
+<l>reduce_domain (Image, ROI_0, ImageReduced)</l>
+<l>mean_image (ImageReduced, ImageMean, 21, 21)</l>
+<l>threshold (ImageMean, Region, 70, 255)</l>
+<l>reduce_domain (Image, Region, ImageReduced1)</l>
+<l>edges_sub_pix (ImageReduced1, Edges, 'canny', 1, 15, 30)</l>
+<l>select_contours_xld (Edges, SelectedContours, 'contour_length', 400, 99999, -0.5, 0.5)</l>
+<l>union_adjacent_contours_xld (SelectedContours, UnionContours, 10, 1, 'attr_keep')</l>
+<l>find_shape_model (ImageReduced1, ModelID, -0.39, 0.79, 0.5, 1, 0.5, 'least_squares', 0, 0.9, Row, Column, Angle, Score)</l>
+<l>vector_angle_to_rigid (0, 0, 0, Row, Column, Angle, MovementOfItem)</l>
 <l>dev_display (Image)</l>
 <c></c>
 <l>FAI21_P1_LEN := 20.362 / YCoeff</l>
@@ -2828,20 +2836,20 @@
 <l>Outputs := []</l>
 <l>OutputsPixel := []</l>
 <c></c>
-<l>Threshold := 50</l>
+<l>Threshold := 30</l>
 <l>MapToWorld := 0</l>
 <l>MapToImage := 0</l>
 <l>sigma2 := 5</l>
 <c></c>
 <c>* Find top base line</c>
-<l>row1TopBase := 142 - modelRow</l>
-<l>col1TopBase := 1556 - modelCol</l>
-<l>radianTopBase := rad(89)</l>
+<l>row1TopBase := 137 - modelRow</l>
+<l>col1TopBase := 2217 - modelCol</l>
+<l>radianTopBase := rad(-91)</l>
 <l>len1TopBase := 187</l>
 <l>len2TopBase := 107</l>
 <l>AffineTransRect2 (row1TopBase, col1TopBase, radianTopBase, len1TopBase, len2TopBase, MovementOfItem, row1TopBase, col1TopBase, radianTopBase, len1TopBase, len2TopBase)</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep (Image, findLineRegionTop, lineRegionTop, 'positive', row1TopBase, col1TopBase, radianTopBase, len1TopBase, len2TopBase, 10, Threshold-10, 'first', 0.3, 'false', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, findLineRegionTop, lineRegionTop, 'negative', row1TopBase, col1TopBase, radianTopBase, len1TopBase, len2TopBase, 10, Threshold-10, 'first', 0.3, 'false', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
 <l>PointsYUsed := [PointsYUsed, PointsYUsed]</l>
 <l>PointsXIgnored := [PointsXIgnored, PointsXIgnored]</l>
@@ -2849,11 +2857,11 @@
 <c></c>
 <c></c>
 <c>* Find left base line</c>
-<l>row1LeftBase := 2665 - modelRow</l>
-<l>col1LeftBase := 335 - modelCol</l>
-<l>radianLeftBase := rad(0)</l>
-<l>len1LeftBase := 332</l>
-<l>len2LeftBase := 294</l>
+<l>row1LeftBase := 2607 - modelRow</l>
+<l>col1LeftBase := 995 - modelCol</l>
+<l>radianLeftBase := rad(-1)</l>
+<l>len1LeftBase := 441</l>
+<l>len2LeftBase := 281</l>
 <l>AffineTransRect2 (row1LeftBase, col1LeftBase, radianLeftBase, len1LeftBase, len2LeftBase, MovementOfItem, row1LeftBase, col1LeftBase, radianLeftBase, len1LeftBase, len2LeftBase)</l>
 <c></c>
 <l>VisionProStyleFindLineOneStep (Image, findLineRegionLeft, lineRegionLeft, 'negative', row1LeftBase, col1LeftBase, radianLeftBase, len1LeftBase, len2LeftBase, 10, [Threshold, Threshold-5], 'first', 0.2, 'true', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1LeftBase, lineY1LeftBase, lineX2LeftBase, lineY2LeftBase, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
@@ -2867,17 +2875,17 @@
 <c></c>
 <c>*******************************FAI21*******************************</c>
 <c>* left</c>
-<l>row1FAI21LeftUpper := 2805 - modelRow</l>
-<l>col1FAI21LeftUpper := 418 - modelCol</l>
-<l>radianFAI21LeftUpper := rad(180)</l>
-<l>len1FAI21LeftUpper := 256</l>
-<l>len2FAI21LeftUpper := 112</l>
+<l>row1FAI21LeftUpper := 2825 - modelRow</l>
+<l>col1FAI21LeftUpper := 1033 - modelCol</l>
+<l>radianFAI21LeftUpper := rad(178.5)</l>
+<l>len1FAI21LeftUpper := 210</l>
+<l>len2FAI21LeftUpper := 140</l>
 <c></c>
-<l>row1FAI21LeftLower := 4002 - modelRow</l>
-<l>col1FAI21LeftLower := 393 - modelCol</l>
-<l>radianFAI21LeftLower := rad(180)</l>
-<l>len1FAI21LeftLower :=256</l>
-<l>len2FAI21LeftLower := 121</l>
+<l>row1FAI21LeftLower := 4009 - modelRow</l>
+<l>col1FAI21LeftLower := 1052 - modelCol</l>
+<l>radianFAI21LeftLower := rad(178)</l>
+<l>len1FAI21LeftLower :=210</l>
+<l>len2FAI21LeftLower := 115</l>
 <l>row1FAI21Left := [row1FAI21LeftUpper, row1FAI21LeftLower]</l>
 <l>col1FAI21Left := [col1FAI21LeftUpper, col1FAI21LeftLower]</l>
 <l>radianFAI21Left := [radianFAI21LeftUpper, radianFAI21LeftLower]</l>
@@ -2885,7 +2893,7 @@
 <l>len2FAI21Left := [len2FAI21LeftUpper, len2FAI21LeftLower]</l>
 <l>AffineTransRect2 (row1FAI21Left, col1FAI21Left, radianFAI21Left, len1FAI21Left, len2FAI21Left, MovementOfItem, row1FAI21Left, col1FAI21Left, radianFAI21Left, len1FAI21Left, len2FAI21Left)</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', row1FAI21Left, col1FAI21Left, radianFAI21Left, len1FAI21Left, len2FAI21Left, 10, [Threshold, Threshold], 'first', 0.2, 'true', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1_FAI21_LEFT, lineY1_FAI21_LEFT, lineX2_FAI21_LEFT, lineY2_FAI21_LEFT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, findLineRegion, lineRegion, 'negative', row1FAI21Left, col1FAI21Left, radianFAI21Left, len1FAI21Left, len2FAI21Left, 10, [Threshold, Threshold], 'first', 0.2, 'true', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1_FAI21_LEFT, lineY1_FAI21_LEFT, lineX2_FAI21_LEFT, lineY2_FAI21_LEFT, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -2894,17 +2902,17 @@
 <l>PointsYIgnored := [PointsYIgnored, PointsYIgnored]</l>
 <c></c>
 <c>* right</c>
-<l>row1FAI21RightUpper := 2850 - modelRow</l>
-<l>col1FAI21RightUpper := 2658 - modelCol</l>
-<l>radianFAI21RightUpper := rad(0)</l>
-<l>len1FAI21RightUpper := 441.6</l>
-<l>len2FAI21RightUpper := 128</l>
+<l>row1FAI21RightUpper := 2869 - modelRow</l>
+<l>col1FAI21RightUpper := 3305 - modelCol</l>
+<l>radianFAI21RightUpper := rad(-1.5)</l>
+<l>len1FAI21RightUpper := 243</l>
+<l>len2FAI21RightUpper := 121</l>
 <c></c>
-<l>row1FAI21RightLower := 4028 - modelRow</l>
-<l>col1FAI21RightLower := 2633 - modelCol</l>
-<l>radianFAI21RightLower := rad(0)</l>
-<l>len1FAI21RightLower := 441.6</l>
-<l>len2FAI21RightLower := 128</l>
+<l>row1FAI21RightLower := 4034 - modelRow</l>
+<l>col1FAI21RightLower := 3285 - modelCol</l>
+<l>radianFAI21RightLower := rad(-1)</l>
+<l>len1FAI21RightLower := 243</l>
+<l>len2FAI21RightLower := 121</l>
 <c></c>
 <l>row1FAI21Right := [row1FAI21RightUpper, row1FAI21RightLower]</l>
 <l>col1FAI21Right := [col1FAI21RightUpper, col1FAI21RightLower]</l>
@@ -2913,7 +2921,7 @@
 <l>len2FAI21Right := [len2FAI21RightUpper, len2FAI21RightLower]</l>
 <l>AffineTransRect2 (row1FAI21Right, col1FAI21Right, radianFAI21Right, len1FAI21Right, len2FAI21Right, MovementOfItem, row1FAI21Right, col1FAI21Right, radianFAI21Right, len1FAI21Right, len2FAI21Right)</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', row1FAI21Right, col1FAI21Right, radianFAI21Right, len1FAI21Right, len2FAI21Right, 10, [Threshold, Threshold], 'first', 0.2, 'true', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1_FAI21_Right, lineY1_FAI21_Right, lineX2_FAI21_Right, lineY2_FAI21_Right, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, findLineRegion, lineRegion, 'negative', row1FAI21Right, col1FAI21Right, radianFAI21Right, len1FAI21Right, len2FAI21Right, 10, [Threshold, Threshold], 'first', 0.2, 'true', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1_FAI21_Right, lineY1_FAI21_Right, lineX2_FAI21_Right, lineY2_FAI21_Right, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -2989,15 +2997,15 @@
 <c></c>
 <c>*************************FAI23****************************</c>
 <c>* Top line</c>
-<l>rectX1 := 1506 - modelCol</l>
+<l>rectX1 := 2210 - modelCol</l>
 <l>rectY1 := 2210 - modelRow</l>
-<l>rectRadian := rad(90)</l>
-<l>rectLen1 :=268</l>
-<l>rectLen2 :=537</l>
+<l>rectRadian := rad(-91)</l>
+<l>rectLen1 :=230</l>
+<l>rectLen2 :=549</l>
 <c></c>
 <l>AffineTransRect2 (rectY1, rectX1, rectRadian, rectLen1, rectLen2, MovementOfItem, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold + 10, 'first', 0.2, 'false', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1_FAI23_TOP, lineY1_FAI23_TOP, lineX2_FAI23_TOP, lineY2_FAI23_TOP, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, Threshold + 10, 'first', 0.2, 'false', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1_FAI23_TOP, lineY1_FAI23_TOP, lineX2_FAI23_TOP, lineY2_FAI23_TOP, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -3006,23 +3014,23 @@
 <l>PointsYIgnored := [PointsYIgnored, PointsYIgnored]</l>
 <c></c>
 <c>* Bottom line</c>
-<l>rect1X1 := 951 - modelCol</l>
-<l>rect1Y1 := 4590 - modelRow</l>
-<l>rect1Radian := rad(-91)</l>
+<l>rect1X1 := 1602 - modelCol</l>
+<l>rect1Y1 := 4603 - modelRow</l>
+<l>rect1Radian := rad(-90)</l>
 <l>rect1Len1 :=150</l>
-<l>rect1Len2 :=110</l>
+<l>rect1Len2 :=102</l>
 <c></c>
-<l>rect2X1 := 1527 - modelCol</l>
-<l>rect2Y1 := 4596 - modelRow</l>
-<l>rect2Radian := rad(-91)</l>
+<l>rect2X1 := 2178 - modelCol</l>
+<l>rect2Y1 := 4617 - modelRow</l>
+<l>rect2Radian := rad(-90)</l>
 <l>rect2Len1 :=150</l>
-<l>rect2Len2 :=110</l>
+<l>rect2Len2 :=102</l>
 <c></c>
-<l>rect3X1 := 2058 - modelCol</l>
-<l>rect3Y1 := 4609 - modelRow</l>
-<l>rect3Radian := rad(-91)</l>
+<l>rect3X1 := 2709 - modelCol</l>
+<l>rect3Y1 := 4623 - modelRow</l>
+<l>rect3Radian := rad(-90)</l>
 <l>rect3Len1 :=150</l>
-<l>rect3Len2 :=111</l>
+<l>rect3Len2 :=102</l>
 <c></c>
 <l>rectX1 := [rect1X1, rect2X1, rect3X1]</l>
 <l>rectY1 := [rect1Y1, rect2Y1, rect3Y1]</l>
@@ -3031,7 +3039,7 @@
 <l>rectLen2 :=[rect1Len2, rect2Len2, rect3Len2]</l>
 <l>AffineTransRect2 (rectY1, rectX1, rectRadian, rectLen1, rectLen2, MovementOfItem, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep (ImageSearch, findLineRegion, lineRegion, 'positive', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, [Threshold,Threshold,Threshold], 'first', 0.2, 'false', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1_FAI23_BOTTOM, lineY1_FAI23_BOTTOM, lineX2_FAI23_BOTTOM, lineY2_FAI23_BOTTOM, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, findLineRegion, lineRegion, 'negative', rectY1, rectX1, rectRadian, rectLen1, rectLen2, 10, [Threshold,Threshold,Threshold], 'first', 0.2, 'false', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1_FAI23_BOTTOM, lineY1_FAI23_BOTTOM, lineX2_FAI23_BOTTOM, lineY2_FAI23_BOTTOM, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [PointsXUsed, PointsXUsed]</l>
@@ -3040,68 +3048,36 @@
 <l>PointsYIgnored := [PointsYIgnored, PointsYIgnored]</l>
 <c></c>
 <c>* Intersection points</c>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI23_MID_LEN, MapToWorld, MapToImage, 'false', X1_FAI23_LINE_H, Y1_FAI23_LINE_H, X2_FAI23_LINE_H, Y2_FAI23_LINE_H)</l>
+<l>*TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI23_MID_LEN, MapToWorld, MapToImage, 'false', X1_FAI23_LINE_H, Y1_FAI23_LINE_H, X2_FAI23_LINE_H, Y2_FAI23_LINE_H)</l>
 <c></c>
 <l>TranslateLineInWorldCoordinateAndConvertBack (lineX1LeftBase, lineY1LeftBase, lineX2LeftBase, lineY2LeftBase, FAI23_P1_LEN, MapToWorld, MapToImage, 'true', X1_FAI23_P1, Y1_FAI23_P1, X2_FAI23_P1, Y2_FAI23_P1)</l>
-<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1LeftBase, lineY1LeftBase, lineX2LeftBase, lineY2LeftBase, FAI23_P2_LEN, MapToWorld, MapToImage, 'true', X1_FAI23_P2, Y1_FAI23_P2, X2_FAI23_P2, Y2_FAI23_P2)</l>
+<l>*TranslateLineInWorldCoordinateAndConvertBack (lineX1LeftBase, lineY1LeftBase, lineX2LeftBase, lineY2LeftBase, FAI23_P2_LEN, MapToWorld, MapToImage, 'true', X1_FAI23_P2, Y1_FAI23_P2, X2_FAI23_P2, Y2_FAI23_P2)</l>
 <l>TranslateLineInWorldCoordinateAndConvertBack (lineX1LeftBase, lineY1LeftBase, lineX2LeftBase, lineY2LeftBase, FAI23_P3_LEN, MapToWorld, MapToImage, 'true', X1_FAI23_P3, Y1_FAI23_P3, X2_FAI23_P3, Y2_FAI23_P3)</l>
 <c></c>
-<c>* TOP intersections and distances</c>
-<l>intersection_lines (lineY1_FAI23_TOP, lineX1_FAI23_TOP, lineY2_FAI23_TOP, lineX2_FAI23_TOP, Y1_FAI23_P1, X1_FAI23_P1, Y2_FAI23_P1, X2_FAI23_P1, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI23_LINE_H, X1_FAI23_LINE_H, Y2_FAI23_LINE_H, X2_FAI23_LINE_H, DistanceC)</l>
-<l>Outputs := [Outputs, DistanceC*YCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceC]</l>
 <c></c>
-<l>intersection_lines (lineY1_FAI23_TOP, lineX1_FAI23_TOP, lineY2_FAI23_TOP, lineX2_FAI23_TOP, Y1_FAI23_P2, X1_FAI23_P2, Y2_FAI23_P2, X2_FAI23_P2, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI23_LINE_H, X1_FAI23_LINE_H, Y2_FAI23_LINE_H, X2_FAI23_LINE_H, DistanceE)</l>
-<l>Outputs := [Outputs, DistanceE*YCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceE]</l>
 <c></c>
-<l>intersection_lines (lineY1_FAI23_TOP, lineX1_FAI23_TOP, lineY2_FAI23_TOP, lineX2_FAI23_TOP, Y1_FAI23_P3, X1_FAI23_P3, Y2_FAI23_P3, X2_FAI23_P3, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI23_LINE_H, X1_FAI23_LINE_H, Y2_FAI23_LINE_H, X2_FAI23_LINE_H, DistanceG)</l>
-<l>Outputs := [Outputs, DistanceG*YCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceG]</l>
 <c></c>
 <c>* BOTTOM intersections and distances</c>
-<l>intersection_lines (lineY1_FAI23_BOTTOM, lineX1_FAI23_BOTTOM, lineY2_FAI23_BOTTOM, lineX2_FAI23_BOTTOM, Y1_FAI23_P1, X1_FAI23_P1, Y2_FAI23_P1, X2_FAI23_P1, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI23_LINE_H, X1_FAI23_LINE_H, Y2_FAI23_LINE_H, X2_FAI23_LINE_H, DistanceD)</l>
-<l>Outputs := [Outputs, DistanceD*YCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceD]</l>
+<l>intersection_lines (lineY1_FAI23_TOP, lineX1_FAI23_TOP, lineY2_FAI23_TOP, lineX2_FAI23_TOP, Y1_FAI23_P1, X1_FAI23_P1, Y2_FAI23_P1, X2_FAI23_P1, intersectY_TOP, intersectX_TOP, IsOverlapping)</l>
+<l>intersection_lines (lineY1_FAI23_BOTTOM, lineX1_FAI23_BOTTOM, lineY2_FAI23_BOTTOM, lineX2_FAI23_BOTTOM, Y1_FAI23_P1, X1_FAI23_P1, Y2_FAI23_P1, X2_FAI23_P1, intersectY_BOTTOM, intersectX_BOTTOM, IsOverlapping)</l>
+<l>distance_pp (intersectY_TOP, intersectX_TOP, intersectY_BOTTOM, intersectX_BOTTOM, Distance)</l>
+<l>IntersectsX := [IntersectsX, intersectX_TOP]</l>
+<l>IntersectsY := [IntersectsY, intersectY_TOP]</l>
+<l>IntersectsX := [IntersectsX, intersectX_BOTTOM]</l>
+<l>IntersectsY := [IntersectsY, intersectY_BOTTOM]</l>
+<l>Outputs := [Outputs, Distance*YCoeff]</l>
+<l>OutputsPixel := [OutputsPixel, Distance]</l>
 <c></c>
-<l>intersection_lines (lineY1_FAI23_BOTTOM, lineX1_FAI23_BOTTOM, lineY2_FAI23_BOTTOM, lineX2_FAI23_BOTTOM, Y1_FAI23_P2, X1_FAI23_P2, Y2_FAI23_P2, X2_FAI23_P2, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI23_LINE_H, X1_FAI23_LINE_H, Y2_FAI23_LINE_H, X2_FAI23_LINE_H, DistanceF)</l>
-<l>Outputs := [Outputs, DistanceF*YCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceF]</l>
 <c></c>
-<l>intersection_lines (lineY1_FAI23_BOTTOM, lineX1_FAI23_BOTTOM, lineY2_FAI23_BOTTOM, lineX2_FAI23_BOTTOM, Y1_FAI23_P3, X1_FAI23_P3, Y2_FAI23_P3, X2_FAI23_P3, intersectY, intersectX, IsOverlapping)</l>
-<l>IntersectsX := [IntersectsX, intersectX]</l>
-<l>IntersectsY := [IntersectsY, intersectY]</l>
-<l>distance_pl (intersectY, intersectX, Y1_FAI23_LINE_H, X1_FAI23_LINE_H, Y2_FAI23_LINE_H, X2_FAI23_LINE_H, DistanceH)</l>
-<l>Outputs := [Outputs, DistanceH*YCoeff]</l>
-<l>OutputsPixel := [OutputsPixel, DistanceH]</l>
-<c></c>
-<c>* FAI23 Sums</c>
-<l>DistanceCD := DistanceC + DistanceD</l>
-<l>OutputsPixel := [OutputsPixel, DistanceCD]</l>
-<l>Outputs := [Outputs, DistanceCD * YCoeff]</l>
-<c></c>
-<l>DistanceEF := DistanceE + DistanceF</l>
-<l>OutputsPixel := [OutputsPixel, DistanceEF]</l>
-<l>Outputs := [Outputs, DistanceEF * YCoeff]</l>
-<c></c>
-<l>DistanceGH := DistanceG + DistanceH</l>
-<l>OutputsPixel := [OutputsPixel, DistanceGH]</l>
-<l>Outputs := [Outputs, DistanceGH * YCoeff]</l>
+<l>intersection_lines (lineY1_FAI23_TOP, lineX1_FAI23_TOP, lineY2_FAI23_TOP, lineX2_FAI23_TOP, Y1_FAI23_P3, X1_FAI23_P3, Y2_FAI23_P3, X2_FAI23_P3, intersectY_TOP, intersectX_TOP, IsOverlapping)</l>
+<l>intersection_lines (lineY1_FAI23_BOTTOM, lineX1_FAI23_BOTTOM, lineY2_FAI23_BOTTOM, lineX2_FAI23_BOTTOM, Y1_FAI23_P3, X1_FAI23_P3, Y2_FAI23_P3, X2_FAI23_P3, intersectY_BOTTOM, intersectX_BOTTOM, IsOverlapping)</l>
+<l>distance_pp (intersectY_TOP, intersectX_TOP, intersectY_BOTTOM, intersectX_BOTTOM, Distance)</l>
+<l>IntersectsX := [IntersectsX, intersectX_TOP]</l>
+<l>IntersectsY := [IntersectsY, intersectY_TOP]</l>
+<l>IntersectsX := [IntersectsX, intersectX_BOTTOM]</l>
+<l>IntersectsY := [IntersectsY, intersectY_BOTTOM]</l>
+<l>Outputs := [Outputs, Distance*YCoeff]</l>
+<l>OutputsPixel := [OutputsPixel, Distance]</l>
 <c></c>
 <c>******************************FAI24************************</c>
 <l>rectX1 := 770 - modelCol</l>
