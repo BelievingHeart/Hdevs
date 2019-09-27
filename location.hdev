@@ -3,6 +3,7 @@
 <procedure name="main">
 <interface/>
 <body>
+<l>set_system ('clip_region', 'false')</l>
 <l>Width := 5120</l>
 <l>Height := 5120</l>
 <l>read_shape_model ('E:/Projects/3d/Hdevs/backViewModel', ModelID)</l>
@@ -31,10 +32,10 @@
 <c></c>
 <c></c>
 <l>for Index := 1 to 32 by 1</l>
-<c>    </c>
-<l>    grab_image (Image, AcqHandle)</l>
+<l>    read_image (Image, 'D:/Images/0928/LF_20190928014626637.bmp')</l>
+<l>    *grab_image (Image, AcqHandle)</l>
 <c>* Find model</c>
-<l>I94BottomViewMeasure (Image, FindLineRegions, LineRegions, ModelID, XCoeff, YCoeff, FAINames, FAIWeights, FAIBiases, IntersectsX, IntersectsY, Outputs, OutputsPixel, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
+<l>     I94BottomViewMeasure (Image, FindLineRegions, LineRegions, ModelID, XCoeff, YCoeff, FAINames, FAIWeights, FAIBiases, IntersectsX, IntersectsY, Outputs, OutputsPixel, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <c></c>
 <l>numOutputs := |Outputs|</l>
 <l>numOutputsPixel := |OutputsPixel|</l>
@@ -58,7 +59,7 @@
 <l>  endfor</l>
 <l>  fnew_line (FileHandle)</l>
 <c>  </c>
-<l>*stop ()</l>
+<l>stop ()</l>
 <l>  endfor</l>
 <c></c>
 <l>close_file (FileHandle)</l>
@@ -2857,9 +2858,28 @@
 <l>radianTopBase := rad(-91)</l>
 <l>len1TopBase := 187</l>
 <l>len2TopBase := 107</l>
+<c></c>
+<l>row1TopBase1 := 137 - modelRow</l>
+<l>col1TopBase1 := 1628 - modelCol</l>
+<l>radianTopBase1 := rad(-91)</l>
+<l>len1TopBase1 := 187</l>
+<l>len2TopBase1 := 107</l>
+<c></c>
+<l>row1TopBase2 := 137 - modelRow</l>
+<l>col1TopBase2 := 2876 - modelCol</l>
+<l>radianTopBase2 := rad(-91)</l>
+<l>len1TopBase2 := 187</l>
+<l>len2TopBase2 := 160</l>
+<c></c>
+<l>row1TopBase := [row1TopBase, row1TopBase1, row1TopBase2]</l>
+<l>col1TopBase := [col1TopBase, col1TopBase1, col1TopBase2]</l>
+<l>radianTopBase := [radianTopBase, radianTopBase1, radianTopBase2]</l>
+<l>len1TopBase := [len1TopBase, len1TopBase1, len1TopBase2]</l>
+<l>len2TopBase := [len2TopBase, len2TopBase1,len2TopBase2]</l>
+<c></c>
 <l>AffineTransRect2 (row1TopBase, col1TopBase, radianTopBase, len1TopBase, len2TopBase, MovementOfItem, row1TopBase, col1TopBase, radianTopBase, len1TopBase, len2TopBase)</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep (Image, findLineRegionTop, lineRegionTop, 'negative', row1TopBase, col1TopBase, radianTopBase, len1TopBase, len2TopBase, 10, Threshold-10, 'first', 0.3, 'false', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, ptsXUsed,ptsYUsed,ptsXIgnored,ptsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, findLineRegionTop, lineRegionTop, 'negative', row1TopBase, col1TopBase, radianTopBase, len1TopBase, len2TopBase, 10, [Threshold-10,Threshold-10,Threshold-10], 'first', 0.3, 'false', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, ptsXUsed,ptsYUsed,ptsXIgnored,ptsYIgnored)</l>
 <l>PointsXUsed := [ptsXUsed, PointsXUsed]</l>
 <l>PointsYUsed := [ptsYUsed, PointsYUsed]</l>
 <l>PointsXIgnored := [ptsXIgnored, PointsXIgnored]</l>
@@ -2872,9 +2892,22 @@
 <l>radianLeftBase := rad(-1)</l>
 <l>len1LeftBase := 441</l>
 <l>len2LeftBase := 281</l>
+<c></c>
+<l>row1LeftBase1 := 4216 - modelRow</l>
+<l>col1LeftBase1 := 995 - modelCol</l>
+<l>radianLeftBase1 := rad(-1)</l>
+<l>len1LeftBase1 := 441</l>
+<l>len2LeftBase1 := 281</l>
+<c></c>
+<l>row1LeftBase := [row1LeftBase, row1LeftBase1]</l>
+<l>col1LeftBase := [col1LeftBase, col1LeftBase1]</l>
+<l>radianLeftBase := [radianLeftBase, radianLeftBase1]</l>
+<l>len1LeftBase := [len1LeftBase, len1LeftBase1]</l>
+<l>len2LeftBase := [len2LeftBase, len2LeftBase1]</l>
+<c></c>
 <l>AffineTransRect2 (row1LeftBase, col1LeftBase, radianLeftBase, len1LeftBase, len2LeftBase, MovementOfItem, row1LeftBase, col1LeftBase, radianLeftBase, len1LeftBase, len2LeftBase)</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep (Image, findLineRegionLeft, lineRegionLeft, 'negative', row1LeftBase, col1LeftBase, radianLeftBase, len1LeftBase, len2LeftBase, 10, [Threshold, Threshold-5], 'first', 0.2, 'true', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1LeftBase, lineY1LeftBase, lineX2LeftBase, lineY2LeftBase, ptsXUsed,ptsYUsed,ptsXIgnored,ptsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, findLineRegionLeft, lineRegionLeft, 'negative', row1LeftBase, col1LeftBase, radianLeftBase, len1LeftBase, len2LeftBase, 10, [Threshold, Threshold], 'first', 0.2, 'true', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1LeftBase, lineY1LeftBase, lineX2LeftBase, lineY2LeftBase, ptsXUsed,ptsYUsed,ptsXIgnored,ptsYIgnored)</l>
 <l>concat_obj (findLineRegionTop, findLineRegionLeft, FindLineRegions)</l>
 <l>concat_obj (lineRegionTop, lineRegionLeft, LineRegions)</l>
 <l>PointsXUsed := [ptsXUsed, PointsXUsed]</l>
@@ -2996,7 +3029,7 @@
 <l>rect2Y1 := 4617 - modelRow</l>
 <l>rect2Radian := rad(-90)</l>
 <l>rect2Len1 :=150</l>
-<l>rect2Len2 :=102</l>
+<l>rect2Len2 :=150</l>
 <c></c>
 <l>rect3X1 := 2709 - modelCol</l>
 <l>rect3Y1 := 4623 - modelRow</l>
