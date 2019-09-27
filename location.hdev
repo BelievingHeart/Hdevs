@@ -7,10 +7,10 @@
 <l>Width := 5120</l>
 <l>Height := 5120</l>
 <l>read_shape_model ('E:/Projects/3d/Hdevs/backViewModel', ModelID)</l>
-<l>imageDir := 'D:/Images/0925/动态/2/XIA/MV-CH250-20TM-M58S-NF (00D27021190)/'</l>
+<l>imageDir := 'D:/Images/0928/xia/1/down/MV-CH250-20TM-M58S-NF (00D27021190)/'</l>
 <c></c>
 <l>open_file ('C:/Users/25001858/Desktop/data.txt', 'output', FileHandle)</l>
-<l>header := '21_1,21_2,23_1,23_2,24_1,25_1,25_2,26_1,26_2,27_1,27_2,28_1,28_2,29_1,29_2,31_1,32_1,33_1'</l>
+<l>header := '21_1,21_2,23_1,23_2,24_1,25_1,25_2,26_1,26_2,27_1,27_2,28_1,28_2,29_1,29_2,31_1,32_1,33_1,123_1,123_2,123_3'</l>
 <l>fwrite_string (FileHandle, header)</l>
 <l>fnew_line (FileHandle)</l>
 <c>                </c>
@@ -32,8 +32,7 @@
 <c></c>
 <c></c>
 <l>for Index := 1 to 32 by 1</l>
-<l>    read_image (Image, 'D:/Images/0928/LF_20190928014626637.bmp')</l>
-<l>    *grab_image (Image, AcqHandle)</l>
+<l>    grab_image (Image, AcqHandle)</l>
 <c>* Find model</c>
 <l>     I94BottomViewMeasure (Image, FindLineRegions, LineRegions, ModelID, XCoeff, YCoeff, FAINames, FAIWeights, FAIBiases, IntersectsX, IntersectsY, Outputs, OutputsPixel, PointsXUsed, PointsYUsed, PointsXIgnored, PointsYIgnored)</l>
 <c></c>
@@ -59,7 +58,7 @@
 <l>  endfor</l>
 <l>  fnew_line (FileHandle)</l>
 <c>  </c>
-<l>stop ()</l>
+<l>*stop ()</l>
 <l>  endfor</l>
 <c></c>
 <l>close_file (FileHandle)</l>
@@ -2814,6 +2813,8 @@
 <l>FAI27_P2_LEN := 24.434 / XCoeff</l>
 <l>FAI27_P3_LEN := 25.731 / XCoeff</l>
 <c></c>
+<l>FAI28_X_LEN := 24.434 / XCoeff</l>
+<l>FAI28_Y_LEN := 16.624 / YCoeff</l>
 <c></c>
 <l>FAI29_P1_LEN := 15.327 / YCoeff</l>
 <l>FAI29_P2_LEN := 16.623 / YCoeff</l>
@@ -2834,7 +2835,9 @@
 <l>FAI33_V_LEN := 7.886 / YCoeff</l>
 <l>FAI33_H_LEN := 9.299 / XCoeff</l>
 <c></c>
-<c></c>
+<l>FAI123_P1_LEN := 3 / XCoeff</l>
+<l>FAI123_P2_LEN := 9.269 / XCoeff</l>
+<l>FAI123_P3_LEN := 15.5 / XCoeff</l>
 <c></c>
 <c></c>
 <l>PointsXUsed := []</l>
@@ -3336,8 +3339,9 @@
 <c></c>
 <l>reduce_domain (Image, ROI_INTERSECTION, image_intersection)</l>
 <l>edges_sub_pix (image_intersection, Edges, 'canny', 1, 15, 30)</l>
-<l>union_cocircular_contours_xld (Edges, UnionContours1, rad(180), rad(5), rad(180), 2000, 10, 10, 'true', 3)</l>
+<l>union_cocircular_contours_xld (Edges, UnionContours1, rad(360), rad(5), rad(360), 2000, 50, 50, 'true', 5)</l>
 <l>select_shape_xld (UnionContours1, SelectedXLD, 'outer_radius', 'and', 200, 1000)</l>
+<l>LongestXLD (SelectedXLD, SelectedXLD)</l>
 <l>fit_circle_contour_xld (SelectedXLD, 'algebraic', -1, 0, 0, 3, 2, rowRightCircle, colRightCircle, radRightCircle, StartPhi1, EndPhi1, PointOrder1)</l>
 <l>gen_circle (Circle1, rowRightCircle, colRightCircle, radRightCircle)</l>
 <l>concat_obj (LineRegions, Circle1, LineRegions)</l>
@@ -3371,9 +3375,11 @@
 <l>Outputs := [Outputs, diameterPixel*XCoeff]</l>
 <l>OutputsPixel := [OutputsPixel, diameterPixel]</l>
 <c></c>
-<l>distance_pl (rowRightCircle, colRightCircle, lineY1LeftBase, lineX1LeftBase, lineY2LeftBase, lineX2LeftBase, DistanceX)</l>
-<l>distance_pl (rowRightCircle, colRightCircle, lineY1TopBase, lineX1TopBase, lineY2TopBase, lineX2TopBase, DistanceY)</l>
-<l>distancePixel := sqrt(DistanceX * DistanceX + DistanceY * DistanceY)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1TopBase, lineY1TopBase, lineX2TopBase, lineY2TopBase, FAI28_Y_LEN, MapToWorld, MapToImage, 'false', X1H, Y1H, X2H, Y2H)</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1LeftBase, lineY1LeftBase, lineX2LeftBase, lineY2LeftBase, FAI28_X_LEN, MapToWorld, MapToImage, 'true', X1V, Y1V, X2V, Y2V)</l>
+<l>intersection_lines (Y1V, X1V, Y2V, X2V, Y1H, X1H, Y2H, X2H, centerY, centerX, IsOverlapping9)</l>
+<c></c>
+<l>distance_pp (centerY, centerX, rowRightCircle, colRightCircle, distancePixel)</l>
 <l>Outputs := [Outputs, distancePixel*XCoeff]</l>
 <l>OutputsPixel := [OutputsPixel, distancePixel]</l>
 <c></c>
@@ -3603,28 +3609,74 @@
 <l>OutputsPixel := [OutputsPixel, Distance]</l>
 <c></c>
 <c>***********************FAI123******************</c>
-<l>rect1X1 := 658 - modelCol</l>
+<l>rect1X1 := 1358 - modelCol</l>
 <l>rect1Y1 := 4660 - modelRow</l>
 <l>rect1Radian := rad(89)</l>
-<l>rect1Len1 :=28</l>
-<l>rect1Len2 :=150</l>
+<l>rect1Len1 :=40</l>
+<l>rect1Len2 :=200</l>
 <c></c>
-<l>rect2X1 := 2372 - modelCol</l>
+<l>rect2X1 := 2140 - modelCol</l>
 <l>rect2Y1 := 4685 - modelRow</l>
-<l>rect2Radian := rad(-90)</l>
+<l>rect2Radian := rad(90)</l>
 <l>rect2Len1 :=64</l>
 <l>rect2Len2 :=205</l>
 <c></c>
-<l>rectX1 := [rect1X1, rect2X1]</l>
-<l>rectY1 := [rect1Y1, rect2Y1]</l>
-<l>rectRadian := [rect1Radian, rect2Radian]</l>
-<l>rectLen1 := [rect1Len1, rect2Len1]</l>
-<l>rectLen2 := [rect1Len2, rect2Len2]</l>
+<l>rect3X1 := 2972 - modelCol</l>
+<l>rect3Y1 := 4685 - modelRow</l>
+<l>rect3Radian := rad(90)</l>
+<l>rect3Len1 :=64</l>
+<l>rect3Len2 :=205</l>
+<c></c>
+<l>rectX1 := [rect1X1, rect2X1, rect3X1]</l>
+<l>rectY1 := [rect1Y1, rect2Y1, rect3Y1]</l>
+<l>rectRadian := [rect1Radian, rect2Radian, rect3Radian]</l>
+<l>rectLen1 := [rect1Len1, rect2Len1, rect3Len1]</l>
+<l>rectLen2 := [rect1Len2, rect2Len2, rect3Len2]</l>
 <l>AffineTransRect2 (rectY1, rectX1, rectRadian, rectLen1, rectLen2, MovementOfItem, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
+<l>gen_rectangle2 (Rectangle, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
 <c></c>
+<l> VisionProStyleFindLineOneStep_Pairs (Image, findLineRegion, lineRegion, rectY1, rectX1, rectRadian, rectLen1, rectLen2, 'positive', 10, [Threshold,Threshold,Threshold], 1, 2, 'last', 'false', 0.2, 'first', 1, 15, 5120, 5120, 40, 20, 'false', ptsXUsed,ptsYUsed,ptsXIgnored,ptsYIgnored, lineX1, lineY1, lineX2, lineY2)</l>
+<l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
+<l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
+<l>PointsXUsed := [ptsXUsed, PointsXUsed]</l>
+<l>PointsYUsed := [ptsYUsed, PointsYUsed]</l>
+<l>PointsXIgnored := [ptsXIgnored, PointsXIgnored]</l>
+<l>PointsYIgnored := [ptsYIgnored, PointsYIgnored]</l>
 <c></c>
-<l>* VisionProStyleFindLineOneStep_Pairs (Image, findLineRegion, lineRegion, rect1Y1, rect1X1, rect1Radian, rect1Len1, rect1Len2, 'positive', 10, 5, 1, sigma2, 'first', 'false', 0.2, 'first', 1, 10, 5120, 5120, 60, 30, useXLD, ptsXUsed,ptsYUsed,ptsXIgnored,ptsYIgnored, lineX1, lineY1, lineX2, lineY2)</l>
-<l>return ()</l>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1LeftBase, lineY1LeftBase, lineX2LeftBase, lineY2LeftBase, FAI123_P1_LEN, MapToWorld, MapToImage, 'true', P1_X1, P1_Y1, P1_X2, P1_Y2)</l>
+<l>intersection_lines (P1_Y1, P1_X1, P1_Y2, P1_X2, lineY1TopBase, lineX1TopBase, lineY2TopBase, lineX2TopBase, rowP1_TOP, colP1_TOP, IsOverlapping10)</l>
+<l>IntersectsX := [IntersectsX, colP1_TOP]</l>
+<l>IntersectsY := [IntersectsY, rowP1_TOP]</l>
+<l>intersection_lines (P1_Y1, P1_X1, P1_Y2, P1_X2, lineY1, lineX1, lineY2, lineX2, rowP1_BOTTOM, colP1_BOTTOM, IsOverlapping10)</l>
+<l>IntersectsX := [IntersectsX, colP1_BOTTOM]</l>
+<l>IntersectsY := [IntersectsY, rowP1_BOTTOM]</l>
+<l>distance_pp (rowP1_TOP, colP1_TOP, rowP1_BOTTOM, colP1_BOTTOM, Distance)</l>
+<l>Outputs := [Outputs, Distance*YCoeff]</l>
+<l>OutputsPixel := [OutputsPixel, Distance]</l>
+<c></c>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1LeftBase, lineY1LeftBase, lineX2LeftBase, lineY2LeftBase, FAI123_P2_LEN, MapToWorld, MapToImage, 'true', P2_X1, P2_Y1, P2_X2, P2_Y2)</l>
+<l>intersection_lines (P2_Y1, P2_X1, P2_Y2, P2_X2, lineY1TopBase, lineX1TopBase, lineY2TopBase, lineX2TopBase, rowP2_TOP, colP2_TOP, IsOverlapping10)</l>
+<l>IntersectsX := [IntersectsX, colP2_TOP]</l>
+<l>IntersectsY := [IntersectsY, rowP2_TOP]</l>
+<l>intersection_lines (P2_Y1, P2_X1, P2_Y2, P2_X2, lineY1, lineX1, lineY2, lineX2, rowP2_BOTTOM, colP2_BOTTOM, IsOverlapping10)</l>
+<l>IntersectsX := [IntersectsX, colP2_BOTTOM]</l>
+<l>IntersectsY := [IntersectsY, rowP2_BOTTOM]</l>
+<l>distance_pp (rowP2_TOP, colP2_TOP, rowP2_BOTTOM, colP2_BOTTOM, Distance)</l>
+<l>Outputs := [Outputs, Distance*YCoeff]</l>
+<l>OutputsPixel := [OutputsPixel, Distance]</l>
+<c></c>
+<l>TranslateLineInWorldCoordinateAndConvertBack (lineX1LeftBase, lineY1LeftBase, lineX2LeftBase, lineY2LeftBase, FAI123_P3_LEN, MapToWorld, MapToImage, 'true', P3_X1, P3_Y1, P3_X2, P3_Y2)</l>
+<l>intersection_lines (P3_Y1, P3_X1, P3_Y2, P3_X2, lineY1TopBase, lineX1TopBase, lineY2TopBase, lineX2TopBase, rowP3_TOP, colP3_TOP, IsOverlapping10)</l>
+<l>IntersectsX := [IntersectsX, colP3_TOP]</l>
+<l>IntersectsY := [IntersectsY, rowP3_TOP]</l>
+<l>intersection_lines (P3_Y1, P3_X1, P3_Y2, P3_X2, lineY1, lineX1, lineY2, lineX2, rowP3_BOTTOM, colP3_BOTTOM, IsOverlapping10)</l>
+<l>IntersectsX := [IntersectsX, colP3_BOTTOM]</l>
+<l>IntersectsY := [IntersectsY, rowP3_BOTTOM]</l>
+<l>distance_pp (rowP3_TOP, colP3_TOP, rowP3_BOTTOM, colP3_BOTTOM, Distance)</l>
+<l>Outputs := [Outputs, Distance*YCoeff]</l>
+<l>OutputsPixel := [OutputsPixel, Distance]</l>
+<c></c>
+<l> return ()</l>
 </body>
 <docu id="I94BottomViewMeasure">
 <parameters>
