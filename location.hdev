@@ -7,7 +7,7 @@
 <l>Width := 5120</l>
 <l>Height := 5120</l>
 <l>read_shape_model ('E:/Projects/3d/Hdevs/backViewModel', ModelID)</l>
-<l>imageDir := 'D:/Images/0929/xia/3/MV-CH250-20TM-M58S-NF (00D27021190)/'</l>
+<l>imageDir := 'D:/Images/0929/xia/14/MV-CH250-20TM-M58S-NF (00D27021190)/'</l>
 <c></c>
 <l>open_file ('C:/Users/25001858/Desktop/data.txt', 'output', FileHandle)</l>
 <l>header := '21_1,21_2,23_1,23_2,24_1,25_1,25_2,26_1,26_2,27_1,27_2,28_1,28_2,29_1,29_2,31_1,32_1,33_1,123_1,123_2,123_3'</l>
@@ -58,7 +58,7 @@
 <l>  endfor</l>
 <l>  fnew_line (FileHandle)</l>
 <c>  </c>
-<l>*stop ()</l>
+<l>* stop ()</l>
 <l>  endfor</l>
 <c></c>
 <l>close_file (FileHandle)</l>
@@ -3024,7 +3024,7 @@
 <l>len2FAI21Left := [len2FAI21LeftUpper, len2FAI21LeftLower]</l>
 <l>AffineTransRect2 (row1FAI21Left, col1FAI21Left, radianFAI21Left, len1FAI21Left, len2FAI21Left, MovementOfItem, row1FAI21Left, col1FAI21Left, radianFAI21Left, len1FAI21Left, len2FAI21Left)</l>
 <c></c>
-<l>VisionProStyleFindLineOneStep (Image, findLineRegion, lineRegion, 'negative', row1FAI21Left, col1FAI21Left, radianFAI21Left, len1FAI21Left, len2FAI21Left, 10, [Threshold, Threshold], 'first', 0.2, 'true', 1, sigma2, 5120, 5120, 5, 60, 30, lineX1_FAI21_LEFT, lineY1_FAI21_LEFT, lineX2_FAI21_LEFT, lineY2_FAI21_LEFT, ptsXUsed,ptsYUsed,ptsXIgnored,ptsYIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, findLineRegion, lineRegion, 'negative', row1FAI21Left, col1FAI21Left, radianFAI21Left, len1FAI21Left, len2FAI21Left, 10, [Threshold, Threshold], 'first', 0.2, 'true', 1, 2, 5120, 5120, 5, 60, 30, lineX1_FAI21_LEFT, lineY1_FAI21_LEFT, lineX2_FAI21_LEFT, lineY2_FAI21_LEFT, ptsXUsed,ptsYUsed,ptsXIgnored,ptsYIgnored)</l>
 <l>concat_obj (FindLineRegions, findLineRegion, FindLineRegions)</l>
 <l>concat_obj (LineRegions, lineRegion, LineRegions)</l>
 <l>PointsXUsed := [ptsXUsed, PointsXUsed]</l>
@@ -3234,7 +3234,8 @@
 <l>edges_sub_pix (ImageReduced2, Edges2, 'canny', 3, 15, 30)</l>
 <l>select_contours_xld (Edges2, SelectedContours, 'contour_length', 500, 999999, -0.5, 0.5)</l>
 <l>union_cocircular_contours_xld (SelectedContours, UnionContours, rad(180), rad(5), rad(180), 2000, 10, 50, 'true', 3)</l>
-<l>fit_circle_contour_xld (UnionContours, 'algebraic', -1, 0, 0, 3, 2, Row, Column, Radius, StartPhi, EndPhi, PointOrder)</l>
+<l>LongestXLD (UnionContours, outputContour)</l>
+<l>fit_circle_contour_xld (outputContour, 'algebraic', -1, 0, 0, 3, 2, Row, Column, Radius, StartPhi, EndPhi, PointOrder)</l>
 <l>gen_circle_contour_xld(ContCircle, Row, Column, Radius, StartPhi, StartPhi + rad(360), 'positive', 1)</l>
 <c></c>
 <l>gen_circle (Circle, Row, Column, Radius)</l>
@@ -3369,68 +3370,24 @@
 <l>PointsYIgnored := [ptsYIgnored, PointsYIgnored]</l>
 <c></c>
 <c>* Intersection points</c>
-<l>rectX1 := 3755 - modelCol</l>
-<l>rectY1 := 1945 - modelRow</l>
-<l>rectRadian := rad(-44)</l>
-<l>rectLen1 :=188</l>
-<l>rectLen2 :=194</l>
-<l>AffineTransRect2 (rectY1, rectX1, rectRadian, rectLen1, rectLen2, MovementOfItem, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
-<l>gen_rectangle2 (ROI_TL, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
 <c></c>
-<l>rectX1 := 4521 - modelCol</l>
-<l>rectY1 := 2703 - modelRow</l>
-<l>rectRadian := rad(-44)</l>
-<l>rectLen1 :=195</l>
-<l>rectLen2 :=194</l>
-<l>AffineTransRect2 (rectY1, rectX1, rectRadian, rectLen1, rectLen2, MovementOfItem, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
-<l>gen_rectangle2 (ROI_BR, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
+<l>gen_rectangle1 (ROI_0, 1077.9, 2786.7, 3970.7, 4905.1)</l>
+<l>reduce_domain (Image, ROI_0, ImageReduced)</l>
+<l>threshold (ImageReduced, Region, 100, 255)</l>
+<l>connection (Region, ConnectedRegions)</l>
 <c></c>
-<l>rectX1 := 4536 - modelCol</l>
-<l>rectY1 := 1938 - modelRow</l>
-<l>rectRadian := rad(-44)</l>
-<l>rectLen1 :=188</l>
-<l>rectLen2 :=194</l>
-<l>AffineTransRect2 (rectY1, rectX1, rectRadian, rectLen1, rectLen2, MovementOfItem, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
-<l>gen_rectangle2 (ROI_TR, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
+<l>select_shape (ConnectedRegions, SelectedRegions, 'area', 'and', 800000, 1200000)</l>
+<l>dilation_circle (SelectedRegions, RegionDilation, 35)</l>
 <c></c>
-<l>rectX1 := 3755 - modelCol</l>
-<l>rectY1 := 2696 - modelRow</l>
-<l>rectRadian := rad(-44)</l>
-<l>rectLen1 :=188</l>
-<l>rectLen2 :=194</l>
-<l>AffineTransRect2 (rectY1, rectX1, rectRadian, rectLen1, rectLen2, MovementOfItem, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
-<l>gen_rectangle2 (ROI_BL, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
-<l>union2(ROI_TL, ROI_BR, ROI_MAIN_DIR)</l>
-<l>union2 (ROI_TR, ROI_BL, ROI_VICE_DIR)</l>
-<l>union2 (ROI_MAIN_DIR, ROI_VICE_DIR, ROI)</l>
+<l>reduce_domain (Image, RegionDilation, image_intersection)</l>
+<l>edges_sub_pix (image_intersection, Edges, 'canny', 1, 10, 20)</l>
 <c></c>
-<l>rectX1 := 4142 - modelCol</l>
-<l>rectY1 := 2289 - modelRow</l>
-<l>rectRadian := rad(-90)</l>
-<l>rectLen1 :=673</l>
-<l>rectLen2 :=616</l>
-<l>AffineTransRect2 (rectY1, rectX1, rectRadian, rectLen1, rectLen2, MovementOfItem, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
-<l>gen_rectangle2 (ROI_Threshold, rectY1, rectX1, rectRadian, rectLen1, rectLen2)</l>
-<c></c>
-<l>reduce_domain (Image, ROI_Threshold, ImageThreshold)</l>
-<l>mean_image (ImageThreshold, ImageMean, 11, 11)</l>
-<l>threshold (ImageMean, Region1, 100, 255)</l>
-<l>connection (Region1, ConnectedRegions)</l>
-<l>select_shape (ConnectedRegions, SelectedRegions, 'area', 'and', 400000, 99999999)</l>
-<l>select_shape (SelectedRegions, SelectedRegions1, 'roundness', 'and', 0.92, 10)</l>
-<l>dilation_circle (SelectedRegions1, RegionDilation, 35)</l>
-<c></c>
-<l>intersection (ROI, RegionDilation, ROI_INTERSECTION)</l>
-<c></c>
-<l>reduce_domain (Image, ROI_INTERSECTION, image_intersection)</l>
-<l>bilateral_filter (image_intersection, image_intersection, ImageBilateral, 3, 20, [], [])</l>
-<l>edges_sub_pix (ImageBilateral, Edges, 'canny', 1, 10, 20)</l>
-<l>union_cocircular_contours_xld (Edges, UnionContours1, rad(360), rad(5), rad(360), 2000, 50, 50, 'true', 5)</l>
-<l>select_shape_xld (UnionContours1, SelectedXLD, 'outer_radius', 'and', 200, 1000)</l>
-<l>LongestXLD (SelectedXLD, SelectedXLD)</l>
-<l>fit_circle_contour_xld (SelectedXLD, 'algebraic', -1, 0, 0, 3, 2, rowRightCircle, colRightCircle, radRightCircle, StartPhi1, EndPhi1, PointOrder1)</l>
-<l>gen_circle (Circle1, rowRightCircle, colRightCircle, radRightCircle)</l>
-<l>concat_obj (LineRegions, Circle1, LineRegions)</l>
+<l>union_adjacent_contours_xld (Edges, UnionContours2, 1000, 1000, 'attr_keep')</l>
+<l>LongestXLD (UnionContours2, SelectedXLD)</l>
+<l>smallest_circle_xld (SelectedXLD, rowRightCircle, colRightCircle, radRightCircle)</l>
+<l>*fit_circle_contour_xld (SelectedXLD, 'algebraic', -1, 0, 0, 3, 2, rowRightCircle, colRightCircle, radRightCircle, StartPhi1, EndPhi1, PointOrder1)</l>
+<l>gen_circle_contour_xld (ContCircle1, rowRightCircle, colRightCircle, radRightCircle, 0, rad(360), 'positive', 1)</l>
+<l>concat_obj (LineRegions, ContCircle1, LineRegions)</l>
 <c></c>
 <l>TranslateLineInWorldCoordinateAndConvertBack (lineX1LeftBase, lineY1LeftBase, lineX2LeftBase, lineY2LeftBase, FAI27_P2_LEN, MapToWorld, MapToImage, 'true', X1_FAI27_P2, Y1_FAI27_P2, X2_FAI27_P2, Y2_FAI27_P2)</l>
 <c></c>
