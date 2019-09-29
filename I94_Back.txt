@@ -2,7 +2,7 @@ set_system ('clip_region', 'false')
 Width := 5120
 Height := 5120
 read_shape_model ('E:/Projects/3d/Hdevs/backViewModel', ModelID)
-imageDir := 'D:/Images/0928/xia/1/down/MV-CH250-20TM-M58S-NF (00D27021190)/'
+imageDir := 'D:/Images/0929/xia/14/MV-CH250-20TM-M58S-NF (00D27021190)/'
 
 open_file ('C:/Users/25001858/Desktop/data.txt', 'output', FileHandle)
 header := '21_1,21_2,23_1,23_2,24_1,25_1,25_2,26_1,26_2,27_1,27_2,28_1,28_2,29_1,29_2,31_1,32_1,33_1,123_1,123_2,123_3'
@@ -53,7 +53,7 @@ for Index1 := 0 to |OutputsPixel|-1 by 1
   endfor
   fnew_line (FileHandle)
   
-*stop ()
+* stop ()
   endfor
 
 close_file (FileHandle)
