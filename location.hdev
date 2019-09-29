@@ -4,7 +4,7 @@
 <interface/>
 <body>
 <l>read_shape_model ('E:/Projects/3d/Hdevs/ModelTopViewI94', ModelID)</l>
-<l>imageDir := 'D:/Images/0929/I94上/动态/5/MV-CH250-20TM-F-NF (00D46076741)/'</l>
+<l>imageDir := 'D:/Images/0929/I94上/动态/13/MV-CH250-20TM-F-NF (00D46076741)/'</l>
 <c></c>
 <c></c>
 <l>Width := 5120</l>
@@ -68,7 +68,7 @@
 <l>  endfor</l>
 <l>  fnew_line (FileHandle)</l>
 <c>  </c>
-<l>*stop ()</l>
+<l>stop ()</l>
 <l>  endfor</l>
 <c></c>
 <l>close_file (FileHandle)</l>
@@ -799,8 +799,9 @@
 <l>    else</l>
 <l>        FitLine2D (Xs, Ys, ignoreFraction, lineX1, lineY1, lineX2, lineY2, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>    endif</l>
-<c></c>
-<l>    _pinPointFindLine (inputImage, findLineRegion1, lineX1, lineX2, lineY1, lineY2, radian, newWidth, MultipleLines, cannyHigh, cannyLow, sigma2, RowBegin, ColBegin, RowEnd, ColEnd, EdgesXStep, EdgesYStep)</l>
+<c>    </c>
+<l>    _genSubRect2(findLineRegion, row[i], col[i], radian[i], len1[i], len2[i], lineX1, lineY1, lineX2, lineY2, newWidth)</l>
+<l>    _pinPointFindLine (inputImage, findLineRegion, findLineRegion, lineX1, lineX2, lineY1, lineY2, radian, newWidth, MultipleLines, cannyHigh, cannyLow, sigma2, RowBegin, ColBegin, RowEnd, ColEnd, EdgesXStep, EdgesYStep)</l>
 <c></c>
 <l>    if(MultipleLines == 'true')</l>
 <l>        EdgesX := [EdgesX, EdgesXStep]</l>
@@ -815,7 +816,7 @@
 <l>endfor</l>
 <c></c>
 <l>if(MultipleLines == 'true')</l>
-<l>    FitLine2D (EdgesX, EdgesY, 0, ColBegin, RowBegin, ColEnd, RowEnd, _, _, _, _)</l>
+<l>    FitLine2D (EdgesX, EdgesY,ignoreFraction, ColBegin, RowBegin, ColEnd, RowEnd, _, _, _, _)</l>
 <l>    findLineRegion := findLineRegions</l>
 <l>    XsUsed := AllXsUsed</l>
 <l>    YsUsed := AllYsUsed</l>
@@ -1270,7 +1271,9 @@
 <l>        FitLine2D (XsUsed, YsUsed, ignoreFraction, lineX1, lineY1, lineX2, lineY2, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>    endif</l>
 <c></c>
-<l>    _pinPointFindLine (inputImage, findLineRegion, lineX1, lineX2, lineY1, lineY2, radian, 5, MultipleLines, cannyHigh, cannyLow, sigma2, RowBegin, ColBegin, RowEnd, ColEnd, EdgesXStep, EdgesYStep)</l>
+<l>        _genSubRect2(findLineRegion, row[i], col[i], radian[i], len1[i], len2[i], lineX1, lineY1, lineX2, lineY2, 5)</l>
+<c></c>
+<l>    _pinPointFindLine (inputImage, findLineRegion, findLineRegion, lineX1, lineX2, lineY1, lineY2, radian, 5, MultipleLines, cannyHigh, cannyLow, sigma2, RowBegin, ColBegin, RowEnd, ColEnd, EdgesXStep, EdgesYStep)</l>
 <c></c>
 <l>    if(MultipleLines == 'true')</l>
 <l>        EdgesX := [EdgesX, EdgesXStep]</l>
@@ -2530,6 +2533,7 @@
 <interface>
 <io>
 <par name="inputImage" base_type="iconic" dimension="0"/>
+<par name="inputRegion" base_type="iconic" dimension="0"/>
 </io>
 <oo>
 <par name="findLineRegion" base_type="iconic" dimension="0"/>
@@ -2575,7 +2579,7 @@
 <l>distance_pp (lineY1, lineX1, lineY2, lineX2, newHeight)</l>
 <c></c>
 <l>gen_rectangle2 (findLineRegion, lineCenterY, lineCenterX, newRadian, newWidth, newHeight/2)</l>
-<l>reduce_domain (inputImage, findLineRegion, ImageReduced)</l>
+<l>reduce_domain (inputImage, inputRegion, ImageReduced)</l>
 <l>edges_sub_pix(ImageReduced, Edges, 'canny', sigma, cannyLow, cannyHigh)</l>
 <c></c>
 <c></c>
@@ -2595,6 +2599,7 @@
 <c></c>
 <l>endif</l>
 <c></c>
+<l>findLineRegion := Edges</l>
 <c></c>
 <l>if(EdgesOnly == 'true')</l>
 <l>    get_contour_xld (Edges, EdgesY, EdgesX)</l>
@@ -2637,6 +2642,7 @@
 </parameter>
 <parameter id="findLineRegion"/>
 <parameter id="inputImage"/>
+<parameter id="inputRegion"/>
 <parameter id="lineX1"/>
 <parameter id="lineX2"/>
 <parameter id="lineY1"/>
@@ -3994,6 +4000,61 @@
 <parameters>
 <parameter id="inputContour"/>
 <parameter id="outputContour"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="_genSubRect2">
+<interface>
+<oo>
+<par name="rect2Out" base_type="iconic" dimension="0"/>
+</oo>
+<ic>
+<par name="row" base_type="ctrl" dimension="0"/>
+<par name="col" base_type="ctrl" dimension="0"/>
+<par name="radian" base_type="ctrl" dimension="0"/>
+<par name="len1" base_type="ctrl" dimension="0"/>
+<par name="len2" base_type="ctrl" dimension="0"/>
+<par name="lineX1" base_type="ctrl" dimension="0"/>
+<par name="lineY1" base_type="ctrl" dimension="0"/>
+<par name="lineX2" base_type="ctrl" dimension="0"/>
+<par name="lineY2" base_type="ctrl" dimension="0"/>
+<par name="newWidth" base_type="ctrl" dimension="0"/>
+</ic>
+</interface>
+<body>
+<l>gen_rectangle2_contour_xld (Rectangle, row, col, radian, len1, len2)</l>
+<l>intersection_line_contour_xld (Rectangle, lineY1, lineX1, lineY2, lineX2, rowEndPoint, colEndPoint, IsOverlapping)</l>
+<c></c>
+<l>if(|rowEndPoint|!= 2 or |colEndPoint|!= 2)</l>
+<l>    throw ('Only two end points should be found!')</l>
+<l>endif</l>
+<c></c>
+<l>rowOut := sum(rowEndPoint) / 2.0</l>
+<l>colOut := sum(colEndPoint) / 2.0</l>
+<c></c>
+<l>line_orientation (lineY1, lineX1, lineY2, lineX2, radianNormal)</l>
+<l>radianOut := radianNormal + rad(90)</l>
+<c></c>
+<l>len1Out := newWidth</l>
+<l>len2Out := len2</l>
+<c></c>
+<l>gen_rectangle2 (rect2Out, rowOut, colOut, radianOut, len1Out, len2Out)</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="_genSubRect2">
+<parameters>
+<parameter id="col"/>
+<parameter id="len1"/>
+<parameter id="len2"/>
+<parameter id="lineX1"/>
+<parameter id="lineX2"/>
+<parameter id="lineY1"/>
+<parameter id="lineY2"/>
+<parameter id="newWidth"/>
+<parameter id="radian"/>
+<parameter id="rect2Out"/>
+<parameter id="row"/>
 </parameters>
 </docu>
 </procedure>
