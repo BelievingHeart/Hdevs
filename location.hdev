@@ -4,7 +4,7 @@
 <interface/>
 <body>
 <l>read_shape_model ('E:/Projects/3d/Hdevs/ModelTopViewI94', ModelID)</l>
-<l>imageDir := 'D:/Images/0929/I94上/动态/13/MV-CH250-20TM-F-NF (00D46076741)/'</l>
+<l>imageDir := 'D:/Images/0929/I94上/动态/5/MV-CH250-20TM-F-NF (00D46076741)/'</l>
 <c></c>
 <c></c>
 <l>Width := 5120</l>
@@ -68,7 +68,7 @@
 <l>  endfor</l>
 <l>  fnew_line (FileHandle)</l>
 <c>  </c>
-<l>stop ()</l>
+<l>*stop ()</l>
 <l>  endfor</l>
 <c></c>
 <l>close_file (FileHandle)</l>
@@ -2165,14 +2165,14 @@
 <c></c>
 <c></c>
 <c>*********************************FAI16*************************</c>
-<l>rectFAI16Row := 2276.47000000 - rowModel</l>
+<l>rectFAI16Row := 2246.47000000 - rowModel</l>
 <l>rectFAI16Col := 992.65500000 - colModel</l>
-<l>rectFAI16Radian := rad(-1)</l>
-<l>rectFAI16Len1 := 175.95600000</l>
-<l>rectFAI16Len2 := 391.84500000</l>
+<l>rectFAI16Radian := rad(-0.5)</l>
+<l>rectFAI16Len1 := 125.95600000</l>
+<l>rectFAI16Len2 := 470.84500000</l>
 <c></c>
 <l>AffineTransRect2 (rectFAI16Row, rectFAI16Col, rectFAI16Radian, rectFAI16Len1, rectFAI16Len2, MovementImageToImage, rectFAI16Row, rectFAI16Col, rectFAI16Radian, rectFAI16Len1, rectFAI16Len2)</l>
-<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'negative', rectFAI16Row, rectFAI16Col, rectFAI16Radian, rectFAI16Len1, rectFAI16Len2, 6, FAI16Threshold, 'first', ignorePortion, 'true', 1, 2, Width, Height, newWidth, 40, 20, lineX1FAI16, lineY1FAI16, lineX2FAI16, lineY2FAI16, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>VisionProStyleFindLineOneStep (Image, rect, lineRegion, 'negative', rectFAI16Row, rectFAI16Col, rectFAI16Radian, rectFAI16Len1, rectFAI16Len2, 6, FAI16Threshold, 'first', ignorePortion, 'true', 1, 2, Width, Height, newWidth, 30, 15, lineX1FAI16, lineY1FAI16, lineX2FAI16, lineY2FAI16, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <l>concat_obj (FindLineRects, rect, FindLineRects)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <c></c>
