@@ -1848,6 +1848,13 @@
 <l>gen_rectangle2 (Rectangle7, rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2)</l>
 <l>VisionProStyleFindLineOneStep (Image, rectFAI3, lineRegion, 'negative', rectFAI3Row, rectFAI3Col, rectFAI3Radian, rectFAI3Len1, rectFAI3Len2, 10, [FAI3Threshold,FAI3Threshold], 'first', 0.2, 'false', 1, 1, 5120, 5120, 5, 30, 15, lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
 <c></c>
+<c>**********************</c>
+<l>* GetContoursPoints (rectFAI3, Xs, Ys)</l>
+<l>* ProjectionFilter (Xs, Ys, lineX1RightBase, lineY1RightBase, lineX2RightBase, lineY2RightBase, 0.2, XsOut, YsOut)</l>
+<l>* FitLine2D (XsOut, YsOut, 0, lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3, XsUsed, YsUsed, XsIgnored, YsIgnored)</l>
+<l>* GenLineRegion (lineRegion, lineX1FAI3, lineY1FAI3, lineX2FAI3, lineY2FAI3, 5120, 5120)</l>
+<c></c>
+<c>*********************</c>
 <l>concat_obj (FindLineRects, rectFAI3, FindLineRects)</l>
 <l>concat_obj (lineRegions, lineRegion, lineRegions)</l>
 <c></c>
@@ -3997,6 +4004,237 @@
 <parameter id="radian"/>
 <parameter id="rect2Out"/>
 <parameter id="row"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="ProjectionFilter">
+<interface>
+<ic>
+<par name="Xs" base_type="ctrl" dimension="0"/>
+<par name="Ys" base_type="ctrl" dimension="0"/>
+<par name="lineX1" base_type="ctrl" dimension="0"/>
+<par name="lineY1" base_type="ctrl" dimension="0"/>
+<par name="lineX2" base_type="ctrl" dimension="0"/>
+<par name="lineY2" base_type="ctrl" dimension="0"/>
+<par name="ignorePortion" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="XsOut" base_type="ctrl" dimension="0"/>
+<par name="YsOut" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>numInputs := |Xs|</l>
+<c></c>
+<l>lineProjectionXs := []</l>
+<l>lineProjectionYs := []</l>
+<c></c>
+<l>for i := 0 to numInputs-1 by 1</l>
+<l>    X1 := Xs[i]</l>
+<l>    Y1 := Ys[i]</l>
+<l>    get_perpendicular_line_that_passes (lineX1, lineY1, lineX2, lineY2, X1, Y1, X2, Y2)</l>
+<l>    intersection_lines (lineY1, lineX1, lineY2, lineX2, Y1, X1, Y2, X2, intersectionY, intersectionX, IsOverlapping)</l>
+<l>    lineProjectionXs := [lineProjectionXs, intersectionX]</l>
+<l>    lineProjectionYs := [lineProjectionYs, intersectionY]</l>
+<l>endfor</l>
+<c></c>
+<l>GetDistancesToDistributionCenter (lineProjectionXs, lineProjectionYs, distances)</l>
+<c></c>
+<l>tuple_sort_index (distances, Indices)</l>
+<c></c>
+<l>numChoose := |Xs| * (1 - ignorePortion)</l>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<l>XsOut := []</l>
+<l>YsOut := []</l>
+<c></c>
+<c>* take data points that are within 2 deviations away, that is 95% range</c>
+<l>for i := 0 to |Xs|-1 by 1</l>
+<l>    if(Indices[i] &lt; numChoose)</l>
+<l>        XsOut := [XsOut, Xs[Indices[i]]]</l>
+<l>        YsOut := [YsOut, Ys[Indices[i]]]</l>
+<l>    endif</l>
+<l>endfor</l>
+<c></c>
+<c></c>
+<l>dev_set_color ('red')</l>
+<l>gen_cross_contour_xld (Cross, YsOut, XsOut, 1, 0)</l>
+<l>dev_set_color ('green')</l>
+<l>gen_cross_contour_xld (Cross2, Ys, Xs, 1, 0.785398)</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="ProjectionFilter">
+<parameters>
+<parameter id="Xs"/>
+<parameter id="XsOut"/>
+<parameter id="Ys"/>
+<parameter id="YsOut"/>
+<parameter id="ignorePortion"/>
+<parameter id="lineX1"/>
+<parameter id="lineX2"/>
+<parameter id="lineY1"/>
+<parameter id="lineY2"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="GetLineNormalVec">
+<interface>
+<ic>
+<par name="lineX1" base_type="ctrl" dimension="0"/>
+<par name="lineY1" base_type="ctrl" dimension="0"/>
+<par name="lineX2" base_type="ctrl" dimension="0"/>
+<par name="lineY2" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="Vx" base_type="ctrl" dimension="0"/>
+<par name="Vy" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>GetLineWeightAndBias(lineX1, lineY1, lineX2, lineY2, m, b)</l>
+<l>normalM := -1.0 / m</l>
+<c></c>
+<l>Vx := sqrt(1.0 / (normalM*normalM+1))</l>
+<l>Vy := normalM * Vx</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="GetLineNormalVec">
+<parameters>
+<parameter id="Vx"/>
+<parameter id="Vy"/>
+<parameter id="lineX1"/>
+<parameter id="lineX2"/>
+<parameter id="lineY1"/>
+<parameter id="lineY2"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="GetLineWeightAndBias">
+<interface>
+<ic>
+<par name="X1" base_type="ctrl" dimension="0"/>
+<par name="Y1" base_type="ctrl" dimension="0"/>
+<par name="X2" base_type="ctrl" dimension="0"/>
+<par name="Y2" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="m" base_type="ctrl" dimension="0"/>
+<par name="b" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>yDiff := Y2 - Y1</l>
+<l>xDiff := X2 - X1</l>
+<c></c>
+<l>m := yDiff / xDiff</l>
+<l>b := Y1 - m*X1</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="GetLineWeightAndBias">
+<parameters>
+<parameter id="X1"/>
+<parameter id="X2"/>
+<parameter id="Y1"/>
+<parameter id="Y2"/>
+<parameter id="b"/>
+<parameter id="m"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="GetDistancesToDistributionCenter">
+<interface>
+<ic>
+<par name="Xs" base_type="ctrl" dimension="0"/>
+<par name="Ys" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="distances" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>tuple_mean (Xs, xMean)</l>
+<l>tuple_mean (Ys, yMean)</l>
+<c></c>
+<l>distances := []</l>
+<c></c>
+<l>for i := 0 to |Xs|-1 by 1</l>
+<l>    distance_pp (yMean, xMean, Ys[i], Xs[i], Distance)</l>
+<l>    distances := [distances, Distance]</l>
+<l>endfor</l>
+<c></c>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="GetDistancesToDistributionCenter">
+<abstract lang="zh_CN">Normalize 2D points on a line to range (-1, 1)
+(X1, Y1) is a point out of the line that is used to calculate two end points on the line</abstract>
+<parameters>
+<parameter id="Xs"/>
+<parameter id="Ys"/>
+<parameter id="distances"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="EstimateGaussian1D">
+<interface>
+<ic>
+<par name="Xs" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="Mean" base_type="ctrl" dimension="0"/>
+<par name="Deviation" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>tuple_mean (Xs, Mean)</l>
+<l>tuple_deviation (Xs, Deviation)</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="EstimateGaussian1D">
+<parameters>
+<parameter id="Deviation"/>
+<parameter id="Mean"/>
+<parameter id="Xs"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="GetContoursPoints">
+<interface>
+<io>
+<par name="Contours" base_type="iconic" dimension="0"/>
+</io>
+<oc>
+<par name="Xs" base_type="ctrl" dimension="0"/>
+<par name="Ys" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>count_obj (Contours, Number)</l>
+<c></c>
+<l>Xs := []</l>
+<l>Ys := []</l>
+<c></c>
+<l>for i := 1 to Number by 1</l>
+<l>    select_obj (Contours, Contour, i)</l>
+<l>    get_contour_xld (Contour, Row, Col)</l>
+<l>    Xs := [Xs, Col]</l>
+<l>    Ys := [Ys, Row]</l>
+<l>endfor</l>
+<c></c>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="GetContoursPoints">
+<parameters>
+<parameter id="Contours"/>
+<parameter id="Xs"/>
+<parameter id="Ys"/>
 </parameters>
 </docu>
 </procedure>
