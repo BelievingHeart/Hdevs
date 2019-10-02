@@ -463,6 +463,8 @@
 </oc>
 </interface>
 <body>
+<c>*Should be deprecated</c>
+<c></c>
 <c>* assume that a perticular vector perpendiclar to me is (xAssume, yAssume), let xAssume = 1</c>
 <l>xAssume := 1</l>
 <l>yAssume := -(inputVectorX/inputVectorY)</l>
@@ -480,57 +482,6 @@
 <parameter id="inputVectorY"/>
 <parameter id="outputVectorX"/>
 <parameter id="outputVectorY"/>
-</parameters>
-</docu>
-</procedure>
-<procedure name="offset_line">
-<interface>
-<ic>
-<par name="x1" base_type="ctrl" dimension="0"/>
-<par name="y1" base_type="ctrl" dimension="0"/>
-<par name="x2" base_type="ctrl" dimension="0"/>
-<par name="y2" base_type="ctrl" dimension="0"/>
-<par name="offset" base_type="ctrl" dimension="0"/>
-</ic>
-<oc>
-<par name="x1Output" base_type="ctrl" dimension="0"/>
-<par name="y1Output" base_type="ctrl" dimension="0"/>
-<par name="x2Output" base_type="ctrl" dimension="0"/>
-<par name="y2Output" base_type="ctrl" dimension="0"/>
-</oc>
-</interface>
-<body>
-<c>* calculate m and b</c>
-<l>xDiff := x2 - x1</l>
-<l>yDiff := y2 - y1</l>
-<l>m := yDiff / xDiff</l>
-<l>b := y1 - m* x1</l>
-<c></c>
-<c>* calculate angle</c>
-<l>radian := atan(m)</l>
-<c>* calculate new b after offset</c>
-<l>yIncre := offset / cos(radian)</l>
-<l>newB := b + yIncre</l>
-<c></c>
-<c>* sample two points back to caller</c>
-<l>x1Output := x1</l>
-<l>x2Output := x2</l>
-<l>y1Output := x1Output * m + newB</l>
-<l>y2Output := x2Output * m + newB</l>
-<c></c>
-<l>return ()</l>
-</body>
-<docu id="offset_line">
-<parameters>
-<parameter id="offset"/>
-<parameter id="x1"/>
-<parameter id="x1Output"/>
-<parameter id="x2"/>
-<parameter id="x2Output"/>
-<parameter id="y1"/>
-<parameter id="y1Output"/>
-<parameter id="y2"/>
-<parameter id="y2Output"/>
 </parameters>
 </docu>
 </procedure>
@@ -759,120 +710,6 @@
 </parameters>
 </docu>
 </procedure>
-<procedure name="GetWorldImageMap">
-<interface>
-<io>
-<par name="Image" base_type="iconic" dimension="0"/>
-</io>
-<ic>
-<par name="camParamFile" base_type="ctrl" dimension="0"/>
-<par name="camPoseFile" base_type="ctrl" dimension="0"/>
-</ic>
-<oc>
-<par name="mapToImage" base_type="ctrl" dimension="0"/>
-<par name="mapToWorld" base_type="ctrl" dimension="0"/>
-<par name="Pose" base_type="ctrl" dimension="0"/>
-<par name="CameraParam" base_type="ctrl" dimension="0"/>
-</oc>
-</interface>
-<body>
-<l>read_pose (camPoseFile, Pose)</l>
-<l>read_cam_par (camParamFile, CameraParam)</l>
-<l>get_image_size (Image, Width, Height)</l>
-<c></c>
-<c>* generate 9 image-to-world coordinate pairs</c>
-<l>XsImage := []</l>
-<l>YsImage := []</l>
-<l>XsWorld := []</l>
-<l>YsWorld := []</l>
-<c></c>
-<l>for row := -1 to 1 by 1</l>
-<l>    for column := -1 to 1 by 1</l>
-<l>        xImage := Width/2 + 100* column</l>
-<l>        XsImage := [XsImage, xImage]</l>
-<l>        yImage := Height/2 + 100 * row</l>
-<l>        YsImage := [YsImage, yImage]</l>
-<c>        </c>
-<l>        image_points_to_world_plane (CameraParam, Pose, yImage, xImage, 'mm', xWorld, yWorld)</l>
-<l>        XsWorld := [XsWorld, xWorld]</l>
-<l>        YsWorld := [YsWorld, yWorld]</l>
-<l>    endfor</l>
-<l>endfor</l>
-<c></c>
-<l>vector_to_similarity (XsWorld, YsWorld, XsImage, YsImage, mapToImage)</l>
-<l>vector_to_similarity (XsImage, YsImage, XsWorld, YsWorld, mapToWorld)</l>
-<c></c>
-<c></c>
-<l>return ()</l>
-</body>
-<docu id="GetWorldImageMap">
-<parameters>
-<parameter id="CameraParam"/>
-<parameter id="Image">
-<description lang="zh_CN">Getting maps that convert image coordintates to and from world</description>
-</parameter>
-<parameter id="Pose"/>
-<parameter id="camParamFile">
-<sem_type>string</sem_type>
-</parameter>
-<parameter id="camPoseFile">
-<sem_type>string</sem_type>
-</parameter>
-<parameter id="mapToImage"/>
-<parameter id="mapToWorld"/>
-</parameters>
-</docu>
-</procedure>
-<procedure name="GetImageToWorldMap">
-<interface>
-<io>
-<par name="image" base_type="iconic" dimension="0"/>
-</io>
-<ic>
-<par name="camParamFile" base_type="ctrl" dimension="0"/>
-<par name="camPoseFile" base_type="ctrl" dimension="0"/>
-</ic>
-<oc>
-<par name="map" base_type="ctrl" dimension="0"/>
-</oc>
-</interface>
-<body>
-<l>read_pose (camPoseFile, Pose)</l>
-<l>read_cam_par (camParamFile, CameraParam)</l>
-<l>get_image_size (image, Width, Height)</l>
-<c></c>
-<c>* generate 9 image-to-world coordinate pairs</c>
-<l>XsImage := []</l>
-<l>YsImage := []</l>
-<l>XsWorld := []</l>
-<l>YsWorld := []</l>
-<c></c>
-<l>for row := -1 to 1 by 1</l>
-<l>    for column := -1 to 1 by 1</l>
-<l>        xImage := Width/2 + 100* column</l>
-<l>        XsImage := [XsImage, xImage]</l>
-<l>        yImage := Height/2 + 100 * row</l>
-<l>        YsImage := [YsImage, yImage]</l>
-<c>        </c>
-<l>        image_points_to_world_plane (CameraParam, Pose, yImage, xImage, 'mm', xWorld, yWorld)</l>
-<l>        XsWorld := [XsWorld, xWorld]</l>
-<l>        YsWorld := [YsWorld, yWorld]</l>
-<l>    endfor</l>
-<l>endfor</l>
-<c></c>
-<l>vector_to_similarity (XsImage, YsImage, XsWorld, YsWorld, map)</l>
-<c></c>
-<l>return ()</l>
-</body>
-<docu id="GetImageToWorldMap">
-<parameters>
-<parameter id="camParamFile"/>
-<parameter id="camPoseFile"/>
-<parameter id="image"/>
-<parameter id="map"/>
-</parameters>
-</docu>
-</procedure>
 <procedure name="TranslateLineInWorldCoordinateAndConvertBack">
 <interface>
 <ic>
@@ -923,102 +760,6 @@
 <parameter id="lineStartY"/>
 <parameter id="mapToImage"/>
 <parameter id="mapToWorld"/>
-<parameter id="outLineEndX"/>
-<parameter id="outLineEndY"/>
-<parameter id="outLineStartX"/>
-<parameter id="outLineStartY"/>
-</parameters>
-</docu>
-</procedure>
-<procedure name="MakeParallelLine">
-<interface>
-<ic>
-<par name="lineStartX" base_type="ctrl" dimension="0"/>
-<par name="lineStartY" base_type="ctrl" dimension="0"/>
-<par name="lineEndX" base_type="ctrl" dimension="0"/>
-<par name="lineEndY" base_type="ctrl" dimension="0"/>
-<par name="offset" base_type="ctrl" dimension="0"/>
-<par name="isVertical" base_type="ctrl" dimension="0"/>
-</ic>
-<oc>
-<par name="outLineStartX" base_type="ctrl" dimension="0"/>
-<par name="outLineStartY" base_type="ctrl" dimension="0"/>
-<par name="outLineEndX" base_type="ctrl" dimension="0"/>
-<par name="outLineEndY" base_type="ctrl" dimension="0"/>
-</oc>
-</interface>
-<body>
-<l>if(isVertical == 'true')</l>
-<l>    OffsetLineLeftRight (lineStartX, lineStartY, lineEndX, lineEndY, offset, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
-<l>else</l>
-<l>    OffsetLineUpDown (lineStartX, lineStartY, lineEndX, lineEndY, offset, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
-<l>endif</l>
-<c></c>
-<l>return ()</l>
-</body>
-<docu id="MakeParallelLine">
-<parameters>
-<parameter id="isVertical">
-<description lang="zh_CN">Whether the line is near or actually vertical</description>
-<sem_type>string</sem_type>
-</parameter>
-<parameter id="lineEndX"/>
-<parameter id="lineEndY"/>
-<parameter id="lineStartX"/>
-<parameter id="lineStartY"/>
-<parameter id="offset">
-<description lang="zh_CN">Positive direction points outward from (0,0)</description>
-<sem_type>real</sem_type>
-</parameter>
-<parameter id="outLineEndX"/>
-<parameter id="outLineEndY"/>
-<parameter id="outLineStartX"/>
-<parameter id="outLineStartY"/>
-</parameters>
-</docu>
-</procedure>
-<procedure name="TranslateLineNotVertical">
-<interface>
-<ic>
-<par name="lineStartX" base_type="ctrl" dimension="0"/>
-<par name="lineStartY" base_type="ctrl" dimension="0"/>
-<par name="lineEndX" base_type="ctrl" dimension="0"/>
-<par name="lineEndY" base_type="ctrl" dimension="0"/>
-<par name="offset" base_type="ctrl" dimension="0"/>
-</ic>
-<oc>
-<par name="outLineStartX" base_type="ctrl" dimension="0"/>
-<par name="outLineStartY" base_type="ctrl" dimension="0"/>
-<par name="outLineEndX" base_type="ctrl" dimension="0"/>
-<par name="outLineEndY" base_type="ctrl" dimension="0"/>
-</oc>
-</interface>
-<body>
-<l>line_orientation (lineStartY, lineStartX, lineEndY, lineEndX, Phi)</l>
-<c></c>
-<c></c>
-<l>absPhi := abs(Phi)</l>
-<l>bIncre := offset / cos(absPhi)</l>
-<l>m := atan(Phi)</l>
-<c></c>
-<l>b := lineStartY - m*lineStartX</l>
-<l>newB := b + bIncre</l>
-<c></c>
-<c>* sample output points</c>
-<l>outLineStartX := lineStartX</l>
-<l>outLineStartY := m * outLineStartX + newB</l>
-<l>outLineEndX := lineEndX</l>
-<l>outLineEndY := m * outLineEndX + newB</l>
-<c></c>
-<l>return ()</l>
-</body>
-<docu id="TranslateLineNotVertical">
-<parameters>
-<parameter id="lineEndX"/>
-<parameter id="lineEndY"/>
-<parameter id="lineStartX"/>
-<parameter id="lineStartY"/>
-<parameter id="offset"/>
 <parameter id="outLineEndX"/>
 <parameter id="outLineEndY"/>
 <parameter id="outLineStartX"/>
@@ -2266,108 +2007,6 @@
 <parameter id="thresholds"/>
 <parameter id="xCoeff"/>
 <parameter id="yCoeff"/>
-</parameters>
-</docu>
-</procedure>
-<procedure name="OffsetLineLeftRight">
-<interface>
-<ic>
-<par name="x1" base_type="ctrl" dimension="0"/>
-<par name="y1" base_type="ctrl" dimension="0"/>
-<par name="x2" base_type="ctrl" dimension="0"/>
-<par name="y2" base_type="ctrl" dimension="0"/>
-<par name="offset" base_type="ctrl" dimension="0"/>
-</ic>
-<oc>
-<par name="outX1" base_type="ctrl" dimension="0"/>
-<par name="outY1" base_type="ctrl" dimension="0"/>
-<par name="outX2" base_type="ctrl" dimension="0"/>
-<par name="outY2" base_type="ctrl" dimension="0"/>
-</oc>
-</interface>
-<body>
-<l>xDiff := x2 - x1</l>
-<l>yDiff := y2 - y1</l>
-<c></c>
-<l>m := xDiff / yDiff</l>
-<c></c>
-<l>b := x1 - m*y1</l>
-<c></c>
-<l>alpha := atan(m)</l>
-<c></c>
-<l>bIncre := offset / cos(alpha)</l>
-<c></c>
-<l>newB := b + bIncre</l>
-<c></c>
-<c>* outX = m * outY + newB</c>
-<l>outY1 := y1</l>
-<l>outY2 := y2</l>
-<l>outX1 := m* outY1 + newB</l>
-<l>outX2 := m* outY2 + newB</l>
-<c></c>
-<l>return ()</l>
-</body>
-<docu id="OffsetLineLeftRight">
-<parameters>
-<parameter id="offset"/>
-<parameter id="outX1"/>
-<parameter id="outX2"/>
-<parameter id="outY1"/>
-<parameter id="outY2"/>
-<parameter id="x1"/>
-<parameter id="x2"/>
-<parameter id="y1"/>
-<parameter id="y2"/>
-</parameters>
-</docu>
-</procedure>
-<procedure name="OffsetLineUpDown">
-<interface>
-<ic>
-<par name="x1" base_type="ctrl" dimension="0"/>
-<par name="y1" base_type="ctrl" dimension="0"/>
-<par name="x2" base_type="ctrl" dimension="0"/>
-<par name="y2" base_type="ctrl" dimension="0"/>
-<par name="offset" base_type="ctrl" dimension="0"/>
-</ic>
-<oc>
-<par name="outX1" base_type="ctrl" dimension="0"/>
-<par name="outY1" base_type="ctrl" dimension="0"/>
-<par name="outX2" base_type="ctrl" dimension="0"/>
-<par name="outY2" base_type="ctrl" dimension="0"/>
-</oc>
-</interface>
-<body>
-<l>xDiff := x2 - x1</l>
-<l>yDiff := y2 - y1</l>
-<c></c>
-<l>m := yDiff / xDiff</l>
-<l>b := y2 - x2 * m</l>
-<c></c>
-<l>alpha := atan(m)</l>
-<c></c>
-<l>bIncre := offset / cos(alpha)</l>
-<l>newB := b + bIncre</l>
-<c></c>
-<c>* sample output points</c>
-<l>outX1 := x1</l>
-<l>outY1 := m * outX1 + newB</l>
-<l>outX2 := x2</l>
-<l>outY2 := m * outX2 + newB</l>
-<c></c>
-<l>return ()</l>
-</body>
-<docu id="OffsetLineUpDown">
-<parameters>
-<parameter id="offset"/>
-<parameter id="outX1"/>
-<parameter id="outX2"/>
-<parameter id="outY1"/>
-<parameter id="outY2"/>
-<parameter id="x1"/>
-<parameter id="x2"/>
-<parameter id="y1"/>
-<parameter id="y2"/>
 </parameters>
 </docu>
 </procedure>
@@ -3930,39 +3569,6 @@
 <parameter id="Ys"/>
 <parameter id="YsOut"/>
 <parameter id="ignorePortion"/>
-<parameter id="lineX1"/>
-<parameter id="lineX2"/>
-<parameter id="lineY1"/>
-<parameter id="lineY2"/>
-</parameters>
-</docu>
-</procedure>
-<procedure name="GetLineNormalVec">
-<interface>
-<ic>
-<par name="lineX1" base_type="ctrl" dimension="0"/>
-<par name="lineY1" base_type="ctrl" dimension="0"/>
-<par name="lineX2" base_type="ctrl" dimension="0"/>
-<par name="lineY2" base_type="ctrl" dimension="0"/>
-</ic>
-<oc>
-<par name="Vx" base_type="ctrl" dimension="0"/>
-<par name="Vy" base_type="ctrl" dimension="0"/>
-</oc>
-</interface>
-<body>
-<l>GetLineWeightAndBias(lineX1, lineY1, lineX2, lineY2, m, b)</l>
-<l>normalM := -1.0 / m</l>
-<c></c>
-<l>Vx := sqrt(1.0 / (normalM*normalM+1))</l>
-<l>Vy := normalM * Vx</l>
-<c></c>
-<l>return ()</l>
-</body>
-<docu id="GetLineNormalVec">
-<parameters>
-<parameter id="Vx"/>
-<parameter id="Vy"/>
 <parameter id="lineX1"/>
 <parameter id="lineX2"/>
 <parameter id="lineY1"/>
