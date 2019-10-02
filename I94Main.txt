@@ -1,5 +1,5 @@
 read_shape_model ('E:/Projects/3d/Hdevs/ModelTopViewI94', ModelID)
-imageDir := 'D:/Images/0929/I94上/grr/2/MV-CH250-20TM-F-NF (00D46076741)/'
+imageDir := 'D:/Images/0929/I94上/grr/1/MV-CH250-20TM-F-NF (00D46076741)/'
 
 
 Width := 5120
@@ -62,7 +62,7 @@ dev_display (FindLineRects)
   endfor
   fnew_line (FileHandle)
   
-*stop ()
+stop ()
   endfor
 
 close_file (FileHandle)

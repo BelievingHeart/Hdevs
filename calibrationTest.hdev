@@ -1,371 +1,416 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<hdevelop file_version="1.2" halcon_version="18.11.0.0">
+<hdevelop file_version="1.1" halcon_version="17.12">
 <procedure name="main">
 <interface/>
 <body>
-<l>read_pose ('E:/Projects/校正标定/919/CamPose.dat', Pose)</l>
-<l>read_cam_par ('E:/Projects/校正标定/919/CamParams.cal', CameraParam)</l>
+<l>CameraParameters := ['area_scan_telecentric_division',0.588611,-0.451042,4.49784e-006,4.5e-006,2561.74,2560.1,5120,5120]</l>
+<l>CameraPose := [-0.00435978,-0.000190543,0.000999271,0.346393,2.16033,180.996,0]</l>
 <c></c>
-<l>read_image (Image, 'E:/Projects/校正标定/919/Image_20190920191500730.bmp')</l>
+<l>change_radial_distortion_cam_par ('adaptive', CameraParameters, 0, CamParamOut)</l>
+<l>gen_radial_distortion_map (Map, CameraParameters, CamParamOut, 'bilinear')</l>
 <c></c>
-<l>get_image_size (Image, Width, Height)</l>
+<l>read_image (Image, 'C:/Users/afterbunny/Pictures/Images/I94/shang/动态/2/MV-CH250-20TM-F-NF (00D46076741)/LF_20190929010225741.bmp')</l>
+<l>map_image (Image, Map, ImageMapped)</l>
 <c></c>
-<l>XsPixel := []</l>
-<l>YsPixel := []</l>
+<l>abs_diff_image (Image, ImageMapped, ImageAbsDiff, 128)</l>
 <c></c>
-<l>for i := -1 to 1 by 1</l>
-<l>    for j:= -1 to 1 by 1</l>
-<l>        XsPixel := [XsPixel, Width/2 +i *100]</l>
-<l>        YsPixel := [YsPixel, Height/2 + i*100]</l>
-<l>    endfor</l>
-<l>endfor</l>
+<l>GenCalibrationMaps (Image, CameraParameters, CameraPose, MapToWorld, MapToImage)</l>
+<l>affine_trans_point_2d (MapToWorld, 2978.82, 113.347, worldX1, worldY1)</l>
+<l>affine_trans_point_2d (MapToWorld, 2978.82, 0, worldX2, worldY2)</l>
 <c></c>
-<l>image_points_to_world_plane (CameraParam, Pose, YsPixel, XsPixel, 'mm', XsWorld, YsWorld)</l>
+<l>line_orientation (113.347, 2978.82, 0, 2978.82, PhiImage)</l>
 <c></c>
-<l>vector_to_hom_mat2d (XsPixel, YsPixel, XsWorld, YsWorld, MapToWorld)</l>
-<l>vector_to_hom_mat2d (XsWorld, YsWorld, XsPixel, YsPixel, MapToImage)</l>
-<c></c>
-<c></c>
-<l>gen_rectangle2 (ROI_0, 2541.35, 800.024, rad(-1.70283), 287.167, 1812.22)</l>
-<l>reduce_domain (Image, ROI_0, ImageReduced)</l>
-<c></c>
-<l>threshold_sub_pix (ImageReduced, Border, 20)</l>
-<c></c>
-<l>area_center_xld (Border, Area, Row, Column, PointOrder)</l>
-<c></c>
-<l>FitLine2D (Column, Row, 0.2, lineX1, lineY1, lineX2, lineY2)</l>
-<c></c>
-<l>OffsetLineInWorldAndConvertBack (lineX1, lineY1, lineX2, lineY2, 22.5, 'true', MapToWorld, MapToImage, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<l>affine_trans_point_2d (MapToImage, -7.22935, 18.6465, imageRecoveredX1, imageRecoveredY1)</l>
+<l>affine_trans_point_2d (MapToImage, -7.21429, 19.513, imageRecoveredX2, imageRecoveredY2)</l>
+<l>line_orientation (worldY1, worldX1, worldY2, worldX2, PhiWorld)</l>
+<l>line_orientation (worldY2, worldX2, worldY1, worldX1, Phi)</l>
 <c></c>
 <c></c>
+<l>image_points_to_world_plane (CamParamOut, CameraPose, 3000, 1000, 0.001, X, Y)</l>
 <c></c>
+<c></c>
+<l>width := 50</l>
+<l>height := 50</l>
+<l>scale := 10</l>
+<c></c>
+<l>gen_image_const (Image, 'byte', width, height)</l>
+<l>dev_open_window_fit_image (Image, 0, 0, -1, -1, WindowHandle)</l>
+<c></c>
+<l>originX := width/ 2</l>
+<l>originY := height / 2</l>
+<c></c>
+<c></c>
+<c>****************************************************GetNormalVector_Tests*****************************************************</c>
+<c></c>
+<l>X1 := originX + 10</l>
+<l>Y1 :=  originY + 13</l>
+<c></c>
+<l>dev_set_color ('red')</l>
+<l>gen_region_line (RegionLines, originY, originX, Y1, X1)</l>
+<c></c>
+<l>GetNormalVector (originX, originY, X1, Y1, VecX, VecY)</l>
+<l>X2 := X1 + scale*VecX</l>
+<l>Y2 := Y1 + scale * VecY</l>
+<c></c>
+<l>dev_set_color ('blue')</l>
+<l>gen_region_line (RegionLines1, Y1, X1, Y2, X2)</l>
+<l>angle_ll (originY, originX, Y1, X1, Y1, X1, Y2, X2, Angle)</l>
+<l>Angle := deg(Angle)</l>
+<c></c>
+<l>stop ()</l>
+<l>dev_clear_window ()</l>
+<c>*********************************************************************************</c>
+<c></c>
+<l>X1 := originX - 10</l>
+<l>Y1 :=  originY + 13</l>
+<c></c>
+<l>dev_set_color ('red')</l>
+<l>gen_region_line (RegionLines, originY, originX, Y1, X1)</l>
+<c></c>
+<l>GetNormalVector (originX, originY, X1, Y1, VecX, VecY)</l>
+<l>X2 := X1 + scale*VecX</l>
+<l>Y2 := Y1 + scale * VecY</l>
+<c></c>
+<l>dev_set_color ('blue')</l>
+<l>gen_region_line (RegionLines1, Y1, X1, Y2, X2)</l>
+<l>angle_ll (originY, originX, Y1, X1, Y1, X1, Y2, X2, Angle)</l>
+<l>Angle := deg(Angle)</l>
+<c></c>
+<l>stop ()</l>
+<l>dev_clear_window ()</l>
+<c>*********************************************************************************</c>
+<c></c>
+<l>X1 := originX - 13</l>
+<l>Y1 :=  originY + 10</l>
+<c></c>
+<l>dev_set_color ('red')</l>
+<l>gen_region_line (RegionLines, originY, originX, Y1, X1)</l>
+<c></c>
+<l>GetNormalVector (originX, originY, X1, Y1, VecX, VecY)</l>
+<l>X2 := X1 + scale*VecX</l>
+<l>Y2 := Y1 + scale * VecY</l>
+<c></c>
+<l>dev_set_color ('blue')</l>
+<l>gen_region_line (RegionLines1, Y1, X1, Y2, X2)</l>
+<l>angle_ll (originY, originX, Y1, X1, Y1, X1, Y2, X2, Angle)</l>
+<l>Angle := deg(Angle)</l>
+<c></c>
+<l>stop ()</l>
+<l>dev_clear_window ()</l>
+<c>*********************************************************************************</c>
+<c></c>
+<l>X1 := originX - 10</l>
+<l>Y1 :=  originY - 13</l>
+<c></c>
+<l>dev_set_color ('red')</l>
+<l>gen_region_line (RegionLines, originY, originX, Y1, X1)</l>
+<c></c>
+<l>GetNormalVector (originX, originY, X1, Y1, VecX, VecY)</l>
+<l>X2 := X1 + scale*VecX</l>
+<l>Y2 := Y1 + scale * VecY</l>
+<c></c>
+<l>dev_set_color ('blue')</l>
+<l>gen_region_line (RegionLines1, Y1, X1, Y2, X2)</l>
+<l>angle_ll (originY, originX, Y1, X1, Y1, X1, Y2, X2, Angle)</l>
+<l>Angle := deg(Angle)</l>
+<c></c>
+<l>stop ()</l>
+<l>dev_clear_window ()</l>
+<c>*********************************************************************************</c>
+<c></c>
+<l>X1 := originX + 10</l>
+<l>Y1 :=  originY - 13</l>
+<c></c>
+<l>dev_set_color ('red')</l>
+<l>gen_region_line (RegionLines, originY, originX, Y1, X1)</l>
+<c></c>
+<l>GetNormalVector (originX, originY, X1, Y1, VecX, VecY)</l>
+<l>X2 := X1 + scale*VecX</l>
+<l>Y2 := Y1 + scale * VecY</l>
+<c></c>
+<l>dev_set_color ('blue')</l>
+<l>gen_region_line (RegionLines1, Y1, X1, Y2, X2)</l>
+<l>angle_ll (originY, originX, Y1, X1, Y1, X1, Y2, X2, Angle)</l>
+<l>Angle := deg(Angle)</l>
+<c></c>
+<l>stop ()</l>
+<l>dev_clear_window ()</l>
+<c>*********************************************************************************</c>
+<c></c>
+<c></c>
+<c>***************************************GetParallelLine_Tests******************************************</c>
+<c>****************TO the right********</c>
+<c></c>
+<l>dev_set_color ('red')</l>
+<l>gen_region_line (RegionLines, originY, originX, Y1, X1)</l>
+<c></c>
+<l>GetParallelLine (originX, originY, X1, Y1, 5, X1Out, Y1Out, X2Out, Y2Out)</l>
+<l>dev_set_color ('blue')</l>
+<l>gen_region_line (RegionLines1, Y1Out, X1Out, Y2Out, X2Out)</l>
+<c>  </c>
+<c></c>
+<l>stop ()</l>
+<l>dev_clear_window ()</l>
+<c>*********************************************************************************</c>
+<c>************TO the left**********</c>
+<l>dev_set_color ('red')</l>
+<l>gen_region_line (RegionLines, originY, originX, Y1, X1)</l>
+<c></c>
+<l>GetParallelLine (X1, Y1, originX, originY, 5, X1Out, Y1Out, X2Out, Y2Out)</l>
+<l>dev_set_color ('blue')</l>
+<l>gen_region_line (RegionLines1, Y1Out, X1Out, Y2Out, X2Out)</l>
+<c></c>
+<c></c>
+<l>stop ()</l>
+<l>dev_clear_window ()</l>
+<c>*********************************************************************************</c>
+<l>dev_close_window ()</l>
 </body>
 <docu id="main">
 <parameters/>
 </docu>
 </procedure>
-<procedure name="FitLine2D">
+<procedure name="GenCalibrationMaps">
 <interface>
+<io>
+<par name="Image" base_type="iconic" dimension="0"/>
+</io>
 <ic>
-<par name="Xs" base_type="ctrl" dimension="0"/>
-<par name="Ys" base_type="ctrl" dimension="0"/>
-<par name="ignorePortion" base_type="ctrl" dimension="0"/>
+<par name="CamParams" base_type="ctrl" dimension="0"/>
+<par name="CamPose" base_type="ctrl" dimension="0"/>
 </ic>
 <oc>
-<par name="lineX1" base_type="ctrl" dimension="0"/>
-<par name="lineY1" base_type="ctrl" dimension="0"/>
-<par name="lineX2" base_type="ctrl" dimension="0"/>
-<par name="lineY2" base_type="ctrl" dimension="0"/>
+<par name="MapToWorld" base_type="ctrl" dimension="0"/>
+<par name="MapToImage" base_type="ctrl" dimension="0"/>
 </oc>
 </interface>
 <body>
-<l>fit_line2D_rough (Xs, Ys, lineX1, lineY1, lineX2, lineY2)</l>
+<l>get_image_size (Image, Width, Height)</l>
 <c></c>
-<l>totalPoints := |Xs|</l>
-<c>* number of points to ignore</c>
-<l>numPointsLeft := (1.0-ignorePortion) * |Xs|</l>
+<l>halfWidth := Width / 3.0</l>
+<l>halfHeight := Height / 3.0</l>
 <c></c>
-<c>* calculate fitness of each point</c>
-<l>fiterrors := []</l>
-<l>for i := 0 to |Xs|-1 by 1</l>
-<l>    distance_pl (Ys[i], Xs[i], lineY1, lineX1, lineY2, lineX2, Distance)</l>
-<l>    fiterrors := [fiterrors, Distance]</l>
+<l>centerX := Width / 2.0</l>
+<l>centerY := Height / 2.0</l>
+<c></c>
+<l>imageXs := []</l>
+<l>imageYs := []</l>
+<c></c>
+<c></c>
+<l>for i := -1 to 1 by 1</l>
+<l>    for j := -1 to 1 by 1</l>
+<l>        imageX := centerX+j*halfWidth</l>
+<l>        imageXs := [imageXs, imageX]</l>
+<l>        imageY := centerY + i* halfHeight</l>
+<l>        imageYs := [imageYs, imageY]</l>
+<l>    endfor</l>
 <l>endfor</l>
 <c></c>
-<l>tuple_sort_index (fiterrors, Indices)</l>
+<l>image_points_to_world_plane (CamParams, CamPose, imageYs, imageXs, 0.001, worldXs, worldYs)</l>
 <c></c>
-<c>* select the best fits</c>
-<l>XsUsed := []</l>
-<l>YsUsed := []</l>
-<l>XsIgnored := []</l>
-<l>YsIgnored := []</l>
-<l>ErrorBest := []</l>
-<l>for i := 0 to totalPoints-1 by 1</l>
-<l>    index := Indices[i]</l>
-<l>   if(i &lt; numPointsLeft)</l>
-<l>           XsUsed := [XsUsed, Xs[index]]</l>
-<l>    YsUsed := [YsUsed, Ys[index]]</l>
-<l>    ErrorBest := [ErrorBest, fiterrors[index]]</l>
-<l>   else</l>
-<l>       XsIgnored := [XsIgnored, Xs[index]]</l>
-<l>       YsIgnored := [YsIgnored, Ys[index]]</l>
-<l>   endif</l>
-<l>endfor</l>
-<c></c>
-<c>* fit line again</c>
-<l>fit_line2D_rough (XsUsed, YsUsed, lineX1, lineY1, lineX2, lineY2)</l>
-<c></c>
-<c></c>
-<l>return ()</l>
-<c></c>
-</body>
-<docu id="FitLine2D">
-<parameters>
-<parameter id="Xs"/>
-<parameter id="Ys"/>
-<parameter id="ignorePortion"/>
-<parameter id="lineX1"/>
-<parameter id="lineX2"/>
-<parameter id="lineY1"/>
-<parameter id="lineY2"/>
-</parameters>
-</docu>
-</procedure>
-<procedure name="fit_line2D_rough">
-<interface>
-<ic>
-<par name="Xs" base_type="ctrl" dimension="0"/>
-<par name="Ys" base_type="ctrl" dimension="0"/>
-</ic>
-<oc>
-<par name="lineX1" base_type="ctrl" dimension="0"/>
-<par name="lineY1" base_type="ctrl" dimension="0"/>
-<par name="lineX2" base_type="ctrl" dimension="0"/>
-<par name="lineY2" base_type="ctrl" dimension="0"/>
-</oc>
-</interface>
-<body>
-<l>tuple_sum (Xs, SumX)</l>
-<l>AverageX := SumX / |Xs|</l>
-<c></c>
-<l>tuple_sum (Ys, SumY)</l>
-<l>AverageY := SumY / |Ys|</l>
-<c></c>
-<l>SumUpper := 0</l>
-<l>SumLower := 0</l>
-<l>for i := 0 to |Xs|-1 by 1</l>
-<l>    incrementUpper := (Xs[i]-AverageX) * (Ys[i]-AverageY)</l>
-<l>    incrementLower := (AverageX-Xs[i]) * (AverageX-Xs[i])</l>
-<l>    SumUpper := SumUpper + incrementUpper</l>
-<l>    SumLower := SumLower + incrementLower</l>
-<l>endfor</l>
-<c></c>
-<l>m := SumUpper / SumLower</l>
-<l>b := AverageY - m*AverageX</l>
-<c></c>
-<c></c>
-<c></c>
-<c>* sample two point</c>
-<l>tuple_max (Xs, lineX1)</l>
-<l>tuple_min (Xs, lineX2)</l>
-<c></c>
-<l>lineY1 := m * lineX1 + b</l>
-<l>lineY2 := m * lineX2 + b</l>
-<l>return ()</l>
-</body>
-<docu id="fit_line2D_rough">
-<parameters>
-<parameter id="Xs"/>
-<parameter id="Ys"/>
-<parameter id="lineX1"/>
-<parameter id="lineX2"/>
-<parameter id="lineY1"/>
-<parameter id="lineY2"/>
-</parameters>
-</docu>
-</procedure>
-<procedure name="OffsetLineInWorldAndConvertBack">
-<interface>
-<ic>
-<par name="lineStartX" base_type="ctrl" dimension="0"/>
-<par name="lineStartY" base_type="ctrl" dimension="0"/>
-<par name="lineEndX" base_type="ctrl" dimension="0"/>
-<par name="lineEndY" base_type="ctrl" dimension="0"/>
-<par name="distance" base_type="ctrl" dimension="0"/>
-<par name="isVertical" base_type="ctrl" dimension="0"/>
-<par name="mapToWorld" base_type="ctrl" dimension="0"/>
-<par name="mapToImage" base_type="ctrl" dimension="0"/>
-</ic>
-<oc>
-<par name="outLineStartX" base_type="ctrl" dimension="0"/>
-<par name="outLineStartY" base_type="ctrl" dimension="0"/>
-<par name="outLineEndX" base_type="ctrl" dimension="0"/>
-<par name="outLineEndY" base_type="ctrl" dimension="0"/>
-</oc>
-</interface>
-<body>
-<l>affine_trans_point_2d (mapToWorld, lineStartX, lineStartY, lineStartX, lineStartY)</l>
-<l>affine_trans_point_2d (mapToWorld, lineEndX, lineEndY, lineEndX, lineEndY)</l>
-<c></c>
-<c></c>
-<c>* translate world line</c>
-<l>MakeParallelLine (lineStartX, lineStartY, lineEndX, lineEndY, distance, isVertical, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
-<c></c>
-<l>affine_trans_point_2d (mapToImage, outLineStartX, outLineStartY, outLineStartX, outLineStartY)</l>
-<l>affine_trans_point_2d (mapToImage, outLineEndX, outLineEndY, outLineEndX, outLineEndY)</l>
+<l>vector_to_hom_mat2d (worldXs, worldYs, imageXs, imageYs, MapToImage)</l>
+<l>vector_to_hom_mat2d (imageXs, imageYs, worldXs, worldYs, MapToWorld)</l>
 <c></c>
 <l>return ()</l>
 </body>
-<docu id="OffsetLineInWorldAndConvertBack">
+<docu id="GenCalibrationMaps">
 <parameters>
-<parameter id="distance"/>
-<parameter id="isVertical"/>
-<parameter id="lineEndX"/>
-<parameter id="lineEndY"/>
-<parameter id="lineStartX"/>
-<parameter id="lineStartY"/>
-<parameter id="mapToImage"/>
-<parameter id="mapToWorld"/>
-<parameter id="outLineEndX"/>
-<parameter id="outLineEndY"/>
-<parameter id="outLineStartX"/>
-<parameter id="outLineStartY"/>
+<parameter id="CamParams"/>
+<parameter id="CamPose"/>
+<parameter id="Image"/>
+<parameter id="MapToImage"/>
+<parameter id="MapToWorld"/>
 </parameters>
 </docu>
 </procedure>
-<procedure name="MakeParallelLine">
+<procedure name="SortLineUpDown">
 <interface>
 <ic>
-<par name="lineStartX" base_type="ctrl" dimension="0"/>
-<par name="lineStartY" base_type="ctrl" dimension="0"/>
-<par name="lineEndX" base_type="ctrl" dimension="0"/>
-<par name="lineEndY" base_type="ctrl" dimension="0"/>
-<par name="offset" base_type="ctrl" dimension="0"/>
-<par name="isVertical" base_type="ctrl" dimension="0"/>
+<par name="X1" base_type="ctrl" dimension="0"/>
+<par name="Y1" base_type="ctrl" dimension="0"/>
+<par name="X2" base_type="ctrl" dimension="0"/>
+<par name="Y2" base_type="ctrl" dimension="0"/>
 </ic>
 <oc>
-<par name="outLineStartX" base_type="ctrl" dimension="0"/>
-<par name="outLineStartY" base_type="ctrl" dimension="0"/>
-<par name="outLineEndX" base_type="ctrl" dimension="0"/>
-<par name="outLineEndY" base_type="ctrl" dimension="0"/>
+<par name="XUp" base_type="ctrl" dimension="0"/>
+<par name="YUp" base_type="ctrl" dimension="0"/>
+<par name="XDown" base_type="ctrl" dimension="0"/>
+<par name="YDown" base_type="ctrl" dimension="0"/>
 </oc>
 </interface>
 <body>
-<l>if (isVertical == 'true')</l>
-<l>    TranslateLineNotVertical (lineStartY, lineStartX, lineEndY, lineEndX, offset, outLineStartY, outLineStartX, outLineEndY, outLineEndX)</l>
+<l>XUp := X1</l>
+<l>XDown := X2</l>
+<l>YUp := Y1</l>
+<l>YDown := Y2</l>
+<c></c>
+<l>if(Y1 &gt; Y2)</l>
+<l>    XUp := X2</l>
+<l>    XDown := X1</l>
+<l>    YUp := Y2</l>
+<l>    YDown := Y1</l>
+<l>endif</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="SortLineUpDown">
+<abstract lang="en_US">Sort end points of a line from top to bottom</abstract>
+<parameters>
+<parameter id="X1"/>
+<parameter id="X2"/>
+<parameter id="XDown"/>
+<parameter id="XUp"/>
+<parameter id="Y1"/>
+<parameter id="Y2"/>
+<parameter id="YDown"/>
+<parameter id="YUp"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="SortLineLeftRight">
+<interface>
+<ic>
+<par name="X1" base_type="ctrl" dimension="0"/>
+<par name="Y1" base_type="ctrl" dimension="0"/>
+<par name="X2" base_type="ctrl" dimension="0"/>
+<par name="Y2" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="XLeft" base_type="ctrl" dimension="0"/>
+<par name="YLeft" base_type="ctrl" dimension="0"/>
+<par name="XRight" base_type="ctrl" dimension="0"/>
+<par name="YRight" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>XLeft := X1</l>
+<l>XRight := X2</l>
+<l>YLeft := Y1</l>
+<l>YRight := Y2</l>
+<c></c>
+<l>if(X1 &gt; X2)</l>
+<l>    XLeft := X2</l>
+<l>    XRight := X1</l>
+<l>    YLeft := Y2</l>
+<l>    YRight := Y1</l>
+<l>endif</l>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="SortLineLeftRight">
+<abstract lang="en_US">Sort end points of a line from left to right</abstract>
+<parameters>
+<parameter id="X1"/>
+<parameter id="X2"/>
+<parameter id="XLeft"/>
+<parameter id="XRight"/>
+<parameter id="Y1"/>
+<parameter id="Y2"/>
+<parameter id="YLeft"/>
+<parameter id="YRight"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="GetNormalVector">
+<interface>
+<ic>
+<par name="X1" base_type="ctrl" dimension="0"/>
+<par name="Y1" base_type="ctrl" dimension="0"/>
+<par name="X2" base_type="ctrl" dimension="0"/>
+<par name="Y2" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="VecX" base_type="ctrl" dimension="0"/>
+<par name="VecY" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>xDiff := X2- X1</l>
+<l>yDiff := Y2 - Y1</l>
+<c></c>
+<l>dist := sqrt(xDiff*xDiff + yDiff*yDiff)</l>
+<l>xDiffNorm := xDiff / dist</l>
+<l>yDiffNorm := yDiff / dist</l>
+<c></c>
+<l>radian := atan2(yDiffNorm, xDiffNorm)</l>
+<c></c>
+<l>VecX := yDiffNorm</l>
+<l>VecY := -xDiffNorm</l>
+<c></c>
+<l>vecXNew := xDiffNorm + VecX</l>
+<l>vecYNew := yDiffNorm + VecY</l>
+<c></c>
+<l>radianNew := atan2(vecYNew, vecXNew)</l>
+<c></c>
+<c>* 原单位向量 + 其法线单位向量都会得到一个角度 radianNew = radian + rad(45)的向量</c>
+<c>* 若原向量角度大于135, 则radianNew &lt; 0</c>
+<l>if(radian &gt; 2.35619)</l>
+<l>    if(radianNew &gt; 0)</l>
+<l>        VecX := -VecX</l>
+<l>        VecY := -VecY</l>
+<l>    endif</l>
+<c>   </c>
 <l>else</l>
-<l>    TranslateLineNotVertical (lineStartX, lineStartY, lineEndX, lineEndY, offset, outLineStartX, outLineStartY, outLineEndX, outLineEndY)</l>
+<l>    if(radianNew &lt; radian)</l>
+<l>        VecX := -VecX</l>
+<l>        VecY := -VecY</l>
+<l>    endif</l>
 <l>endif</l>
+<c></c>
 <c></c>
 <l>return ()</l>
 </body>
-<docu id="MakeParallelLine">
+<docu id="GetNormalVector">
+<abstract lang="en_US">The direction of the input line is pointing from (X1, Y1) to (X2, Y2).
+The normal direction of the input line is defined on the right side along the input line.
+(VecX, VecY) is a unit vector</abstract>
 <parameters>
-<parameter id="isVertical">
-<description lang="zh_CN">Whether the line is near or actually vertical</description>
-<sem_type>string</sem_type>
-</parameter>
-<parameter id="lineEndX"/>
-<parameter id="lineEndY"/>
-<parameter id="lineStartX"/>
-<parameter id="lineStartY"/>
-<parameter id="offset">
-<description lang="zh_CN">Positive direction points outward from (0,0)</description>
-<sem_type>real</sem_type>
-</parameter>
-<parameter id="outLineEndX"/>
-<parameter id="outLineEndY"/>
-<parameter id="outLineStartX"/>
-<parameter id="outLineStartY"/>
+<parameter id="VecX"/>
+<parameter id="VecY"/>
+<parameter id="X1"/>
+<parameter id="X2"/>
+<parameter id="Y1"/>
+<parameter id="Y2"/>
 </parameters>
 </docu>
 </procedure>
-<procedure name="TranslateLineNotVertical">
+<procedure name="GetParallelLine">
 <interface>
 <ic>
-<par name="lineStartX" base_type="ctrl" dimension="0"/>
-<par name="lineStartY" base_type="ctrl" dimension="0"/>
-<par name="lineEndX" base_type="ctrl" dimension="0"/>
-<par name="lineEndY" base_type="ctrl" dimension="0"/>
-<par name="offset" base_type="ctrl" dimension="0"/>
+<par name="X1" base_type="ctrl" dimension="0"/>
+<par name="Y1" base_type="ctrl" dimension="0"/>
+<par name="X2" base_type="ctrl" dimension="0"/>
+<par name="Y2" base_type="ctrl" dimension="0"/>
+<par name="Offset" base_type="ctrl" dimension="0"/>
 </ic>
 <oc>
-<par name="outLineStartX" base_type="ctrl" dimension="0"/>
-<par name="outLineStartY" base_type="ctrl" dimension="0"/>
-<par name="outLineEndX" base_type="ctrl" dimension="0"/>
-<par name="outLineEndY" base_type="ctrl" dimension="0"/>
+<par name="X1Out" base_type="ctrl" dimension="0"/>
+<par name="Y1Out" base_type="ctrl" dimension="0"/>
+<par name="X2Out" base_type="ctrl" dimension="0"/>
+<par name="Y2Out" base_type="ctrl" dimension="0"/>
 </oc>
 </interface>
 <body>
-<l>xDiff := lineEndX - lineStartX</l>
-<l>yDiff := lineEndY - lineStartY</l>
+<l>GetNormalVector (X1, Y1, X2, Y2, VecX, VecY)</l>
 <c></c>
-<l>m := yDiff / xDiff</l>
-<l>b := lineStartY - yDiff / xDiff * lineStartX</l>
-<c></c>
-<l>alpha := atan(m)</l>
-<c></c>
-<l>bIncre := offset / cos(alpha)</l>
-<c></c>
-<l>newB := b + bIncre</l>
-<c></c>
-<c></c>
-<c>* sample output points</c>
-<l>outLineStartX := lineStartX</l>
-<l>outLineStartY := m * outLineStartX + newB</l>
-<l>outLineEndX := lineEndX</l>
-<l>outLineEndY := m * outLineEndX + newB</l>
-<c></c>
+<l>X1Out := Offset * VecX + X1</l>
+<l>Y1Out := Offset * VecY + Y1</l>
+<l>X2Out := Offset * VecX + X2</l>
+<l>Y2Out := Offset * VecY + Y2</l>
 <l>return ()</l>
 </body>
-<docu id="TranslateLineNotVertical">
+<docu id="GetParallelLine">
+<abstract lang="en_US">沿着矢量(X1, Y1)-&gt;(X2, Y2)方向的右手边平移得到直线</abstract>
 <parameters>
-<parameter id="lineEndX"/>
-<parameter id="lineEndY"/>
-<parameter id="lineStartX"/>
-<parameter id="lineStartY"/>
-<parameter id="offset"/>
-<parameter id="outLineEndX"/>
-<parameter id="outLineEndY"/>
-<parameter id="outLineStartX"/>
-<parameter id="outLineStartY"/>
-</parameters>
-</docu>
-</procedure>
-<procedure name="GenLineRegion">
-<interface>
-<oo>
-<par name="lineRegion" base_type="iconic" dimension="0"/>
-</oo>
-<ic>
-<par name="lineXStart" base_type="ctrl" dimension="0"/>
-<par name="lineYStart" base_type="ctrl" dimension="0"/>
-<par name="lineXEnd" base_type="ctrl" dimension="0"/>
-<par name="lineYEnd" base_type="ctrl" dimension="0"/>
-<par name="imageWidth" base_type="ctrl" dimension="0"/>
-<par name="imageHeight" base_type="ctrl" dimension="0"/>
-</ic>
-</interface>
-<body>
-<l>xDiff := lineXEnd - lineXStart</l>
-<l>yDiff := lineYEnd - lineYStart</l>
-<c></c>
-<l>epslon := 0.0000000001</l>
-<l>if(abs(xDiff) &lt; epslon)</l>
-<l>    xDiff := epslon</l>
-<l>endif</l>
-<c></c>
-<l>m := yDiff/xDiff</l>
-<l>b := lineYStart - m* lineXStart</l>
-<c></c>
-<l>xStart := 0</l>
-<l>xEnd := imageWidth</l>
-<c></c>
-<l>yStart := m* xStart +b</l>
-<l>if(yStart&gt; imageHeight or yStart &lt; 0)</l>
-<l>    yStart := 0</l>
-<l>    xStart := (yStart - b)/m</l>
-<l>endif</l>
-<c></c>
-<l>yEnd := m* xEnd +b</l>
-<l>if(yEnd&gt; imageHeight or yEnd &lt; 0)</l>
-<l>    yEnd := imageHeight</l>
-<l>    xEnd := (yEnd - b)/m</l>
-<l>endif</l>
-<c></c>
-<l>gen_region_line (lineRegion, yStart, xStart, yEnd, xEnd)</l>
-<c></c>
-<l>return ()</l>
-</body>
-<docu id="GenLineRegion">
-<parameters>
-<parameter id="imageHeight"/>
-<parameter id="imageWidth"/>
-<parameter id="lineRegion"/>
-<parameter id="lineXEnd"/>
-<parameter id="lineXStart"/>
-<parameter id="lineYEnd"/>
-<parameter id="lineYStart"/>
+<parameter id="Offset"/>
+<parameter id="X1"/>
+<parameter id="X1Out"/>
+<parameter id="X2"/>
+<parameter id="X2Out"/>
+<parameter id="Y1"/>
+<parameter id="Y1Out"/>
+<parameter id="Y2"/>
+<parameter id="Y2Out"/>
 </parameters>
 </docu>
 </procedure>
