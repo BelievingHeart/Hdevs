@@ -160,7 +160,7 @@
 <l>dev_set_color ('blue')</l>
 <l>gen_region_line (RegionLines1, Y1Out, X1Out, Y2Out, X2Out)</l>
 <c></c>
-<c></c>
+<l>SortLineUpDown (X1Out, X1Out, X1Out, X1Out, XUp, YUp, XDown, YDown)</l>
 <l>stop ()</l>
 <l>dev_clear_window ()</l>
 <c>*********************************************************************************</c>
